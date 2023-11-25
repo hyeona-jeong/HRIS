@@ -8,6 +8,7 @@ from PyQt5 import QtGui, uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from index import Index
+from find import Find
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -24,6 +25,8 @@ class Login(QMainWindow, form_class):
         self.passwd.returnPressed.connect(self.loginfunction)
         self.passwd.setEchoMode(QLineEdit.Password)
 
+        self.findBtn.clicked.connect(self.showFind)
+
     # 231120 로그인 함수 (정현아) 
     def loginfunction(self):
         id = self.id.text()
@@ -38,25 +41,24 @@ class Login(QMainWindow, form_class):
                 host='localhost',
                 user='dev',
                 password='nori1234',
-                db='test',
+                db='dev',
                 port=3306,
                 charset='utf8'
             )
             cur = conn.cursor()
-            query = 'SELECT password FROM login_data WHERE id =\''+id+"\'"
+            query = 'SELECT passwd FROM login_data WHERE id =\''+id+"\'"
             cur.execute(query)
             result_pass = cur.fetchone()
             if result_pass is not None:
                 if result_pass[0] == password:
                     self.showIndex()
-
+                    return
                 else:
                     QMessageBox.warning(self, "Login Failed", "잘못된 패스워드입니다.")
                     self.passwd.clear()
+    
             else:
                 QMessageBox.warning(self, "Login Failed", "존재하지 않는 ID입니다.")
-                
-    
     
     # 231122 페이지 전환 함수 by정현아
     def showIndex(self):
@@ -71,6 +73,10 @@ class Login(QMainWindow, form_class):
         self.id.clear()
         self.passwd.clear()
         
+    def showFind(self):
+        self.w = Find()
+        self.w.show()
+        self.w.cnlBtn.clicked.connect(self.w.close)
 
 
 
