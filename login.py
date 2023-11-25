@@ -46,13 +46,20 @@ class Login(QMainWindow, form_class):
                 charset='utf8'
             )
             cur = conn.cursor()
-            query = 'SELECT passwd FROM login_data WHERE id =\''+id+"\'"
+            query = 'SELECT passwd,cert_num FROM login_data WHERE id =\''+id+"\'"
             cur.execute(query)
             result_pass = cur.fetchone()
             if result_pass is not None:
                 if result_pass[0] == password:
                     self.showIndex()
-                    return
+                    # 231125 비밀번호 찾기로 생긴 인증번호값 초기화
+                    if (result_pass[1] is None):
+                        return
+                    else:
+                        query='update login_data set cert_num = Null;'
+                        cur.execute(query)
+                        conn.commit()
+                        conn.close()
                 else:
                     QMessageBox.warning(self, "Login Failed", "잘못된 패스워드입니다.")
                     self.passwd.clear()

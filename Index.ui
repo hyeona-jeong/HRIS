@@ -497,7 +497,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="toolhr">
+        <widget class="QPushButton" name="toolhr">
          <property name="minimumSize">
           <size>
            <width>170</width>
@@ -519,27 +519,21 @@
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">QToolButton{
+          <string notr="true">QPushButton{
 	border: none;
 	color:#ff5500;
 }
-QToolButton:hover {
+QPushButton:hover {
 	border-bottom: 3px solid #ff5500;
 }</string>
          </property>
          <property name="text">
           <string>인사</string>
          </property>
-         <property name="popupMode">
-          <enum>QToolButton::InstantPopup</enum>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextOnly</enum>
-         </property>
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="tooledu">
+        <widget class="QPushButton" name="tooledu">
          <property name="minimumSize">
           <size>
            <width>170</width>
@@ -561,28 +555,21 @@ QToolButton:hover {
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">QToolButton{
+          <string notr="true">QPushButton{
 	border: none;
 	color:#ff5500;
 }
-QToolButton:hover {
+QPushButton:hover {
 	border-bottom: 3px solid #ff5500;
-
 }</string>
          </property>
          <property name="text">
           <string>교육</string>
          </property>
-         <property name="popupMode">
-          <enum>QToolButton::InstantPopup</enum>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextOnly</enum>
-         </property>
         </widget>
        </item>
-       <item alignment="Qt::AlignLeft">
-        <widget class="QToolButton" name="toolrc">
+       <item>
+        <widget class="QPushButton" name="toolrc">
          <property name="minimumSize">
           <size>
            <width>170</width>
@@ -604,23 +591,16 @@ QToolButton:hover {
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">QToolButton{
+          <string notr="true">QPushButton{
 	border: none;
 	color:#ff5500;
 }
-QToolButton:hover {
+QPushButton:hover {
 	border-bottom: 3px solid #ff5500;
-
 }</string>
          </property>
          <property name="text">
           <string>채용</string>
-         </property>
-         <property name="popupMode">
-          <enum>QToolButton::InstantPopup</enum>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonTextOnly</enum>
          </property>
         </widget>
        </item>

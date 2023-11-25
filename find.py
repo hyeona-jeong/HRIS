@@ -43,9 +43,11 @@ class Find(QMainWindow, form_class):
         )
         self.cur = self.conn.cursor()
 
+    # 231125 탭 변경시 버튼 활성화 by 정현아
     def useBtn(self):
         self.fsubmitBtn.setDisabled(False)
 
+    # 231125 ID찾기시 인증번호 발송 by 정현아
     def find_cert_num(self):
         self.name = self.name_lineEdit.text()
         self.emp_num = int(self.emp_num_lineEdit.text())
@@ -86,6 +88,7 @@ class Find(QMainWindow, form_class):
             QMessageBox.information(self, "Find Succeed", "메일이 전송되었습니다.")
             self.cert_btn.setDisabled(True)
 
+    # 231125 ID/PASSWD찾기 탭0 id찾기, 탭1 passwd찾기 by 정현아
     def findID(self):
         if self.tab.currentIndex() == 0:
             if not self.cert_btn.isChecked():
@@ -138,8 +141,8 @@ class Find(QMainWindow, form_class):
                     smtp.login('wjdgusk310@gmail.com','fmvs mwrf ydyp ifkw')
 
                     msg = EmailMessage()
-                    msg['Subject'] = 'NoriSystem Id/Passwd 정보입니다.'
-                    msg.set_content('Id: ' +id+ '\nPasswd: ' + newpasswd + '입니다.')
+                    msg['Subject'] = 'NoriSystem 새로운 비밀번호입니다.'
+                    msg.set_content('비밀번호: ' + newpasswd + '입니다.')
 
                     msg['From']='wjdgusk310@gmail.com'
                     msg['To']=mail
