@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1253</width>
-    <height>911</height>
+    <width>1261</width>
+    <height>837</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="palette">
    <palette>
@@ -455,62 +461,30 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="Index">
-   <widget class="QWidget" name="horizontalLayoutWidget_2">
+  <widget class="QWidget" name="index">
+   <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>0</y>
       <width>1261</width>
-      <height>962</height>
+      <height>791</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="indexLayout" stretch="1,4">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
-     </property>
+    <layout class="QVBoxLayout" name="indexlayout" stretch="0,0,0,0">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="minimumSize">
-          <size>
-           <width>402</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>402</width>
-           <height>50</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color:#ff5500;
-</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::NoTextInteraction</set>
-         </property>
-        </widget>
-       </item>
-       <item alignment="Qt::AlignLeft">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item alignment="Qt::AlignRight|Qt::AlignBottom">
         <widget class="QLabel" name="label">
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>350</width>
            <height>105</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>16777215</width>
+           <width>350</width>
            <height>105</height>
           </size>
          </property>
@@ -518,448 +492,168 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>nori.gif</pixmap>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <pixmap>../1122/nori.gif</pixmap>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_5">
+        <widget class="QToolButton" name="toolhr">
          <property name="minimumSize">
           <size>
-           <width>402</width>
-           <height>50</height>
+           <width>170</width>
+           <height>105</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>402</width>
-           <height>50</height>
+           <width>170</width>
+           <height>105</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <family>맑은 고딕</family>
+           <pointsize>16</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#ff5500;
-</string>
+          <string notr="true">QToolButton{
+	border: none;
+	color:#ff5500;
+}
+QToolButton:hover {
+	border-bottom: 3px solid #ff5500;
+}</string>
          </property>
          <property name="text">
-          <string/>
+          <string>인사</string>
          </property>
-         <property name="textInteractionFlags">
-          <set>Qt::NoTextInteraction</set>
+         <property name="popupMode">
+          <enum>QToolButton::InstantPopup</enum>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextOnly</enum>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QTreeWidget" name="tree">
+        <widget class="QToolButton" name="tooledu">
          <property name="minimumSize">
           <size>
-           <width>402</width>
-           <height>491</height>
+           <width>170</width>
+           <height>105</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>402</width>
-           <height>491</height>
+           <width>170</width>
+           <height>105</height>
           </size>
          </property>
-         <property name="palette">
-          <palette>
-           <active>
-            <colorrole role="Button">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>85</green>
-               <blue>0</blue>
-              </color>
-             </brush>
-            </colorrole>
-            <colorrole role="Base">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>85</green>
-               <blue>0</blue>
-              </color>
-             </brush>
-            </colorrole>
-            <colorrole role="Window">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>85</green>
-               <blue>0</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </active>
-           <inactive>
-            <colorrole role="Button">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>85</green>
-               <blue>0</blue>
-              </color>
-             </brush>
-            </colorrole>
-            <colorrole role="Base">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>85</green>
-               <blue>0</blue>
-              </color>
-             </brush>
-            </colorrole>
-            <colorrole role="Window">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>85</green>
-               <blue>0</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </inactive>
-           <disabled>
-            <colorrole role="Button">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>85</green>
-               <blue>0</blue>
-              </color>
-             </brush>
-            </colorrole>
-            <colorrole role="Base">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>85</green>
-               <blue>0</blue>
-              </color>
-             </brush>
-            </colorrole>
-            <colorrole role="Window">
-             <brush brushstyle="SolidPattern">
-              <color alpha="255">
-               <red>255</red>
-               <green>85</green>
-               <blue>0</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </disabled>
-          </palette>
+         <property name="font">
+          <font>
+           <family>맑은 고딕</family>
+           <pointsize>16</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color:#ff5500;</string>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <column>
-          <property name="text">
-           <string>Main menu</string>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>26</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="background">
-           <color>
-            <red>255</red>
-            <green>170</green>
-            <blue>0</blue>
-           </color>
-          </property>
-          <property name="foreground">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>255</red>
-             <green>85</green>
-             <blue>0</blue>
-            </color>
-           </brush>
-          </property>
-         </column>
-         <item>
-          <property name="text">
-           <string>인사</string>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>16</pointsize>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="background">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>255</red>
-             <green>85</green>
-             <blue>0</blue>
-            </color>
-           </brush>
-          </property>
-          <property name="foreground">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>255</red>
-             <green>255</green>
-             <blue>255</blue>
-            </color>
-           </brush>
-          </property>
-          <item>
-           <property name="text">
-            <string>사원정보검색</string>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="background">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>85</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </property>
-           <property name="foreground">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </brush>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>나의 정보</string>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="background">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>85</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </property>
-           <property name="foreground">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </brush>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>사원정보등록/수정</string>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="background">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>85</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </property>
-           <property name="foreground">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </brush>
-           </property>
-          </item>
-         </item>
-         <item>
-          <property name="text">
-           <string>교육</string>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>16</pointsize>
-           </font>
-          </property>
-          <property name="background">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>255</red>
-             <green>85</green>
-             <blue>0</blue>
-            </color>
-           </brush>
-          </property>
-          <property name="foreground">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>255</red>
-             <green>255</green>
-             <blue>255</blue>
-            </color>
-           </brush>
-          </property>
-          <item>
-           <property name="text">
-            <string>교육이수정보</string>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="background">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>85</green>
-              <blue>0</blue>
-             </color>
-            </brush>
-           </property>
-           <property name="foreground">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </brush>
-           </property>
-          </item>
-         </item>
-         <item>
-          <property name="text">
-           <string>총무</string>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>16</pointsize>
-           </font>
-          </property>
-          <property name="background">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>255</red>
-             <green>85</green>
-             <blue>0</blue>
-            </color>
-           </brush>
-          </property>
-          <property name="foreground">
-           <brush brushstyle="SolidPattern">
-            <color alpha="255">
-             <red>255</red>
-             <green>255</green>
-             <blue>255</blue>
-            </color>
-           </brush>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_4">
-         <property name="minimumSize">
-          <size>
-           <width>402</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>402</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color:#ff5500;
-</string>
+          <string notr="true">QToolButton{
+	border: none;
+	color:#ff5500;
+}
+QToolButton:hover {
+	border-bottom: 3px solid #ff5500;
+
+}</string>
          </property>
          <property name="text">
-          <string/>
+          <string>교육</string>
          </property>
-         <property name="textInteractionFlags">
-          <set>Qt::NoTextInteraction</set>
+         <property name="popupMode">
+          <enum>QToolButton::InstantPopup</enum>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextOnly</enum>
          </property>
         </widget>
        </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_5" stretch="1,1,11,3">
+       <item alignment="Qt::AlignLeft">
+        <widget class="QToolButton" name="toolrc">
+         <property name="minimumSize">
+          <size>
+           <width>170</width>
+           <height>105</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>170</width>
+           <height>105</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>맑은 고딕</family>
+           <pointsize>16</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton{
+	border: none;
+	color:#ff5500;
+}
+QToolButton:hover {
+	border-bottom: 3px solid #ff5500;
+
+}</string>
+         </property>
+         <property name="text">
+          <string>채용</string>
+         </property>
+         <property name="popupMode">
+          <enum>QToolButton::InstantPopup</enum>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextOnly</enum>
+         </property>
+        </widget>
+       </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="50,0,1,2">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <spacer name="horizontalSpacer_5">
+          <spacer name="verticalSpacer_2">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>40</width>
-             <height>20</height>
+             <width>20</width>
+             <height>27</height>
             </size>
            </property>
           </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="userRegBtn">
-           <property name="minimumSize">
-            <size>
-             <width>93</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>93</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color: #ff5500;
-border-radius : 10px; 
-border : 2px solid #ff5500;
-color: white;
-</string>
-           </property>
-           <property name="text">
-            <string>New User</string>
-           </property>
-          </widget>
          </item>
          <item>
           <widget class="QPushButton" name="logoutBtn">
@@ -988,14 +682,17 @@ color: white;
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_6">
+          <spacer name="verticalSpacer">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>40</width>
-             <height>20</height>
+             <width>20</width>
+             <height>38</height>
             </size>
            </property>
           </spacer>
@@ -1003,178 +700,247 @@ color: white;
         </layout>
        </item>
        <item>
-        <spacer name="verticalSpacer_3">
+        <spacer name="horizontalSpacer_2">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QPushButton" name="empBtn">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>200</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>200</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>맑은 고딕</family>
-             <pointsize>18</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="cursor">
-            <cursorShape>OpenHandCursor</cursorShape>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-color: #ff5500;
-background-color: white;
-border: 4px solid #ff5500;
-border-radius: 20px;
-}
-
-QPushButton:hover {
-
-color: #ff5500;
-background-color: rgb(217, 237, 255);
-border: 4px solid #ff5500;
-border-radius: 20px;
-}</string>
-           </property>
-           <property name="text">
-            <string>인사</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="eduBtn">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>200</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>200</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>맑은 고딕</family>
-             <pointsize>18</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="cursor">
-            <cursorShape>OpenHandCursor</cursorShape>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-color: #ff5500;
-background-color: white;
-border: 4px solid #ff5500;
-border-radius: 20px;
-}
-
-QPushButton:hover {
-
-color: #ff5500;
-background-color: rgb(217, 237, 255);
-border: 4px solid #ff5500;
-border-radius: 20px;
-}</string>
-           </property>
-           <property name="text">
-            <string>교육</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="open_excel_file_pushbutton_5">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>200</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>200</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>맑은 고딕</family>
-             <pointsize>18</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="cursor">
-            <cursorShape>OpenHandCursor</cursorShape>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-color: #ff5500;
-background-color: white;
-border: 4px solid #ff5500;
-border-radius: 20px;
-}
-
-QPushButton:hover {
-
-color: #ff5500;
-background-color: rgb(217, 237, 255);
-border: 4px solid #ff5500;
-border-radius: 20px;
-}</string>
-           </property>
-           <property name="text">
-            <string>채용</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
+           <width>40</width>
+           <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
       </layout>
      </item>
+     <item>
+      <spacer name="verticalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>200</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <item>
+        <widget class="QToolButton" name="empBtn">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>200</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>200</width>
+           <height>200</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>맑은 고딕</family>
+           <pointsize>14</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="cursor">
+          <cursorShape>OpenHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton {
+color: #ff5500;
+background-color: white;
+border: 4px solid #ff5500;
+border-radius: 20px;
+}
+
+QToolButton:hover {
+color: #ff5500;
+background-color: rgba(255, 85, 0, 50);
+border: 4px solid #ff5500;
+border-radius: 20px;
+}</string>
+         </property>
+         <property name="text">
+          <string>인사</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>hr.png</normaloff>hr.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>130</width>
+           <height>130</height>
+          </size>
+         </property>
+         <property name="popupMode">
+          <enum>QToolButton::InstantPopup</enum>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="eduBtn">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>200</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>200</width>
+           <height>200</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>맑은 고딕</family>
+           <pointsize>14</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="cursor">
+          <cursorShape>OpenHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton {
+color: #ff5500;
+background-color: white;
+border: 4px solid #ff5500;
+border-radius: 20px;
+}
+
+QToolButton:hover {
+color: #ff5500;
+background-color: rgba(255, 85, 0, 50);
+border: 4px solid #ff5500;
+border-radius: 20px;
+}</string>
+         </property>
+         <property name="text">
+          <string>교육</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>edu.png</normaloff>edu.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>130</width>
+           <height>130</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="hireBtn">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>200</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>200</width>
+           <height>200</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>맑은 고딕</family>
+           <pointsize>14</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="cursor">
+          <cursorShape>OpenHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton {
+color: #ff5500;
+background-color: white;
+border: 4px solid #ff5500;
+border-radius: 20px;
+}
+
+QToolButton:hover {
+color: #ff5500;
+background-color: rgba(255, 85, 0, 50);
+border: 4px solid #ff5500;
+border-radius: 20px;
+}</string>
+         </property>
+         <property name="text">
+          <string>채용</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>rc.png</normaloff>rc.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>130</width>
+           <height>130</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextUnderIcon</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
    </widget>
   </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1261</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

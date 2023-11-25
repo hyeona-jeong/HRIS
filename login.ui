@@ -660,7 +660,7 @@ color: white;
 </string>
            </property>
            <property name="text">
-            <string>Login</string>
+            <string>로그인</string>
            </property>
           </widget>
          </item>
