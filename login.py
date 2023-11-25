@@ -45,15 +45,15 @@ class Login(QMainWindow, form_class):
             cur = conn.cursor()
             query = 'SELECT password FROM login_data WHERE id =\''+id+"\'"
             cur.execute(query)
-            try:
-                result_pass = cur.fetchone()[0]
-                if result_pass == password:
+            result_pass = cur.fetchone()
+            if result_pass is not None:
+                if result_pass[0] == password:
                     self.showIndex()
 
                 else:
                     QMessageBox.warning(self, "Login Failed", "잘못된 패스워드입니다.")
                     self.passwd.clear()
-            except:
+            else:
                 QMessageBox.warning(self, "Login Failed", "존재하지 않는 ID입니다.")
                 
     
