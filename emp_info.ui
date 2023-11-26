@@ -3094,7 +3094,7 @@ background-color:white;</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="infoCnlBtn">
+        <widget class="QPushButton" name="cnlBtn">
          <property name="text">
           <string>닫기</string>
          </property>

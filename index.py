@@ -38,9 +38,9 @@ class Index(QMainWindow, form_class):
 
         # 231125 툴버튼에 메뉴 추가 
         self.menuHr = QMenu()
-        self.menuHr.addAction('사원정보목록',self.showList)
-        self.menuHr.addAction('사원개인정보',self.showInfo)
-        self.menuHr.addAction('사원정보편집',self.showReg)
+        self.menuHr.addAction('사원정보목록',self.showPage)
+        self.menuHr.addAction('사원개인정보',self.showPage)
+        self.menuHr.addAction('사원정보편집',self.showPage)
 
         self.menuHr.setStyleSheet(stylesheet)
         self.toolhr.setMenu(self.menuHr)
@@ -50,44 +50,28 @@ class Index(QMainWindow, form_class):
         menuEdu.setStyleSheet(stylesheet)
 
         self.tooledu.setMenu(menuEdu)
-        self.empBtn.clicked.connect(self.showList)
-        # self.eduBtn.clicked.connect(self.showEdu)
-
-    def showList(self):
-        self.w = Emplist()
-        self.w .show()
-        self.hide()
-        self.w.listCnlBtn.clicked.connect(self.back)
-        self.w.closed.connect(self.show)
-
-    def showInfo(self):
-        self.w = EmpInfo()
-        self.w .show()
-        self.hide()
-        self.w.infoCnlBtn.clicked.connect(self.back)
-        self.w.closed.connect(self.show)
-
-    def showReg(self):
-        self.w = Regist()
-        self.w .show()
-        self.hide()
-        self.w.regCnlBtn.clicked.connect(self.back)
-        self.w.closed.connect(self.show)
-
-    def showEdu(self):
-        self.w = EduList()
-        self.w .show()
-        self.hide()
-        self.w.eduCnlBtn.clicked.connect(self.back)
-        self.w.closed.connect(self.show)
+        self.empBtn.clicked.connect(self.showPage)
+        # self.eduBtn.clicked.connect(self.showPage)
         
-    # def showSign(self):
-    #     self.w = SignUp()
-    #     self.w.show()
-    #     self.w.cnlBtn.clicked.connect(self.w.close)
+    # 231126 버튼 별로 화면 페이지 구분하여 페이지 전환
+    def showPage(self):
+        sender = self.sender().text()
+        if sender == '사원정보목록' or sender == '인사':
+            self.w = Emplist()
+        elif sender == '사원개인정보': 
+            self.w = EmpInfo()
+        elif sender == '사원정보편집':
+            self.w = Regist()
+        elif sender == '교육' or sender == '교육이수정보':
+            self.w = EduList()
+        self.w.show()
+        self.w.center()
+        self.hide()
+        self.w.cnlBtn.clicked.connect(self.back)
+        self.w.closed.connect(self.show)            
 
     def back(self):
-        self.w.hide()
+        self.w.close()
         self.show()
 
     def closeEvent(self, e):

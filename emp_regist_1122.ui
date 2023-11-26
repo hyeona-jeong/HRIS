@@ -1873,7 +1873,7 @@ background-color:white;</string>
            </rect>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideNone</enum>
@@ -4585,7 +4585,7 @@ background-color:white;</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="regCnlBtn">
+        <widget class="QPushButton" name="cnlBtn">
          <property name="text">
           <string>취소</string>
          </property>

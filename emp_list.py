@@ -46,17 +46,23 @@ class Emplist(QMainWindow, form_class):
         self.w = Regist()
         self.w .show()
         self.hide()
-        self.w.regCnlBtn.clicked.connect(self.back)
+        self.w.cnlBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)
         
     def back(self):
-        self.w.hide()
+        self.w.close()
         self.show()
 
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):
         self.closed.emit()
         super().closeEvent(e)
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
    
 stylesheet = """
     QTableWidget {

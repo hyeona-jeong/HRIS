@@ -84,6 +84,7 @@ class Login(QMainWindow, form_class):
         self.w = Find()
         self.w.show()
         self.w.cnlBtn.clicked.connect(self.w.close)
+    
 
 
 

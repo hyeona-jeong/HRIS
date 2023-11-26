@@ -495,7 +495,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="eduCnlBtn">
+      <widget class="QPushButton" name="cnlBtn">
        <property name="minimumSize">
         <size>
          <width>93</width>

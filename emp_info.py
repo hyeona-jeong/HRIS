@@ -40,6 +40,12 @@ class EmpInfo(QMainWindow, form_class):
     def closeEvent(self, e):
         self.closed.emit()
         super().closeEvent(e)
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
          
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
