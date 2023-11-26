@@ -1,16 +1,15 @@
 import os
 import sys
+import typing
 
 from PyQt5.QtWidgets import *
-from PyQt5 import uic
+from PyQt5 import QtGui, uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from emp_list import Emplist
 from emp_info import EmpInfo
 from emp_regist import Regist
 from edu_list import EduList
-from sign_up import SignUp
-
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -18,13 +17,6 @@ def resource_path(relative_path):
 
 form = resource_path('index.ui')
 form_class = uic.loadUiType(form)[0]
-
-class MyQMenu(QMenu):
-    def __init__(self):
-        QMenu.__init__(self)
-
-    def leaveEvent(self, QEvent):
-        self.close()
 
 class Index(QMainWindow, form_class):
     closed = pyqtSignal()
@@ -52,8 +44,11 @@ class Index(QMainWindow, form_class):
         self.tooledu.setMenu(menuEdu)
         self.empBtn.clicked.connect(self.showPage)
         # self.eduBtn.clicked.connect(self.showPage)
+
+        self.toolhr.installEventFilter(self)
+
         
-    # 231126 버튼 별로 화면 페이지 구분하여 페이지 전환
+    # 231126 버튼 별로 화면 페이지 구분하여 페이지 전환 by 정현아
     def showPage(self):
         sender = self.sender().text()
         if sender == '사원정보목록' or sender == '인사':
@@ -77,6 +72,15 @@ class Index(QMainWindow, form_class):
     def closeEvent(self, e):
         self.closed.emit()
         super().closeEvent(e)
+
+    # 231126 마우스가 버튼위에 위치하면 자동으로 메뉴가 보이게 하는 함수 by정현아 
+    # def eventFilter(self, object, event):
+    #     if event.type() == QEvent.HoverEnter:
+    #         object.showMenu()
+    #         return True
+    #     elif event.type() == QEvent.HoverLeave:
+    #         print( "mouseout!")
+    #     return False
 
 stylesheet = """
     QPushButton::menu-indicator { 
