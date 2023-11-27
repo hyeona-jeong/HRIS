@@ -8,7 +8,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from emp_list import Emplist
 from emp_info import EmpInfo
-from emp_regist import Regist
+from emp_regist1124 import Regist
 from edu_list import EduList
 
 def resource_path(relative_path):
