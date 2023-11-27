@@ -465,7 +465,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>사원 정보 목록</string>
+   <string>사원정보목록</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="verticalLayoutWidget">
