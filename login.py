@@ -95,7 +95,7 @@ class Login(QMainWindow, form_class):
     def showChPw(self):
         self.w2 = ChangPw()
         self.w2.show()
-        self.w2.cnlBtn.clicked.connect(self.w.close)
+        self.w2.cnlBtn.clicked.connect(self.w2.close)
         self.w2.chgBtn.clicked.connect(self.changPw)
         self.w2.oldpwlineEdit.returnPressed.connect(self.changPw)
         
