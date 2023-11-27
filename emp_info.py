@@ -24,17 +24,17 @@ class EmpInfo(QMainWindow, form_class):
         
         self.empinfo.setLayout(self.empinfolayout)
         
-        self.tabWidget.hide()
-        self.pushButton.clicked.connect(self.tab_show)
+    #     self.tabWidget.hide()
+    #     self.pushButton.clicked.connect(self.tab_show)
         
         
-    def tab_show(self):
-        if(self.flag == 0):
-            self.tabWidget.show()
-            self.flag+=1
-        else:
-            self.tabWidget.hide()
-            self.flag-=1
+    # def tab_show(self):
+    #     if(self.flag == 0):
+    #         self.tabWidget.show()
+    #         self.flag+=1
+    #     else:
+    #         self.tabWidget.hide()
+    #         self.flag-=1
     
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):

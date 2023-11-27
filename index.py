@@ -52,7 +52,6 @@ class Index(QMainWindow, form_class):
     # 231126 버튼 별로 화면 페이지 구분하여 페이지 전환 by 정현아
     def showPage(self):
         sender = self.sender().text()
-        senderObj = self.sender().objectName()
         if sender == '사원정보목록' or sender == '인사':
             self.w = Emplist()
         elif sender == '사원개인정보': 
