@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>515</width>
-    <height>337</height>
+    <height>296</height>
    </rect>
   </property>
   <property name="palette">
@@ -455,374 +455,210 @@
   <property name="windowTitle">
    <string>ID/PW찾기</string>
   </property>
-  <widget class="QWidget" name="verticalLayoutWidget">
+  <widget class="QTabWidget" name="tab">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>512</width>
-     <height>331</height>
+     <width>510</width>
+     <height>291</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="signlayout" stretch="0,0,0,0">
-    <item>
-     <spacer name="verticalSpacer_4">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tab_1">
+    <attribute name="title">
+     <string>ID찾기</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>60</y>
+       <width>501</width>
+       <height>131</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="grid" columnstretch="1,0,0">
+      <property name="spacing">
+       <number>6</number>
       </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>10</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item>
-     <widget class="QTabWidget" name="tab">
-      <property name="minimumSize">
-       <size>
-        <width>510</width>
-        <height>250</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>510</width>
-        <height>250</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="tab_1">
-       <attribute name="title">
-        <string>ID찾기</string>
-       </attribute>
-       <widget class="QWidget" name="layoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>60</y>
-          <width>501</width>
-          <height>131</height>
-         </rect>
-        </property>
-        <layout class="QGridLayout" name="grid" columnstretch="1,0,0">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="name_label">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 이름&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="emp_num_label">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 사번&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="name_lineEdit">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>120</width>
-             <height>28</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="emp_num_lineEdit">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>120</width>
-             <height>28</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="mail_label_2">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 인증번호&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="mail_lineEdit_3">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>120</width>
-             <height>28</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QPushButton" name="cert_btn">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>인증번호받기</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QLabel" name="label_2">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>476</width>
-          <height>28</height>
-         </rect>
-        </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="name_label">
         <property name="minimumSize">
          <size>
-          <width>0</width>
+          <width>100</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>100</width>
           <height>28</height>
          </size>
         </property>
         <property name="text">
-         <string>찾기를 누르면 등록된 메일로 인증번호를 보내드립니다.</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 이름&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Passwd찾기</string>
-       </attribute>
-       <widget class="QWidget" name="layoutWidget_2">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>60</y>
-          <width>371</width>
-          <height>131</height>
-         </rect>
-        </property>
-        <layout class="QGridLayout" name="grid_2" columnstretch="1,0">
-         <property name="spacing">
-          <number>6</number>
-         </property>
-         <item row="1" column="0">
-          <widget class="QLabel" name="name_label_2">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 이름&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="emp_num_lineEdit_2">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>120</width>
-             <height>28</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="id_label">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; ID&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="id_lineEdit">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>120</width>
-             <height>28</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="emp_num_label_2">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 사번&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="name_lineEdit_2">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>120</width>
-             <height>28</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QLabel" name="label_4">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>20</y>
-          <width>476</width>
-          <height>28</height>
-         </rect>
-        </property>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="emp_num_label">
         <property name="minimumSize">
          <size>
-          <width>0</width>
+          <width>100</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>100</width>
           <height>28</height>
          </size>
         </property>
         <property name="text">
-         <string>찾기를 누르면 등록된 메일로 새로운 비밀번호를 보내드립니다.</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 사번&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
-      </widget>
-     </widget>
-    </item>
-    <item>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="name_lineEdit">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>28</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="emp_num_lineEdit">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>28</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="mail_label_2">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 인증번호&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="cert_btn">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>인증번호받기</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="mail_lineEdit">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>28</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>476</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>찾기를 누르면 등록된 메일로 인증번호를 보내드립니다.</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget_3">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>210</y>
+       <width>510</width>
+       <height>41</height>
+      </rect>
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="spacing">
        <number>6</number>
@@ -854,6 +690,13 @@
           <height>28</height>
          </size>
         </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: #ff5500;
+border-radius : 10px; 
+border : 2px solid #ff5500;
+color: white;
+</string>
+        </property>
         <property name="text">
          <string>찾기</string>
         </property>
@@ -872,6 +715,13 @@
           <width>93</width>
           <height>28</height>
          </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: #ff5500;
+border-radius : 10px; 
+border : 2px solid #ff5500;
+color: white;
+</string>
         </property>
         <property name="text">
          <string>닫기</string>
@@ -892,24 +742,251 @@
        </spacer>
       </item>
      </layout>
-    </item>
-    <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Passwd찾기</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>60</y>
+       <width>371</width>
+       <height>134</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="grid_2" columnstretch="1,0">
+      <property name="spacing">
+       <number>6</number>
       </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
+      <item row="1" column="0">
+       <widget class="QLabel" name="name_label_2">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 이름&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="name_lineEdit_2">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>28</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="id_lineEdit">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>28</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="emp_num_label_2">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 사번&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="id_label">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; ID&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="emp_num_lineEdit_2">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>28</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>476</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>28</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>찾기를 누르면 등록된 메일로 새로운 비밀번호를 보내드립니다.</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget_4">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>210</y>
+       <width>510</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="spacing">
+       <number>6</number>
       </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>10</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-   </layout>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="fsubmitBtn_2">
+        <property name="minimumSize">
+         <size>
+          <width>93</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>93</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: #ff5500;
+border-radius : 10px; 
+border : 2px solid #ff5500;
+color: white;
+</string>
+        </property>
+        <property name="text">
+         <string>찾기</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="cnlBtn_2">
+        <property name="minimumSize">
+         <size>
+          <width>93</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>93</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: #ff5500;
+border-radius : 10px; 
+border : 2px solid #ff5500;
+color: white;
+</string>
+        </property>
+        <property name="text">
+         <string>닫기</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </widget>
   </widget>
  </widget>
  <resources/>

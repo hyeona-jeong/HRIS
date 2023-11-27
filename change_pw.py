@@ -20,30 +20,6 @@ class ChangPw(QMainWindow, form_class):
         self.setupUi(self)
 
         self.chgpw.setLayout(self.chLayout)
-        self.chgBtn.clicked.connect(self.changPw)
-        self.oldpwlineEdit.returnPressed.connect(self.changPw)
-
-    def changPw(self):
-        oldPw = self.oldpwlineEdit.text()
-        newPw = self.newpwlineEdit.text()
-        newPw2 = self.newpwlineEdit_2.text()
-
-        conn = pymysql.connect(
-            host='localhost',
-            user='dev',
-            password='nori1234',
-            db='dev',
-            port=3306,
-            charset='utf8'
-        )
-        cur = conn.cursor()
-        query = ''
-
-        if(len(oldPw) == 0 or len(newPw) == 0 or len(newPw2) == 0):
-            QMessageBox.warning(self,"Password Change Failed","모든 항목을 입력해주셔야합니다.")
-            return
-        else:
-            pass
          
 if __name__ == '__main__':
     app = QApplication(sys.argv) 

@@ -10,7 +10,6 @@ from emp_list import Emplist
 from emp_info import EmpInfo
 from emp_regist import Regist
 from edu_list import EduList
-from change_pw import ChangPw
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -44,7 +43,7 @@ class Index(QMainWindow, form_class):
 
         self.tooledu.setMenu(menuEdu)
         self.empBtn.clicked.connect(self.showPage)
-        self.chpwBtn.clicked.connect(self.showChPw)
+        # self.chpwBtn.clicked.connect(self.showChPw)
         # self.eduBtn.clicked.connect(self.showPage)
 
         self.toolhr.installEventFilter(self)
@@ -76,10 +75,13 @@ class Index(QMainWindow, form_class):
         self.closed.emit()
         super().closeEvent(e)
         
-    def showChPw(self):
-        self.w = ChangPw()
-        self.w.show()
-        self.w.cnlBtn.clicked.connect(self.w.close)
+    # def showChPw(self):
+    #     self.w = ChangPw()
+    #     self.w.show()
+    #     self.w.cnlBtn.clicked.connect(self.w.close)
+        
+        
+        
     # 231126 마우스가 버튼위에 위치하면 자동으로 메뉴가 보이게 하는 함수 by정현아 
     # def eventFilter(self, object, event):
     #     if event.type() == QEvent.HoverEnter:
