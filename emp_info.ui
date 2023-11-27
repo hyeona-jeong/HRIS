@@ -1142,7 +1142,7 @@ background-color:white;</string>
                </size>
               </property>
               <property name="currentIndex">
-               <number>0</number>
+               <number>4</number>
               </property>
               <widget class="QWidget" name="tab_37">
                <property name="maximumSize">

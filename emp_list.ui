@@ -795,7 +795,7 @@ background-color:white;</string>
         <bool>true</bool>
        </property>
        <property name="rowCount">
-        <number>20</number>
+        <number>15</number>
        </property>
        <attribute name="horizontalHeaderVisible">
         <bool>true</bool>
@@ -838,11 +838,6 @@ background-color:white;</string>
          <string>새 열</string>
         </property>
        </row>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
        <row/>
        <row/>
        <row/>
