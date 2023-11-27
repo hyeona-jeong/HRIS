@@ -459,7 +459,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Inex</string>
   </property>
   <widget class="QWidget" name="index">
    <widget class="QWidget" name="verticalLayoutWidget_2">
