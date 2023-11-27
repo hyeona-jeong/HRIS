@@ -75,7 +75,7 @@ class Login(QMainWindow, form_class):
     def showIndex(self):
         self.w = Index()
         self.w.show()
-        self.w.chpwBtn.clicked.connect(self.showChPw)
+        self.w.chgBtn.clicked.connect(self.showChPw)
         self.hide()
         self.w.logoutBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)
@@ -91,14 +91,16 @@ class Login(QMainWindow, form_class):
         self.w.cnlBtn.clicked.connect(self.w.close)
         self.w.cnlBtn_2.clicked.connect(self.w.close)
     
-    # 231127 패스워드 변경 함수 by 정현아
+    # 231127 패스워드 변경 페이지 호출 by 정현아
     def showChPw(self):
         self.w2 = ChangPw()
         self.w2.show()
         self.w2.cnlBtn.clicked.connect(self.w2.close)
         self.w2.chgBtn.clicked.connect(self.changPw)
         self.w2.oldpwlineEdit.returnPressed.connect(self.changPw)
+        self.w2.chgBtn.setToolTip('패스워드 변경')
         
+    # 231127 패스워드 변경 함수 by 정현아
     def changPw(self):
         oldPw = self.w2.oldpwlineEdit.text()
         newPw = self.w2.newpwlineEdit.text()
