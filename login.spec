@@ -1,11 +1,33 @@
 # -*- mode: python ; coding: utf-8 -*-
-
+ui = [('login.ui', '.'),
+       ('find.ui', '.'),
+       ('index.ui', '.'),
+       ('emp_list.ui', '.'),
+       ('emp_info.ui', '.'),
+       ('emp_regist.ui', '.'),
+       ('edu_list.ui', '.'),
+       ('change_pw.ui', '.'),
+       ('add_edu.ui', '.'),
+       ('add_img.ui', '.'),
+       ('rc.png', '.'),
+       ('peo.png', '.'),
+       ('logout.png', '.'),
+       ('hr.png', '.'),
+       ('edu.png', '.'),
+       ('chgpw.png', '.'),
+       ('diagram.png', '.'),
+       ('find.png', '.'),
+       ('nori_230.jpg', '.'),
+       ('nori.png', '.'),
+       ('nori.gif', '.'),
+       ('unknown.png', '.')
+]
 
 a = Analysis(
     ['login.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=ui,
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
