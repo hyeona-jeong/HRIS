@@ -1,5 +1,6 @@
 import os
 import sys
+#import pymysql
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -21,7 +22,6 @@ class Emplist(QMainWindow, form_class):
     def __init__(self):
         super( ).__init__( )
         self.setupUi(self)
-        #self.chbox1 = QCheckBox()
         
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)   
         self.table.horizontalHeader().setSectionResizeMode(6,QHeaderView.ResizeToContents)
@@ -44,7 +44,18 @@ class Emplist(QMainWindow, form_class):
         #     self.table.setCellWidget(r, 0, cell_widget)
 
 
-        self.listRegBtn.clicked.connect(self.showRegsit)
+
+        self.listRegBtn.clicked.connect(self.showRegist)
+        
+        #self.conn = pymysql.connect(
+        #    host='192.168.2.20',
+        #    user='dev',
+        #    password='nori1234',
+        #    db='dev',
+        #    port=3306,
+        #    charset='utf8'
+        #)
+        
     #셀 클릭시     
     def Cell_Click(self, row):
         data = self.table.item(row)
@@ -54,18 +65,18 @@ class Emplist(QMainWindow, form_class):
         self.w = EmpInfo()
         self.w .show()
         self.hide()       
-        self.w.infoCnlBtn.clicked.connect(self.back)
+        self.w.cnlBtn.clicked.connect(self.back)
     
     def back(self):
         self.w.hide()
         self.show()
 
     # 231122 페이지 전환 함수 by정현아
-    def showRegsit(self):
+    def showRegist(self):
         self.w = Regist()
         self.w .show()
         self.hide()
-        self.w.regCnlBtn.clicked.connect(self.back)
+        self.w.cnlBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)
         
     def back(self):
