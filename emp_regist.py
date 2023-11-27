@@ -146,7 +146,7 @@ class Regist(QMainWindow, form_class):
     def showAddImg(self):
         self.w = AddImg()
         self.w.show()
-        self.w.cancelbtn.clicked.connect(self.w.close)
+        self.w.cnlBtn.clicked.connect(self.w.close)
         
     # 231115 가족 정보 추가작성을 위해 새로운 작성폼 생성 by 정현아        
     def addfamily(self):
