@@ -2,7 +2,6 @@ import os
 import sys
 import typing
 import pymysql
-
 from PyQt5.QtWidgets import *
 from PyQt5 import QtGui, uic
 from PyQt5.QtGui import *

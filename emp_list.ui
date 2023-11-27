@@ -473,7 +473,7 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>1261</width>
+      <width>1555</width>
       <height>871</height>
      </rect>
     </property>
@@ -502,7 +502,7 @@
 color white;</string>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;&amp;nbsp;사원목록&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;&amp;nbsp;사원정보목록&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -759,11 +759,11 @@ background-color:white;</string>
        </item>
       </layout>
      </item>
-     <item alignment="Qt::AlignHCenter">
+     <item>
       <widget class="QTableWidget" name="table">
        <property name="minimumSize">
         <size>
-         <width>880</width>
+         <width>1296</width>
          <height>0</height>
         </size>
        </property>
@@ -793,6 +793,9 @@ background-color:white;</string>
        </property>
        <property name="sortingEnabled">
         <bool>true</bool>
+       </property>
+       <property name="rowCount">
+        <number>20</number>
        </property>
        <attribute name="horizontalHeaderVisible">
         <bool>true</bool>
@@ -835,6 +838,19 @@ background-color:white;</string>
          <string>새 열</string>
         </property>
        </row>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
+       <row/>
        <column>
         <property name="text">
          <string>부서</string>

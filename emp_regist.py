@@ -1,16 +1,19 @@
 import os
 import sys
+import re
+import pymysql
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from add_img import AddImg
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
-form = resource_path('emp_regist_1122.ui')
+form = resource_path('emp_regist.ui')
 form_class = uic.loadUiType(form)[0]
 
 class Regist(QMainWindow, form_class):
@@ -21,6 +24,9 @@ class Regist(QMainWindow, form_class):
         self.setupUi(self)
         #그룹박스내에 생성창 리스트
         self.regist.setLayout(self.regLayout)
+        
+        
+        self.addImgBtn.clicked.connect(self.showAddImg)
 
         self.fcnt = 0
         self.tabWidget.setMovable(True)
@@ -71,8 +77,76 @@ class Regist(QMainWindow, form_class):
 
         self.layout.addWidget(self.tabWidget)
         
-
         self.fAdd_btn.clicked.connect(self.addfamily)
+        self.saveBtn.clicked.connect(self.userReg)
+        
+        #DB 연결
+        #self.conn = pymysql.connect(
+        #    host='localhost',
+        #    user='dev',
+        #    password='nori1234',
+        #    db='dev',
+        #    port=3306,
+        #    charset='utf8'
+        #)
+        #self.cur = self.conn.cursor()
+        
+
+    
+    #편집 저장완료시 필수정보 확인 by김태균
+    def userReg(self):
+        self.namekr = self.namekr_lineEdit.text()
+        self.personnum = self.personnum_lineEdit.text()
+        self.nameEng = self.nameEng_lineEdit.text()
+        self.Emp_Number = self.Emp_Number_lineEdit.text()
+        self.phonennum = self.phonennum_lineEdit.text()
+        self.address1 = self.address1_lineEdit.text()
+        self.address2 = self.address2_lineEdit.text()
+        
+        if(len(self.namekr)==0 or len(self.personnum)==0 or len(self.nameEng)==0 or len(self.Emp_Number)==0 or len(self.phonennum)==0 or len(self.address1)==0 or len(self.address2)==0 ):
+            QMessageBox.warning(self, 'Regist failed','모든 항목을 입력하셔야 합니다.')
+        else:
+            if (len(self.namekr)<2): # 이름 글자수 조건
+                QMessageBox.warning(self,'Sign up Failed','이름은 최소 두 글자입니다.')
+                return
+            elif (len(self.namekr)>4):
+                QMessageBox.warning(self,'Sign up Failed','이름은 최대 네 글자입니다.')
+                return
+            elif (re.sub(r"[가-힣]","",self.namekr) != ''):
+                QMessageBox.warning(self,'Sign up Failed','이름은 영문자, 자음, 모음이 입력될 수 없습니다. ')
+                return
+            else:
+                if (len(self.personnum)<13): #주민등록번호 글자수 조건
+                    QMessageBox.warning(self,'Person number Failed','하이폰(-) 없이 주민번호 13자리를 입력해야 합니다. ')
+                    return
+                else:
+                    if(len(self.phonennum)>11): #휴대폰번호 글자수 조건
+                        QMessageBox.warning(self,'Phone number Failed','하이폰(-) 없이 휴대폰번호 11자리를 입력해야 합니다. ')
+                        return
+                    else:
+                        if emptyYN is None: #사번 밑으로는 권한 확인차 미완성
+                            QMessageBox.warning(self,'Sign up Failed','등록되지 않은 사번입니다.\n관리자에게 문의바랍니다.')
+                            return
+                        else: 
+                            query ='select id from login_data where emp_num = ' + self.emp_num +';'
+                            self.cur.execute(query)
+                            emptyYN = self.cur.fetchone()
+                            if emptyYN is not None:
+                                QMessageBox.warning(self,'Sign up Failed','사원님의 ID가 이미 존재합니다.')
+                                return
+                            else:
+                                query ='insert into login_data values(%s,%s,%s,%s);'
+                                self.cur.execute(query, (self.id,self.passwd,self.emp_num,'user'))
+                                # self.conn.commit()
+                                self.conn.close()   
+                    
+                        
+                
+    # 231123 페이지 전환 함수 by 정현아    
+    def showAddImg(self):
+        self.w = AddImg()
+        self.w.show()
+        self.w.cancelbtn.clicked.connect(self.w.close)
         
     # 231115 가족 정보 추가작성을 위해 새로운 작성폼 생성 by 정현아        
     def addfamily(self):
@@ -113,12 +187,6 @@ class Regist(QMainWindow, form_class):
     def closeEvent(self, e):
         self.closed.emit()
         super().closeEvent(e)
-        
-    def center(self):
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
 
 if __name__ == '__main__':
     app = QApplication(sys.argv) 

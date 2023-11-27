@@ -6,6 +6,7 @@ from PyQt5 import uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from emp_regist import Regist
+from emp_info import EmpInfo
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -20,8 +21,12 @@ class Emplist(QMainWindow, form_class):
     def __init__(self):
         super( ).__init__( )
         self.setupUi(self)
+        #self.chbox1 = QCheckBox()
+        
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)   
         self.table.horizontalHeader().setSectionResizeMode(6,QHeaderView.ResizeToContents)
+        self.table.cellClicked.connect(self.Cell_Click) # 셀 클릭시 함수 이벤트
+        self.table.cellDoubleClicked.connect(self.Cell_DoubleClick) # 셀 더블클릭시 함수 이벤트
         self.centralwidget.setLayout(self.listLayout)
         
         self.setStyleSheet(stylesheet)
@@ -40,29 +45,37 @@ class Emplist(QMainWindow, form_class):
 
 
         self.listRegBtn.clicked.connect(self.showRegsit)
+    #셀 클릭시     
+    def Cell_Click(self, row):
+        data = self.table.item(row)
+        
+    #231124 셀 더블클릭시 개인정보 페이지로 전환함수 by김태균    
+    def Cell_DoubleClick(self):
+        self.w = EmpInfo()
+        self.w .show()
+        self.hide()       
+        self.w.infoCnlBtn.clicked.connect(self.back)
+    
+    def back(self):
+        self.w.hide()
+        self.show()
 
     # 231122 페이지 전환 함수 by정현아
     def showRegsit(self):
         self.w = Regist()
         self.w .show()
         self.hide()
-        self.w.cnlBtn.clicked.connect(self.back)
+        self.w.regCnlBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)
         
     def back(self):
-        self.w.close()
+        self.w.hide()
         self.show()
 
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):
         self.closed.emit()
         super().closeEvent(e)
-
-    def center(self):
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
    
 stylesheet = """
     QTableWidget {
