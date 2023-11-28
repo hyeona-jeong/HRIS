@@ -81,8 +81,13 @@ class Regist(QMainWindow, form_class):
         self.saveBtn.clicked.connect(self.userReg)
         
         #주민번호, 휴대폰번호 정수만 입력되게 제한
-        #regExp = QRegExp("[0-9]*")
-        #self.personnum_lineEdit.setValidator(QIntValidator(regExp, self))
+        # def __init__(self, parent=None):
+        #     super(phoneNum_lineEdit, self).__init__(parent)
+
+        # self.personnum_lineEdit.setValidator(QIntValidator())
+        # regExp = QRegExp("[0-9]*")
+        # self.phoneNum_lineEdit.setValidator(QIntValidator())
+
         #self.phoneNum_lineEdit.setValidator(QIntValidator(regExp, self))
         
         
