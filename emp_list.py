@@ -58,7 +58,8 @@ class Emplist(QMainWindow, form_class):
         
     #셀 클릭시     
     def Cell_Click(self, row):
-        data = self.table.item(row)
+        # data = self.table.item(row)
+        pass
         
     #231124 셀 더블클릭시 개인정보 페이지로 전환함수 by김태균    
     def Cell_DoubleClick(self):

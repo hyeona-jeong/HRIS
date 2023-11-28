@@ -47,7 +47,7 @@ class Login(QMainWindow, form_class):
         
         if len(self.id)==0 or len(password)==0:
             QMessageBox.warning(self, "Login Failed", "ID, 비밀번호 모두 입력하셔야 합니다.")
-
+            return
         #login_data에서 id,passwd가 일치하면 index페이지로 전환
         else:
             query = 'SELECT passwd,cert_num FROM login_data WHERE id = %s'
@@ -67,19 +67,33 @@ class Login(QMainWindow, form_class):
                 else:
                     QMessageBox.warning(self, "Login Failed", "잘못된 패스워드입니다.")
                     self.passwdlineEdit.clear()
+                    return
     
             else:
                 QMessageBox.warning(self, "Login Failed", "존재하지 않는 ID입니다.")
     
-    # 231122 페이지 전환 함수 by정현아
+    # 231122 인덱스 페이지 by정현아
     def showIndex(self):
         self.w = Index()
         self.w.show()
         self.w.chgBtn.clicked.connect(self.showChPw)
+        
+        # 231128 인덱스 페이지에 DB를 가져와 사원 사진 출력 by 정현아
+        query = 'SELECT ID, PIC, MAIN_TABLE.EMP_NUM FROM LOGIN_DATA, MAIN_TABLE WHERE LOGIN_DATA.EMP_NUM = MAIN_TABLE.EMP_NUM AND ID = %s'
+        self.cur.execute(query,(self.id))
+        result = self.cur.fetchone()
+        data = result[1]
+        img = QPixmap()
+        img.loadFromData(data)
+        icon = QIcon(img)        
+        self.w.chgBtn.setIcon(icon)
+        
+        # 231128
+        
+        
         self.hide()
         self.w.logoutBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)
-        self.w.chgBtn.setToolTip('패스워드 변경')
 
     def back(self):
         self.w.close()
@@ -137,17 +151,16 @@ class Login(QMainWindow, form_class):
             QMessageBox.warning(self,'Password Change Failed','패스워드는 세번 연속 같은 문자를 사용하실 수 없습니다.')
             return  
         else:                
-            # num = re.findall(r'\d+', newPw)
-            # for i in range(len(num[0])-2):
-            #     if (int(num[0][i]) - int(num[0][i+1]) == 1):
-            #         if (int(num[0][i+1]) - int(num[0][i+2]) == 1):
-            #             QMessageBox.warning(self,'Password Change Failed','패스워드는 연속된 숫자를 사용하실 수 없습니다.')
-            #             return
-            #     elif (int(num[0][i]) - int(num[0][i+1]) == -1):
-            #         if (int(num[0][i+1]) - int(num[0][i+2]) == -1):
-            #             QMessageBox.warning(self,'Password Change Failed','패스워드는 연속된 숫자를 사용하실 수 없습니다.')
-            #             return     
-            #     else:
+            num = re.findall(r'\d+', newPw)
+            for i in range(len(num[0])-2):
+                if (int(num[0][i]) - int(num[0][i+1]) == 1):
+                    if (int(num[0][i+1]) - int(num[0][i+2]) == 1):
+                        QMessageBox.warning(self,'Password Change Failed','패스워드는 연속된 숫자를 사용하실 수 없습니다.')
+                        return
+                elif (int(num[0][i]) - int(num[0][i+1]) == -1):
+                    if (int(num[0][i+1]) - int(num[0][i+2]) == -1):
+                        QMessageBox.warning(self,'Password Change Failed','패스워드는 연속된 숫자를 사용하실 수 없습니다.')
+                        return     
             query='UPDATE LOGIN_DATA SET PASSWD = %s WHERE ID = %s;'
             self.cur.execute(query,(newPw,self.id))
             self.conn.commit()

@@ -57,16 +57,28 @@ class Find(QMainWindow, form_class):
     # 231125 ID찾기시 인증번호 발송 by 정현아
     def find_cert_num(self):
         self.name = self.name_lineEdit.text()
-        self.emp_num = int(self.emp_num_lineEdit.text())
-
-        query = 'SELECT id, name_kor, mail FROM login_data,main_table WHERE name_kor=%s AND login_data.emp_num=%s AND login_data.emp_num = main_table.emp_num;'
-        self.cur.execute(query,(self.name,self.emp_num))
-        result = self.cur.fetchone()
-        if result is None:
-            QMessageBox.warning(self, "Find Failed", "일치하는 이름, 사번 정보가 없습니다.")
+        self.emp_num = self.emp_num_lineEdit.text()
+        if(len(self.name) == 0 or len(self.emp_num )== 0):
+            QMessageBox.warning(self, "Find Failed", "이름과 사번을 입력해주세요.")
             return
         
+        self.emp_num = int(self.emp_num_lineEdit.text())
+        query = 'SELECT NAME_KOR FROM MAIN_TABLE WHERE NAME_KOR = %s'
+        self.cur.execute(query,(self.name))
+        result = self.cur.fetchone()
+        if result is None:
+            QMessageBox.warning(self, "Find Failed", "일치하는 이름({})이 없습니다.".format(self.name))
+            return
+        query = 'SELECT emp_num FROM LOGIN_DATA WHERE emp_num = %s'
+        self.cur.execute(query,(self.emp_num))
+        result = self.cur.fetchone()
+        if result is None:
+            QMessageBox.warning(self, "Find Failed", "일치하는 사번({})이 없습니다.".format(self.emp_num))
+        
         else:
+            query = 'SELECT id, name_kor, mail FROM login_data,main_table WHERE name_kor=%s AND login_data.emp_num=%s AND login_data.emp_num = main_table.emp_num;'
+            self.cur.execute(query,(self.name,self.emp_num))
+            result = self.cur.fetchone()
             self.id = result[0]
             mail = result[2]
             self.cert_num = ''
@@ -114,6 +126,7 @@ class Find(QMainWindow, form_class):
                 QMessageBox.information(self,"Notice","ID는 "+self.id+"입니다.")
                     
     def findPW(self):
+        
         self.id = self.id_lineEdit.text()
         self.name = self.name_lineEdit_2.text()
         self.emp_num = self.emp_num_lineEdit_2.text()
@@ -121,43 +134,73 @@ class Find(QMainWindow, form_class):
         if(len(self.id) == 0 or len(self.name) == 0 or len(self.emp_num) == 0 ):
             QMessageBox.warning(self, "Find Failed", "모든 정보를 입력해주세요.")
             return
+        
+        query = 'SELECT id FROM LOGIN_DATA WHERE id = %s'
+        self.cur.execute(query,(self.id))
+        result = self.cur.fetchone()
+        if result is None:
+            QMessageBox.warning(self, "Find Failed", "일치하는 ID({})가 없습니다.".format(self.id))
+            return
+        
+        query = 'SELECT NAME_KOR FROM MAIN_TABLE WHERE NAME_KOR = %s'
+        self.cur.execute(query,(self.name))
+        result = self.cur.fetchone()
+        if result is None:
+            QMessageBox.warning(self, "Find Failed", "일치하는 이름({})이 없습니다.".format(self.name))
+            return
+        
+        query = 'SELECT emp_num FROM LOGIN_DATA WHERE emp_num = %s'
+        self.cur.execute(query,(self.emp_num))
+        result = self.cur.fetchone()
+        if result is None:
+            QMessageBox.warning(self, "Find Failed", "일치하는 사번({})이 없습니다.".format(self.emp_num))
+            return
         else:
             query = 'SELECT id, name_kor, login_data.emp_num, mail FROM login_data,main_table WHERE id = %s AND name_kor = %s AND login_data.emp_num = %s AND login_data.emp_num = main_table.emp_num;'
             self.cur.execute(query,(self.id,self.name,self.emp_num))
             result = self.cur.fetchone()
+            id = result[0]
+            mail = result[3]
+            newpasswd = ''
+            string_pool = string.ascii_letters + string.digits
 
-            if result is None:
-                QMessageBox.warning(self, "Find Failed", "일치하는 ID, 이름, 사번정보가 없습니다.")
-                return
+            # 231125 영대소문자숫자 8글자로 이루어진 임시비밀번호생성
+            for i in range(8):
+                newpasswd += random.choice(string_pool)
+
+            query = 'UPDATE login_data SET passwd = %s;'
+            self.cur.execute(query,(newpasswd))
+            self.conn.commit()
             
+            # 231125 등록된 메일로 임시 비밀번호 전송
+            smtp = smtplib.SMTP('smtp.gmail.com',587)
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.login('wjdgusk310@gmail.com','fmvs mwrf ydyp ifkw')
+
+            msg = EmailMessage()
+            msg['Subject'] = 'NoriSystem 새로운 비밀번호입니다.'
+            msg.set_content('비밀번호: ' + newpasswd + '입니다.')
+
+            msg['From']='wjdgusk310@gmail.com'
+            msg['To']=mail
+            smtp.send_message(msg)
+            
+            # 231128 메일 *처리 by 정현아
+            mlen = mail.find('@')
+            mail = list(mail)
+            mlen = mlen/2
+            if(mlen>=4):
+                for i in range(int(mlen-2),int(mlen+2)):
+                    mail[i] ='*'
+                mail = ''.join(mail)
             else:
-                id = result[0]
-                mail = result[3]
-                newpasswd = ''
-                string_pool = string.ascii_letters + string.digits
+                for i in range(mlen):
+                    mail[i] ='*'
+                mail = ''.join(mail)
 
-                for i in range(8):
-                    newpasswd += random.choice(string_pool)
-
-                query = 'UPDATE login_data SET passwd = %s;'
-                self.cur.execute(query,(newpasswd))
-                self.conn.commit()
-
-                smtp = smtplib.SMTP('smtp.gmail.com',587)
-                smtp.ehlo()
-                smtp.starttls()
-                smtp.login('wjdgusk310@gmail.com','fmvs mwrf ydyp ifkw')
-
-                msg = EmailMessage()
-                msg['Subject'] = 'NoriSystem 새로운 비밀번호입니다.'
-                msg.set_content('비밀번호: ' + newpasswd + '입니다.')
-
-                msg['From']='wjdgusk310@gmail.com'
-                msg['To']=mail
-                smtp.send_message(msg)
-
-                QMessageBox.information(self, "Find Succeed", "메일이 전송되었습니다.")
-                self.fsubmitBtn_2.setDisabled(True)        
+            QMessageBox.information(self, "Find Succeed", "{}로 메일이 전송되었습니다.".format(mail))
+            self.fsubmitBtn_2.setDisabled(True)        
         
 
 
