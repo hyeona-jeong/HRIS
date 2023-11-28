@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from emp_regist import Regist
+from emp_edit import Edit
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -53,7 +53,7 @@ class EmpInfo(QMainWindow, form_class):
 
     #편집 화면으로 전환
     def showRegist(self):
-        self.w = Regist()
+        self.w = Edit()
         self.w .show()
         self.hide()
         self.w.cnlBtn.clicked.connect(self.back)

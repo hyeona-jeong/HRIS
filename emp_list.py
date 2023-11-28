@@ -1,6 +1,6 @@
 import os
 import sys
-#import pymysql
+import pymysql
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -28,7 +28,7 @@ class Emplist(QMainWindow, form_class):
         self.table.cellClicked.connect(self.Cell_Click) # 셀 클릭시 함수 이벤트
         self.table.cellDoubleClicked.connect(self.Cell_DoubleClick) # 셀 더블클릭시 함수 이벤트
         self.centralwidget.setLayout(self.listLayout)
-        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)# 목록 편집 막기
         self.setStyleSheet(stylesheet)
 
         # 231122 행의 첫 열에 체크박스 생성함수 by 정현아
@@ -42,6 +42,7 @@ class Emplist(QMainWindow, form_class):
         #     lay_out.setContentsMargins(0,0,0,0)
         #     cell_widget.setLayout(lay_out)
         #     self.table.setCellWidget(r, 0, cell_widget)
+        
 
 
 
