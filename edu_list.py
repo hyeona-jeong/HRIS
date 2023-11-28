@@ -1,6 +1,7 @@
 import os
 import sys
 import openpyxl
+import pymysql
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -22,11 +23,11 @@ class EduList(QMainWindow, form_class):
         super( ).__init__( )
         self.setupUi(self)
 
-        self.header = ['사번','부서','이름','교육명','교육기관','이수여부']
+        self.header = ['사번','사업부','그룹','이름','교육명','교육기관','이수여부']
         #flag로 필터링 여부 구분하기 위한 리스트
-        self.flag = [0,0,0,0,0,0]
+        self.flag = [0,0,0,0,0,0,0]
         #각 컬럼별 필터링 로우를 저장하기 위한 리스트
-        self.hRow = [0,0,0,0,0,0]
+        self.hRow = [0,0,0,0,0,0,0]
         self.s = []
 
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -39,6 +40,41 @@ class EduList(QMainWindow, form_class):
         self.addBtn.clicked.connect(self.addEdu)
         self.excelBtn.clicked.connect(self.addExcel)
 
+        self.conn = pymysql.connect(
+                host='localhost',
+                user='dev',
+                password='nori1234',
+                db='dev',
+                port=3306,
+                charset='utf8'
+        )
+        self.cur = self.conn.cursor()
+
+        # 231128 table item 세팅 by 정현아
+        self.table.setRowCount(0)
+
+        query = 'SELECT MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN FROM MAIN_TABLE,E_C WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;'
+        self.cur.execute(query)
+        result = self.cur.fetchall()
+        for row_number, row_data in enumerate(result):
+            self.table.insertRow(row_number)
+            for column_number, data in enumerate(row_data):
+                if column_number == 0:
+                    self.table.setItem(row_number,column_number,QTableWidgetItem(str(row_number+1)))
+                    self.table.setItem(row_number,column_number+1,QTableWidgetItem(str(data)))
+                else:
+                    self.table.setItem(row_number,column_number+1,QTableWidgetItem(str(data)))
+        
+        # 231128 table item 텍스트 중앙 정렬 및 7번 컬럼 제외한 컬럼 편집불가 처리
+        for r in range(self.table.rowCount()):
+            for c in range(self.table.columnCount()):
+                self.table.item(r,c).setTextAlignment(Qt.AlignCenter|Qt.AlignVCenter)
+                if c != 7:
+                    self.table.item(r,c).setFlags(self.table.item(r,c).flags() & ~ (Qt.ItemIsEditable))
+
+
+        self.table.itemChanged.connect(self.chcell)
+
     # 231120 입력 팝업창 생성 by 정현아
     def addEdu(self):
         self.w = dialogClass()
@@ -47,7 +83,7 @@ class EduList(QMainWindow, form_class):
     def onHeaderClicked(self, logicalIndex):
         if(logicalIndex == 0):
             self.cnlFilter(logicalIndex)
-        for i in range(1,7):
+        for i in range(1,8):
             if (logicalIndex == i):
                 if (self.flag[logicalIndex-1] == 0):
                     self.filter(logicalIndex)
@@ -89,7 +125,7 @@ class EduList(QMainWindow, form_class):
                 self.table.setHorizontalHeaderItem(index, QTableWidgetItem(str(self.header[index-1]+'☐')))
                 s1 = set(self.hRow[index-1])
                 s2 = set()
-                for i in range(0,6):
+                for i in range(0,7):
                     if(self.flag[i] == 1 and i != index-1):
                         s2 = set(self.hRow[i])
                         s2 = s1 - (s2 - (s1 - (s2&s1)))
@@ -115,17 +151,20 @@ class EduList(QMainWindow, form_class):
                     row[2].value,
                     row[3].value,
                     row[4].value,
-                    row[5].value
+                    row[5].value,
+                    row[6].value
                 ])
 
             self.w = dialogClass()
             self.w.addT.setRowCount(len(data)-1)
             for r in range(1,len(data)):
-                for c in range(0,6):
+                for c in range(0,7):
                     print((data[r][c]),end=" ")
                     self.w.addT.setItem(r-1,c,QTableWidgetItem(str(data[r][c])))
             self.w.show()
         else: pass
+    def chcell(self, cell):
+        cell.setBackground(QColor(100,100,150))
 
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):

@@ -538,7 +538,12 @@
    </column>
    <column>
     <property name="text">
-     <string>부서</string>
+     <string>그룹</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>사업부</string>
     </property>
    </column>
    <column>

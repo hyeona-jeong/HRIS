@@ -495,6 +495,31 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="saveBtn">
+       <property name="minimumSize">
+        <size>
+         <width>93</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>93</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: #ff5500;
+border-radius : 10px; 
+border : 2px solid #ff5500;
+color: white;</string>
+       </property>
+       <property name="text">
+        <string>저장</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="cnlBtn">
        <property name="minimumSize">
         <size>
@@ -597,7 +622,12 @@ color: white;</string>
     </column>
     <column>
      <property name="text">
-      <string>부서☐</string>
+      <string>사업부☐</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>그룹☐</string>
      </property>
     </column>
     <column>
@@ -635,45 +665,74 @@ color: white;</string>
      <property name="textAlignment">
       <set>AlignCenter</set>
      </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
     </item>
     <item row="0" column="2">
      <property name="text">
-      <string>MIS사업부 &gt; PLM G</string>
+      <string>MIS</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
      </property>
+     <property name="flags">
+      <set>ItemIsEditable|ItemIsEnabled</set>
+     </property>
     </item>
     <item row="0" column="3">
+     <property name="text">
+      <string>PLM G</string>
+     </property>
+     <property name="textAlignment">
+      <set>AlignCenter</set>
+     </property>
+     <property name="flags">
+      <set>ItemIsDragEnabled|ItemIsDropEnabled|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="0" column="4">
      <property name="text">
       <string>홍길동</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
      </property>
+     <property name="flags">
+      <set>ItemIsDragEnabled|ItemIsDropEnabled|ItemIsEnabled</set>
+     </property>
     </item>
-    <item row="0" column="4">
+    <item row="0" column="5">
      <property name="text">
       <string>Oracle 중급과정</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
      </property>
+     <property name="flags">
+      <set>ItemIsUserCheckable|ItemIsEnabled</set>
+     </property>
     </item>
-    <item row="0" column="5">
+    <item row="0" column="6">
      <property name="text">
       <string>한국교육진흥원</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
      </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
     </item>
-    <item row="0" column="6">
+    <item row="0" column="7">
      <property name="text">
       <string>Y</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
+     </property>
+     <property name="flags">
+      <set>ItemIsEnabled|ItemIsTristate</set>
      </property>
     </item>
     <item row="1" column="0">
@@ -691,10 +750,13 @@ color: white;</string>
      <property name="textAlignment">
       <set>AlignCenter</set>
      </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
     </item>
     <item row="1" column="2">
      <property name="text">
-      <string>MIS사업부 &gt; PLM G</string>
+      <string>MIS</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
@@ -702,7 +764,7 @@ color: white;</string>
     </item>
     <item row="1" column="3">
      <property name="text">
-      <string>정현아</string>
+      <string>PLM G</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
@@ -710,7 +772,7 @@ color: white;</string>
     </item>
     <item row="1" column="4">
      <property name="text">
-      <string>Python</string>
+      <string>정현아</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
@@ -718,13 +780,27 @@ color: white;</string>
     </item>
     <item row="1" column="5">
      <property name="text">
+      <string>Python</string>
+     </property>
+     <property name="textAlignment">
+      <set>AlignCenter</set>
+     </property>
+     <property name="flags">
+      <set>ItemIsUserCheckable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="1" column="6">
+     <property name="text">
       <string>한국교육진흥원</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
      </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
     </item>
-    <item row="1" column="6">
+    <item row="1" column="7">
      <property name="text">
       <string>Y</string>
      </property>
@@ -747,10 +823,13 @@ color: white;</string>
      <property name="textAlignment">
       <set>AlignCenter</set>
      </property>
+     <property name="flags">
+      <set>ItemIsSelectable|ItemIsEnabled</set>
+     </property>
     </item>
     <item row="2" column="2">
      <property name="text">
-      <string>TSP사업부 &gt; TSP 운영 1G</string>
+      <string>TSP사업부</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
@@ -758,7 +837,7 @@ color: white;</string>
     </item>
     <item row="2" column="3">
      <property name="text">
-      <string>가나다</string>
+      <string>TSP 운영 1G</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
@@ -766,7 +845,7 @@ color: white;</string>
     </item>
     <item row="2" column="4">
      <property name="text">
-      <string>JAVA</string>
+      <string>가나다</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
@@ -774,13 +853,21 @@ color: white;</string>
     </item>
     <item row="2" column="5">
      <property name="text">
-      <string>한국교육진흥원</string>
+      <string>JAVA</string>
      </property>
      <property name="textAlignment">
       <set>AlignCenter</set>
      </property>
     </item>
     <item row="2" column="6">
+     <property name="text">
+      <string>한국교육진흥원</string>
+     </property>
+     <property name="textAlignment">
+      <set>AlignCenter</set>
+     </property>
+    </item>
+    <item row="2" column="7">
      <property name="text">
       <string>N</string>
      </property>
