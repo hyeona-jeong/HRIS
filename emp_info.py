@@ -23,6 +23,8 @@ class EmpInfo(QMainWindow, form_class):
         self.flag = 0;
         
         self.empinfo.setLayout(self.empinfolayout)
+        self.listChgbtn.clicked.connect(self.showregist)
+        
         
     #     self.tabWidget.hide()
     #     self.pushButton.clicked.connect(self.tab_show)
@@ -46,6 +48,18 @@ class EmpInfo(QMainWindow, form_class):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+        
+    def showregist(self):
+        self.w = Regist()
+        self.w.show()
+        # self.w.center()
+        self.hide()
+        self.w.cnlBtn.clicked.connect(self.back)
+        self.w.closed.connect(self.show)  
+        
+    def back(self):
+        self.w.close()
+        self.show()
          
 if __name__ == '__main__':
     app = QApplication(sys.argv) 

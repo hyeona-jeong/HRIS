@@ -79,6 +79,7 @@ class Login(QMainWindow, form_class):
         self.hide()
         self.w.logoutBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)
+        self.w.chgBtn.setToolTip('패스워드 변경')
 
     def back(self):
         self.w.close()
@@ -98,7 +99,6 @@ class Login(QMainWindow, form_class):
         self.w2.cnlBtn.clicked.connect(self.w2.close)
         self.w2.chgBtn.clicked.connect(self.changPw)
         self.w2.oldpwlineEdit.returnPressed.connect(self.changPw)
-        self.w2.chgBtn.setToolTip('패스워드 변경')
         
     # 231127 패스워드 변경 함수 by 정현아
     def changPw(self):
@@ -137,22 +137,22 @@ class Login(QMainWindow, form_class):
             QMessageBox.warning(self,'Password Change Failed','패스워드는 세번 연속 같은 문자를 사용하실 수 없습니다.')
             return  
         else:                
-            num = re.findall(r'\d+', newPw)
-            for i in range(len(num[0])-2):
-                if (int(num[0][i]) - int(num[0][i+1]) == 1):
-                    if (int(num[0][i+1]) - int(num[0][i+2]) == 1):
-                        QMessageBox.warning(self,'Password Change Failed','패스워드는 연속된 숫자를 사용하실 수 없습니다.')
-                        return
-                elif (int(num[0][i]) - int(num[0][i+1]) == -1):
-                    if (int(num[0][i+1]) - int(num[0][i+2]) == -1):
-                        QMessageBox.warning(self,'Password Change Failed','패스워드는 연속된 숫자를 사용하실 수 없습니다.')
-                        return     
-                else:
-                    query='UPDATE LOGIN_DATA SET PASSWD = %s WHERE ID = %s;'
-                    self.cur.execute(query,(newPw,self.id))
-                    self.conn.commit()
-                    QMessageBox.information(self,'Password Change Succeed','패스워드가 변경되었습니다.')
-                    self.w2.close()
+            # num = re.findall(r'\d+', newPw)
+            # for i in range(len(num[0])-2):
+            #     if (int(num[0][i]) - int(num[0][i+1]) == 1):
+            #         if (int(num[0][i+1]) - int(num[0][i+2]) == 1):
+            #             QMessageBox.warning(self,'Password Change Failed','패스워드는 연속된 숫자를 사용하실 수 없습니다.')
+            #             return
+            #     elif (int(num[0][i]) - int(num[0][i+1]) == -1):
+            #         if (int(num[0][i+1]) - int(num[0][i+2]) == -1):
+            #             QMessageBox.warning(self,'Password Change Failed','패스워드는 연속된 숫자를 사용하실 수 없습니다.')
+            #             return     
+            #     else:
+            query='UPDATE LOGIN_DATA SET PASSWD = %s WHERE ID = %s;'
+            self.cur.execute(query,(newPw,self.id))
+            self.conn.commit()
+            QMessageBox.information(self,'Password Change Succeed','패스워드가 변경되었습니다.')
+            self.w2.close()
             
 
 
