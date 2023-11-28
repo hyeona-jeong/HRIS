@@ -58,7 +58,8 @@ class Emplist(QMainWindow, form_class):
         
     #셀 클릭시     
     def Cell_Click(self, row):
-        data = self.table.item(row)
+        #data = self.table.item(row,i-1)
+        pass
         
     #231124 셀 더블클릭시 개인정보 페이지로 전환함수 by김태균    
     def Cell_DoubleClick(self):
@@ -66,7 +67,8 @@ class Emplist(QMainWindow, form_class):
         self.w .show()
         self.hide()       
         self.w.cnlBtn.clicked.connect(self.back)
-    
+        self.w.closed.connect(self.show)
+        
     def back(self):
         self.w.hide()
         self.show()
@@ -77,7 +79,7 @@ class Emplist(QMainWindow, form_class):
         self.w .show()
         self.hide()
         self.w.cnlBtn.clicked.connect(self.back)
-        self.w.closed.connect(self.show)
+
         
     def back(self):
         self.w.hide()

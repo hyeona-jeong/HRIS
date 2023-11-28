@@ -23,9 +23,7 @@ class EmpInfo(QMainWindow, form_class):
         self.flag = 0;
         
         self.empinfo.setLayout(self.empinfolayout)
-        self.listChgbtn.clicked.connect(self.showregist)
-        
-        
+        self.listChgbtn.clicked.connect(self.showRegist)
     #     self.tabWidget.hide()
     #     self.pushButton.clicked.connect(self.tab_show)
         
@@ -49,16 +47,20 @@ class EmpInfo(QMainWindow, form_class):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
         
-    def showregist(self):
+    def back(self):
+        self.w.hide()
+        self.show()
+
+    #편집 화면으로 전환
+    def showRegist(self):
         self.w = Regist()
-        self.w.show()
-        # self.w.center()
+        self.w .show()
         self.hide()
         self.w.cnlBtn.clicked.connect(self.back)
-        self.w.closed.connect(self.show)  
+        self.w.closed.connect(self.show)
         
     def back(self):
-        self.w.close()
+        self.w.hide()
         self.show()
          
 if __name__ == '__main__':
