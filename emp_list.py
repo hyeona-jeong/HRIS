@@ -28,7 +28,7 @@ class Emplist(QMainWindow, form_class):
         self.table.cellClicked.connect(self.Cell_Click) # 셀 클릭시 함수 이벤트
         self.table.cellDoubleClicked.connect(self.Cell_DoubleClick) # 셀 더블클릭시 함수 이벤트
         self.centralwidget.setLayout(self.listLayout)
-        
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.setStyleSheet(stylesheet)
 
         # 231122 행의 첫 열에 체크박스 생성함수 by 정현아
