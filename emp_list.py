@@ -39,7 +39,6 @@ class Emplist(QMainWindow, form_class):
         self.setStyleSheet(stylesheet)
         #self.searchlineEdit.set
         self.table.horizontalHeader().sectionClicked.connect(self.onHeaderClicked)
-        #self.table_widget.setItem(15, 8, item)
         
     def onHeaderClicked(self, logicalIndex):
         if(logicalIndex == 0):
@@ -51,7 +50,6 @@ class Emplist(QMainWindow, form_class):
                 else: 
                     self.flag[logicalIndex-1]-=1
                     self.cnlFilter(logicalIndex)
-                    
     def filter(self,index):
         self.s = []
         dialog = QInputDialog(self)
@@ -70,7 +68,30 @@ class Emplist(QMainWindow, form_class):
                     self.s.append(r)
                     self.table.setRowHidden(r,True)
             self.hRow[index-1] = self.s
-    
+
+        # 이름 검색 필터
+        # layout = QVBoxLayout()
+        # layout.addWidget(self.table_widget)
+
+        # central_widget = QWidget()
+        # central_widget.setLayout(layout)
+        # self.setCentralWidget(central_widget)
+
+        # self.searchlineEdit = QLineEdit()
+        # self.searchlineEdit.setPlaceholderText('이름을 입력하세요...')
+        # self.searchlineEdit.textChanged.connect(self.filter_items)
+        # self.layout.addWidget(self.searchlineEdit)
+
+    # def filter_items(self):
+    #     search_text = self.search_input.text().lower()
+    #     self.list_widget.clear()
+
+    #     names = ['Alice', 'Bob', 'Charlie', 'David', 'Eva']  # 이름 목록을 원래의 목록으로 변경하세요.
+
+    #     for name in names:
+    #         if search_text in name.lower():
+    #             self.list_widget.addItem(name)        
+
     # 231118 필터링 해제 by 정현아                
     def cnlFilter(self,index):
         if(index == 0):
@@ -105,22 +126,20 @@ class Emplist(QMainWindow, form_class):
 
         
         #테이블위젯 내에 모든 데이터 추출
-        self.conn = pymysql.connect(
-            host='192.168.2.20',
-            user='dev',
-            password='nori1234',
-            db='dev',
-            port=3306,
-            charset='utf8'
-        )
-        self.cur = self.conn.cursor()
-        query = "select (department, name_kor, postion, emp_rank, work_pos, phone, mail) from main_table"
-        self.cur.execute(query)
-        self.conn.commit()
-        
-        #검색 필터 기능
+        # self.conn = pymysql.connect(
+        #     host='192.168.2.20',
+        #     user='dev',
+        #     password='nori1234',
+        #     db='dev',
+        #     port=3306,
+        #     charset='utf8'
+        # )
+        # self.cur = self.conn.cursor()
+        # self
+        # query = "select (department, name_kor, postion, emp_rank, work_pos, phone, mail) from main_table"
+        # self.cur.execute(query)
+        # self.conn.commit()
 
-        #df.filter(like='', axis=0)
         
                 
     #셀 클릭시     
