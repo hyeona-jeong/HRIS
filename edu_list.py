@@ -23,6 +23,9 @@ class EduList(QMainWindow, form_class):
         super( ).__init__( )
         self.setupUi(self)
         self.eduList.setStyleSheet(stylesheet)
+        
+        # 231129변경된 셀 값 임시 저장 리스트 by 정현아
+        self.chCellItem = []
 
         self.header = ['사번','사업부','그룹','이름','교육명','교육기관','이수여부']
         #flag로 필터링 여부 구분하기 위한 리스트
@@ -56,7 +59,6 @@ class EduList(QMainWindow, form_class):
         self.setTableItem()
         self.table.itemChanged.connect(self.chCell)
         self.saveBtn.clicked.connect(self.updateCell)
-        
         
     # 231128 table 세팅함수 by 정현아
     def setTableItem(self):
@@ -169,11 +171,19 @@ class EduList(QMainWindow, form_class):
         else: pass
     # 231128 셀값 변경시 배경백 변경 by 정현아
     def chCell(self, item):
-        
+        self.chCellItem.append(item)
         item.setBackground(QColor(255,255,127))
-        
+        print(self.chCellItem)
+        self.setTableItem()
+        print(self.chCellItem.text())
+    
+    # 231129 버튼 클릭시 셀값 업데이트
     def updateCell(self):
-        pass
+        if not self.chCellItem:
+           QMessageBox.warning(self,"Update Item Failed","변경된 정보가 없습니다.") 
+           return
+        else:
+            print(self.chCellItem)
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):
         self.closed.emit()
