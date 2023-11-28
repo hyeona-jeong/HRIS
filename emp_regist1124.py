@@ -86,15 +86,15 @@ class Regist(QMainWindow, form_class):
         #self.phoneNum_lineEdit.setValidator(QIntValidator(regExp, self))
         
         
-        #self.conn = pymysql.connect(
-        #    host='192.168.2.20',
-        #    user='dev',
-        #    password='nori1234',
-        #    db='dev',
-        #    port=3306,
-        #    charset='utf8'
-        #)
-        #self.cur = self.conn.cursor()
+        self.conn = pymysql.connect(
+            host='192.168.2.20',
+            user='dev',
+            password='nori1234',
+            db='dev',
+            port=3306,
+            charset='utf8'
+        )
+        self.cur = self.conn.cursor()
 
 
     
@@ -137,18 +137,28 @@ class Regist(QMainWindow, form_class):
                         QMessageBox.warning(self,'Phone number Failed','휴대폰 번호는 숫자만 사용하셔야 합니다.')
                         return
                     else:
-                        query ='select id from main_table where emp_num = ' + self.Emp_Number +';'
+                        query = 'select emp_num from main_table where emp_num =\'' + self.Emp_Number + '\';'
                         self.cur.execute(query)
                         emptyYN = self.cur.fetchone()
-                        if emptyYN is None: #사번 밑으로는 권한 확인차 미완성
-                            QMessageBox.warning(self,'Edit Failed','등록되지 않은 사번입니다.\n관리자에게 문의바랍니다.')
+
+                        if emptyYN is None:
+                            QMessageBox.warning(self,'insert Failed','등록되지 않은 사번입니다.\n관리자에게 문의바랍니다.')
                             return
-                        else:
-                            query ='insert into main_table values(%s,%s,%s,%s);'
-                            self.cur.execute(query, (self.namekr,self.nameEng,self.Emp_Number,'user'))
-                            # self.conn.commit()
-                            self.conn.close()
-                            QMessageBox.information(self,'Regist Succeed','편집 완료되었습니다.')
+                        else: 
+                            query ='select emp_num from main_table where emp_num = ' + self.Emp_Number +';'
+                            self.cur.execute(query)
+                            emptyYN = self.cur.fetchone()
+                            if emptyYN is not None:
+                                QMessageBox.warning(self,'insert Failed','사원님의 ID가 이미 존재합니다.')
+                                return
+                                        
+                            # 231123 모든 체크 완료시 DB에 Insert. 권한 문제로 미완성 by 정현아
+                            else:
+                                query ='insert into main_table values(%s,%s,%s,%s);'
+                                self.cur.execute(query, (self.namekr,self.personnum,self.Emp_Number,'user'))
+                                self.conn.commit()
+                                self.conn.close()
+                                QMessageBox.information(self,'insert Succeed','등록완료되었습니다.')
  
                     
                         

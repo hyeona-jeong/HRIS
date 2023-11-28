@@ -31,7 +31,7 @@ class SignUp(QMainWindow, form_class):
         self.ps2_lineEdit.setEchoMode(QLineEdit.Password)
 
         self.conn = pymysql.connect(
-            host='localhost',
+            host='192.168.2.20',
             user='dev',
             password='nori1234',
             db='dev',

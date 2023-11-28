@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1326</width>
-    <height>929</height>
+    <height>928</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -848,42 +848,47 @@ background-color:white;</string>
        <row/>
        <column>
         <property name="text">
-         <string>부서</string>
+         <string>사업부☐</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>한글성명</string>
+         <string>그룹☐</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>직책</string>
+         <string>이름☐</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>직급</string>
+         <string>직책☐</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>직무</string>
+         <string>직급☐</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>휴대폰번호</string>
+         <string>직무☐</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>메일</string>
+         <string>휴대폰번호☐</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>메일☐</string>
         </property>
        </column>
        <item row="0" column="0">
         <property name="text">
-         <string>MIS &gt; PLM G</string>
+         <string>MIS사업부</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
@@ -891,7 +896,7 @@ background-color:white;</string>
        </item>
        <item row="0" column="1">
         <property name="text">
-         <string>홍길동</string>
+         <string>PLM G</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
@@ -899,7 +904,7 @@ background-color:white;</string>
        </item>
        <item row="0" column="2">
         <property name="text">
-         <string>팀원</string>
+         <string>홍길동</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
@@ -907,13 +912,21 @@ background-color:white;</string>
        </item>
        <item row="0" column="3">
         <property name="text">
-         <string>사원</string>
+         <string>팀원</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
         </property>
        </item>
        <item row="0" column="4">
+        <property name="text">
+         <string>사원</string>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </item>
+       <item row="0" column="5">
         <property name="text">
          <string>개발</string>
         </property>
@@ -930,7 +943,7 @@ background-color:white;</string>
          </brush>
         </property>
        </item>
-       <item row="0" column="5">
+       <item row="0" column="6">
         <property name="text">
          <string>010-0000-0000</string>
         </property>
@@ -938,7 +951,7 @@ background-color:white;</string>
          <set>AlignCenter</set>
         </property>
        </item>
-       <item row="0" column="6">
+       <item row="0" column="7">
         <property name="text">
          <string>gildong@norysystem.co.kr</string>
         </property>
@@ -948,7 +961,7 @@ background-color:white;</string>
        </item>
        <item row="1" column="0">
         <property name="text">
-         <string>MIS &gt; PLM G</string>
+         <string>MIS사업부</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
@@ -956,7 +969,7 @@ background-color:white;</string>
        </item>
        <item row="1" column="1">
         <property name="text">
-         <string>정현아</string>
+         <string>PLM G</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
@@ -964,7 +977,7 @@ background-color:white;</string>
        </item>
        <item row="1" column="2">
         <property name="text">
-         <string>팀원</string>
+         <string>정현아</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
@@ -972,7 +985,7 @@ background-color:white;</string>
        </item>
        <item row="1" column="3">
         <property name="text">
-         <string>대리</string>
+         <string>팀원</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
@@ -980,7 +993,7 @@ background-color:white;</string>
        </item>
        <item row="1" column="4">
         <property name="text">
-         <string>개발</string>
+         <string>대리</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
@@ -988,7 +1001,7 @@ background-color:white;</string>
        </item>
        <item row="1" column="5">
         <property name="text">
-         <string>010-0000-0000</string>
+         <string>개발</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
@@ -996,18 +1009,42 @@ background-color:white;</string>
        </item>
        <item row="1" column="6">
         <property name="text">
+         <string>010-0000-0000</string>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </item>
+       <item row="1" column="7">
+        <property name="text">
          <string>ha.jeong@norysystem.co.kr</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
         </property>
        </item>
-       <item row="2" column="6">
+       <item row="2" column="7">
         <property name="text">
          <string/>
         </property>
        </item>
       </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -1062,22 +1099,6 @@ background-color:white;</string>
         </spacer>
        </item>
       </layout>
-     </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </widget>
