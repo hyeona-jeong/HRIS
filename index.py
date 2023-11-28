@@ -38,13 +38,12 @@ class Index(QMainWindow, form_class):
         self.toolhr.setMenu(self.menuHr)
 
         menuEdu = QMenu()
-        menuEdu.addAction('교육이수정보')
+        menuEdu.addAction('교육이수정보',self.showPage)
         menuEdu.setStyleSheet(stylesheet)
 
         self.tooledu.setMenu(menuEdu)
         self.empBtn.clicked.connect(self.showPage)
-        # self.chpwBtn.clicked.connect(self.showChPw)
-        # self.eduBtn.clicked.connect(self.showPage)
+        self.eduBtn.clicked.connect(self.showPage)
 
         # self.toolhr.installEventFilter(self)
 
@@ -73,11 +72,6 @@ class Index(QMainWindow, form_class):
     def closeEvent(self, e):
         self.closed.emit()
         super().closeEvent(e)
-        
-    # def showChPw(self):
-    #     self.w = ChangPw()
-    #     self.w.show()
-    #     self.w.cnlBtn.clicked.connect(self.w.close)
         
         
         

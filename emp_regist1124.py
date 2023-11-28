@@ -111,6 +111,7 @@ class Regist(QMainWindow, form_class):
         
         if(len(self.namekr)==0 or len(self.personnum)==0 or len(self.nameEng)==0 or len(self.Emp_Number)==0 or len(self.phoneNum)==0 or len(self.address1)==0 or len(self.address2)==0 ):
             QMessageBox.warning(self, 'Regist failed','모든 항목을 입력하셔야 합니다.')
+            return
         else:
             if (len(self.namekr)<2): # 이름 글자수 조건
                 QMessageBox.warning(self,'Name Edit Failed','이름은 최소 두 글자입니다.')
@@ -143,11 +144,11 @@ class Regist(QMainWindow, form_class):
                             QMessageBox.warning(self,'Edit Failed','등록되지 않은 사번입니다.\n관리자에게 문의바랍니다.')
                             return
                         else:
-                            query ='update into main_table values(%s,%s,%s,%s);'
+                            query ='insert into main_table values(%s,%s,%s,%s);'
                             self.cur.execute(query, (self.namekr,self.nameEng,self.Emp_Number,'user'))
                             # self.conn.commit()
                             self.conn.close()
-                            QMessageBox.information(self,'Edit Succeed','편집 완료되었습니다.')
+                            QMessageBox.information(self,'Regist Succeed','편집 완료되었습니다.')
  
                     
                         

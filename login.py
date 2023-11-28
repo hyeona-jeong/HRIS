@@ -76,7 +76,7 @@ class Login(QMainWindow, form_class):
     def showIndex(self):
         self.w = Index()
         self.w.show()
-        self.w.chgBtn.clicked.connect(self.showChPw)
+        # self.w.chgBtn.clicked.connect(self.showChPw)
         
         # 231128 인덱스 페이지에 DB를 가져와 사원 사진 출력 by 정현아
         query = 'SELECT ID, PIC, MAIN_TABLE.EMP_NUM FROM LOGIN_DATA, MAIN_TABLE WHERE LOGIN_DATA.EMP_NUM = MAIN_TABLE.EMP_NUM AND ID = %s'
@@ -89,7 +89,10 @@ class Login(QMainWindow, form_class):
         self.w.chgBtn.setIcon(icon)
         
         # 231128
-        
+        chmenu = QMenu()
+        chmenu.setStyleSheet(stylesheet)
+        chmenu.addAction('패스워드 변경',self.showChPw)
+        self.w.chgBtn.setMenu(chmenu)
         
         self.hide()
         self.w.logoutBtn.clicked.connect(self.back)
@@ -166,6 +169,17 @@ class Login(QMainWindow, form_class):
             self.conn.commit()
             QMessageBox.information(self,'Password Change Succeed','패스워드가 변경되었습니다.')
             self.w2.close()
+            
+stylesheet = """
+    QMenu{
+        background-color: white;
+        color: black;
+        font-family: Malgun Gothic;
+    }
+    QMenu::item:selected{
+        background-color: #c6c6c6; 
+    }
+"""
             
 
 
