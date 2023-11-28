@@ -1,6 +1,7 @@
 import os
 import sys
 import pymysql
+import pandas as pd
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -30,6 +31,7 @@ class Emplist(QMainWindow, form_class):
         self.centralwidget.setLayout(self.listLayout)
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)# 목록 편집 막기
         self.setStyleSheet(stylesheet)
+        #self.searchlineEdit.set
 
         # 231122 행의 첫 열에 체크박스 생성함수 by 정현아
         # for r in range(self.table.rowCount()):
@@ -43,11 +45,13 @@ class Emplist(QMainWindow, form_class):
         #     cell_widget.setLayout(lay_out)
         #     self.table.setCellWidget(r, 0, cell_widget)
         
-
+        data = self.table
 
 
         self.listRegBtn.clicked.connect(self.showRegist)
+
         
+        #테이블위젯 내에 모든 데이터 추출
         #self.conn = pymysql.connect(
         #    host='192.168.2.20',
         #    user='dev',
@@ -55,8 +59,16 @@ class Emplist(QMainWindow, form_class):
         #    db='dev',
         #    port=3306,
         #    charset='utf8'
-        #)
+        #)self.cur = self.conn.cursor()
+        #query = "select (department, name_kor, postion, emp_rank, work_pos, phone, mail) from main_table"
+        #self.cur.execute(query)
+        #connect.commit()
         
+        #검색 필터 기능
+
+        #df.filter(like='', axis=0)
+        
+                
     #셀 클릭시     
     def Cell_Click(self, row):
         #data = self.table.item(row,i-1)

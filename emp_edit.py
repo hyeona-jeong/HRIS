@@ -85,7 +85,6 @@ class Edit(QMainWindow, form_class):
         #self.personnum_lineEdit.setValidator(QIntValidator(regExp, self))
         #self.phoneNum_lineEdit.setValidator(QIntValidator(regExp, self))
         
-        
         #self.conn = pymysql.connect(
         #    host='192.168.2.20',
         #    user='dev',
@@ -94,60 +93,26 @@ class Edit(QMainWindow, form_class):
         #    port=3306,
         #    charset='utf8'
         #)
-        #self.cur = self.conn.cursor()
+        
 
 
     
     #편집 저장완료시 필수정보 확인 by김태균
     def userReg(self):
-        self.namekr = self.namekr_lineEdit.text()
-        self.personnum = self.personnum_lineEdit.text()
-        self.onlyint=QIntValidator()
-        self.nameEng = self.nameEng_lineEdit.text()
-        self.Emp_Number = self.Emp_Number_lineEdit.text()
         self.phoneNum = self.phoneNum_lineEdit.text()
         self.address1 = self.address1_lineEdit.text()
         self.address2 = self.address2_lineEdit.text()
         
-        if(len(self.namekr)==0 or len(self.personnum)==0 or len(self.nameEng)==0 or len(self.Emp_Number)==0 or len(self.phoneNum)==0 or len(self.address1)==0 or len(self.address2)==0 ):
+        if(len(self.phoneNum)==0 or len(self.address1)==0 or len(self.address2)==0 ):
             QMessageBox.warning(self, 'Regist failed','모든 항목을 입력하셔야 합니다.')
+            return
         else:
-            if (len(self.namekr)<2): # 이름 글자수 조건
-                QMessageBox.warning(self,'Name Edit Failed','이름은 최소 두 글자입니다.')
-                return
-            elif (len(self.namekr)>4):
-                QMessageBox.warning(self,'Name Edit Failed','이름은 최대 네 글자입니다.')
-                return
-            elif (re.sub(r"[가-힣]","",self.namekr) != ''):
-                QMessageBox.warning(self,'Name Edit Failed','이름은 영문자, 자음, 모음이 입력될 수 없습니다. ')
-                return
-            else:
-                if (len(self.personnum)<13): #주민등록번호 글자수 조건
-                    QMessageBox.warning(self,'Person number Failed','하이폰(-) 없이 주민번호 13자리를 입력해야 합니다. ')
-                    return
-                elif(not self.personnum.isalnum()):
-                    QMessageBox.warning(self,'Person number Failed','주민번호는 숫자만 사용하셔야 합니다.')
-                    return
-                else:
-                    if(len(self.phoneNum)>11): #휴대폰번호 글자수 조건
-                        QMessageBox.warning(self,'Phone number Failed','하이폰(-) 없이 휴대폰번호 11자리를 입력해야 합니다. ')
-                        return
-                    elif(not self.phoneNum.isalnum()):
-                        QMessageBox.warning(self,'Phone number Failed','휴대폰 번호는 숫자만 사용하셔야 합니다.')
-                        return
-                    else:
-                        query ='select id from main_table where emp_num = ' + self.Emp_Number +';'
-                        self.cur.execute(query)
-                        emptyYN = self.cur.fetchone()
-                        if emptyYN is None: #사번 밑으로는 권한 확인차 미완성
-                            QMessageBox.warning(self,'Edit Failed','등록되지 않은 사번입니다.\n관리자에게 문의바랍니다.')
-                            return
-                        else:
-                            query ='update into main_table values(%s,%s,%s,%s);'
-                            self.cur.execute(query, (self.namekr,self.nameEng,self.Emp_Number,'user'))
-                            # self.conn.commit()
-                            self.conn.close()
-                            QMessageBox.information(self,'Edit Succeed','편집 완료되었습니다.')
+            query ='update into main_table values(%s,%s,%s,%s);'
+            self.cur.execute(query, (self.phoneNum,self.address1,self.address2,'user'))
+            # self.conn.commit()
+            self.conn.close()
+            QMessageBox.information(self,'Edit Succeed','편집 완료되었습니다.')
+            
  
                     
                         
