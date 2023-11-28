@@ -22,6 +22,7 @@ class EduList(QMainWindow, form_class):
     def __init__(self):
         super( ).__init__( )
         self.setupUi(self)
+        self.eduList.setStyleSheet(stylesheet)
 
         self.header = ['사번','사업부','그룹','이름','교육명','교육기관','이수여부']
         #flag로 필터링 여부 구분하기 위한 리스트
@@ -41,7 +42,7 @@ class EduList(QMainWindow, form_class):
         self.excelBtn.clicked.connect(self.addExcel)
 
         self.conn = pymysql.connect(
-                host='localhost',
+                host='192.168.2.20',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -50,9 +51,15 @@ class EduList(QMainWindow, form_class):
         )
         self.cur = self.conn.cursor()
 
-        # 231128 table item 세팅 by 정현아
+        # 231128 table 세팅 by 정현아
         self.table.setRowCount(0)
-
+        self.setTableItem()
+        self.table.itemChanged.connect(self.chCell)
+        self.saveBtn.clicked.connect(self.updateCell)
+        
+        
+    # 231128 table 세팅함수 by 정현아
+    def setTableItem(self):
         query = 'SELECT MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN FROM MAIN_TABLE,E_C WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;'
         self.cur.execute(query)
         result = self.cur.fetchall()
@@ -71,9 +78,6 @@ class EduList(QMainWindow, form_class):
                 self.table.item(r,c).setTextAlignment(Qt.AlignCenter|Qt.AlignVCenter)
                 if c != 7:
                     self.table.item(r,c).setFlags(self.table.item(r,c).flags() & ~ (Qt.ItemIsEditable))
-
-
-        self.table.itemChanged.connect(self.chcell)
 
     # 231120 입력 팝업창 생성 by 정현아
     def addEdu(self):
@@ -163,9 +167,13 @@ class EduList(QMainWindow, form_class):
                     self.w.addT.setItem(r-1,c,QTableWidgetItem(str(data[r][c])))
             self.w.show()
         else: pass
-    def chcell(self, cell):
-        cell.setBackground(QColor(100,100,150))
-
+    # 231128 셀값 변경시 배경백 변경 by 정현아
+    def chCell(self, item):
+        
+        item.setBackground(QColor(255,255,127))
+        
+    def updateCell(self):
+        pass
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):
         self.closed.emit()
@@ -202,7 +210,6 @@ stylesheet = """
 """
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
-    app.setStyleSheet(stylesheet)
     myWindow = EduList() 
     myWindow.show() 
     app.exec_() 

@@ -39,6 +39,7 @@ class Emplist(QMainWindow, form_class):
         self.setStyleSheet(stylesheet)
         #self.searchlineEdit.set
         self.table.horizontalHeader().sectionClicked.connect(self.onHeaderClicked)
+        self.listRegBtn.clicked.connect(self.showRegist)
         
     def onHeaderClicked(self, logicalIndex):
         if(logicalIndex == 0):
@@ -120,10 +121,6 @@ class Emplist(QMainWindow, form_class):
                     
         
         #data = self.table
-
-
-        self.listRegBtn.clicked.connect(self.showRegist)
-
         
         #테이블위젯 내에 모든 데이터 추출
         # self.conn = pymysql.connect(

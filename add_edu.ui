@@ -533,7 +533,7 @@
    </column>
    <column>
     <property name="text">
-     <string>이름</string>
+     <string>사업부</string>
     </property>
    </column>
    <column>
@@ -543,7 +543,7 @@
    </column>
    <column>
     <property name="text">
-     <string>사업부</string>
+     <string>이름</string>
     </property>
    </column>
    <column>
