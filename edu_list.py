@@ -25,6 +25,9 @@ class EduList(QMainWindow, form_class):
         
         # 변경된 셀값 저장
         self.chLists = []
+        self.biz = '전체'
+        self.name = ''
+        self.text = ''
         self.flag = 0
         self.eduList.setLayout(self.eduListLayout)
 
@@ -41,7 +44,7 @@ class EduList(QMainWindow, form_class):
         self.excelBtn.clicked.connect(self.addExcel)
 
         self.conn = pymysql.connect(
-                host='192.168.2.20',
+                host='localhost',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -60,8 +63,8 @@ class EduList(QMainWindow, form_class):
         # 231128 table 세팅 by 정현아
         self.table.setRowCount(0)
         self.setTableItem(self.result)
-        # self.table.itemChanged.connect(self.chCell)
-        # self.saveBtn.clicked.connect(self.updateCell)
+        self.table.itemChanged.connect(self.chCell)
+        self.saveBtn.clicked.connect(self.updateCell)
         
     # 231128 table 세팅함수 by 정현아
     def setTableItem(self,result):
@@ -77,35 +80,63 @@ class EduList(QMainWindow, form_class):
         # 231128 table item 텍스트 중앙 정렬 및 7번 컬럼 제외한 컬럼 편집불가 처리
         for r in range(self.table.rowCount()):
             for c in range(self.table.columnCount()):
-                self.table.item(r,c).setTextAlignment(Qt.AlignCenter|Qt.AlignVCenter)
-                if c == 0 or c == 1 or c == 2 or c == 3 or c == 4:
-                    self.table.item(r,c).setFlags(self.table.item(r,c).flags() & ~ (Qt.ItemIsEditable))
+                if self.table.item(r,c) is not None:
+                    self.table.item(r,c).setTextAlignment(Qt.AlignCenter|Qt.AlignVCenter)
+                    if c == 0 or c == 1 or c == 2 or c == 3 or c == 4:
+                        self.table.item(r,c).setFlags(self.table.item(r,c).flags() & ~ (Qt.ItemIsEditable))
 
 
     # 231129 사업부검색 함수 
     def searchBiz(self,biz):
+        self.table.blockSignals(True)
         self.biz = biz
-        query = """
-        SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
-        FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
-        WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = \'""" + biz +'\';'
-        self.cur.execute(query)
-        result = self.cur.fetchall()
-        self.setTableItem(result)
+        if self.biz == '전체':
+            query = """
+            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
+            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;
+            """
+            self.cur.execute(query)
+            self.result = self.cur.fetchall()
+        else:
+            query = """
+            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
+            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = \'""" + biz +'\';'
+            self.cur.execute(query)
+            result = self.cur.fetchall()
+            self.setTableItem(result)
+        self.table.blockSignals(False)
         
     # 231129 사원검색 함수
     def searchEmp(self):
-        name = self.namelineEdit.text()
-        if name == '' : 
-            return
-        query = """
-        SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
-        FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
-        WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = %s AND NAME_KOR LIKE %s;
-        """
-        self.cur.execute(query,(self.biz,name+'%'))
+        self.table.blockSignals(True)
+        self.name = self.namelineEdit.text()
+        if self.name == '' : 
+            query = """
+            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
+            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;
+            """
+            self.cur.execute(query)
+        elif self.biz == '전체':
+            query = """
+            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
+            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND NAME_KOR LIKE %s;
+            """
+            self.cur.execute(query,(self.name+'%'))
+
+        elif self.biz != '전체':
+            query = """
+            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
+            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = %s AND NAME_KOR LIKE %s;
+            """
+            self.cur.execute(query,(self.biz,self.name+'%'))
         result = self.cur.fetchall()
         self.setTableItem(result)
+        self.table.blockSignals(False)
         
     
     def onHeaderClicked(self, logicalIndex):
@@ -119,22 +150,46 @@ class EduList(QMainWindow, form_class):
 
     # 231118필터링 팝업창 생성 by 정현아
     def filter(self):
-        dialog = QInputDialog(self)
-        dialog.setOkButtonText("검색")
-        dialog.setCancelButtonText("취소")
-        dialog.setLabelText("검색어를 입력하세요(Y,N)")
-        dialog.setWindowTitle("이수여부 검색")
-        if dialog.exec_() == QDialog.Accepted:
-            self.table.setHorizontalHeaderItem(7, QTableWidgetItem('이수여부☑')) 
-            text = dialog.textValue()
-            self.flag+=1
-            query ="""
-            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
-            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
-            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND COMP_YN = '""" + text + '\';'
-            self.cur.execute(query)
-            result = self.cur.fetchall()
-            self.setTableItem(result)
+        self.table.blockSignals(True)
+        if self.flag == 0 :
+            dialog = QInputDialog(self)
+            dialog.setOkButtonText("검색")
+            dialog.setCancelButtonText("취소")
+            dialog.setLabelText("검색어를 입력하세요(Y,N)")
+            dialog.setWindowTitle("이수여부 검색")
+
+            if dialog.exec_() == QDialog.Accepted:
+                self.text = dialog.textValue()
+                self.table.setHorizontalHeaderItem(7, QTableWidgetItem('이수여부☑')) 
+                
+                if not(self.text == 'Y' or self.text == 'N' or self.text == 'y'or self.text == 'n'):
+                    QMessageBox.warning(self,"Update Item Failed","Y 또는 N만 검색가능합니다.")
+                    return
+                elif self.text.islower():
+                    self.text = self.text.upper()
+                self.flag += 1
+
+                row_count = 1
+
+                for row in range(self.table.rowCount()):
+                    item = self.table.item(row, 7)  
+                    if item and item.text() == self.text:
+                        self.table.setRowHidden(row, False)
+                        self.table.item(row, 0).setText(str(row_count))
+                        row_count += 1
+                    else:
+                        self.table.setRowHidden(row, True)
+            else:
+                for row in range(self.table.rowCount()):
+                    item = self.table.item(row, 7)  
+                    if item and item.text() == self.text:
+                        self.table.setRowHidden(row, False)
+                        self.table.item(row, 0).setText(str(row_count))
+                        row_count += 1
+                    else:
+                        self.table.setRowHidden(row, True)
+
+        self.table.blockSignals(False)
                     
     # 231118 필터링 해제 by 정현아                
     def cnlFilter(self):
@@ -147,6 +202,7 @@ class EduList(QMainWindow, form_class):
         self.cur.execute(query)
         result = self.cur.fetchall()
         self.setTableItem(result)
+        self.text = ''
 
 
     # 231120 입력 팝업창 생성 by 정현아
@@ -180,55 +236,65 @@ class EduList(QMainWindow, form_class):
                     self.w.addT.setItem(r-1,c,QTableWidgetItem(str(data[r][c])))
             self.w.show()
         else: pass
+
     # 231129 셀값 변경시 리스트에 저장 by 정현아
-    # def chCell(self, item):
-    #     chList = []
-    #     chList.append(item.row())
-    #     chList.append(item.column())
-    #     chList.append(item.text())
-    #     item.setBackground(QColor(255,255,127))
-    #     self.chLists.append(chList)
+    def chCell(self, item):
+        chList = []
+        chList.append(item.row())
+        chList.append(item.column())
+        chList.append(item.text())
+        item.setBackground(QColor(255,255,127))
+        self.chLists.append(chList)
+        print(chList)
+        print("------------------------------")
     
     # 231129 버튼 클릭시 변경한 셀값 업데이트
-    # def updateCell(self):
-    #     if not self.chLists:
-    #        QMessageBox.warning(self,"Update Item Failed","변경된 정보가 없습니다.") 
-    #        return
+    def updateCell(self):
+        print(self.chLists)
+        if not self.chLists:
+            QMessageBox.warning(self,"Update Item Failed","변경된 정보가 없습니다.") 
+            return
     
-    #     else:
-    #         for chList in self.chLists:
-    #             r = chList[0]
-    #             c = chList[1]
-    #             cont = chList[2]
-    #         if cont == '' :
-    #             QMessageBox.warning(self,"Update Item Failed","빈 값을 넣으실 수 없습니다.")
-    #             return
-    #         elif c==7 and not(cont == 'Y' or cont == 'N' or cont == 'y'or cont == 'n' ):
-    #             QMessageBox.warning(self,"Update Item Failed","이수여부에는 Y 또는 N만 입력가능합니다.")
-    #             return
-    #         else:
-    #             if(c==5):
-    #                 query = 'UPDATE E_C SET NAME_EDU = %s WHERE EMP_NUM = %s AND NAME_EDU = %s'
-    #                 self.cur.execute(query,(cont,int(self.result[r][1]),self.result[r][5]))
-    #             elif(c==6):
-    #                 query = 'UPDATE E_C SET EDU_INSTI = %s WHERE EMP_NUM = %s AND NAME_EDU = %s'
-    #                 self.cur.execute(query,(cont,int(self.result[r][1]),self.result[r][5]))
-    #             elif(c==7):
-    #                 if(cont.islower()):
-    #                     cont = cont.upper()
-    #                 query = 'UPDATE E_C SET COMP_YN = %s WHERE EMP_NUM = %s AND NAME_EDU = %s'
-    #                 self.cur.execute(query,(cont,int(self.result[r][1]),self.result[r][5]))
-    #             self.conn.commit()
-    #         self.chList = []
-    #         QMessageBox.information(self,"Update Item Succeed","업데이트 되었습니다.") 
-    #         query = """
-    #         SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
-    #         FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
-    #         WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;
-    #         """
-    #         self.cur.execute(query)
-    #         result = self.cur.fetchall()
-    #         self.setTableItem(result)
+        else:
+            for chList in self.chLists:
+                r = chList[0]
+                c = chList[1]
+                cont = chList[2]
+                if cont == '' :
+                    QMessageBox.warning(self,"Update Item Failed","빈 값을 넣으실 수 없습니다.")
+                    return
+                elif c==7 and not(cont == 'Y' or cont == 'N' or cont == 'y'or cont == 'n' ):
+                    QMessageBox.warning(self,"Update Item Failed","이수여부에는 Y 또는 N만 입력가능합니다.")
+                    return
+                else:
+                    if(c==5):
+                        query = 'UPDATE E_C SET NAME_EDU = %s WHERE EMP_NUM = %s AND NAME_EDU = %s'
+                        self.cur.execute(query,(cont,int(self.result[r][1]),self.result[r][5]))
+                    elif(c==6):
+                        query = 'UPDATE E_C SET EDU_INSTI = %s WHERE EMP_NUM = %s AND NAME_EDU = %s'
+                        self.cur.execute(query,(cont,int(self.result[r][1]),self.result[r][5]))
+                    elif(c==7):
+                        if(cont.islower()):
+                            cont = cont.upper()
+                        query = 'UPDATE E_C SET COMP_YN = %s WHERE EMP_NUM = %s AND NAME_EDU = %s'
+                        self.cur.execute(query,(cont,int(self.result[r][1]),self.result[r][5]))
+                    self.conn.commit()
+            self.chList = []
+            QMessageBox.information(self,"Update Item Succeed","업데이트 되었습니다.") 
+            query = """
+            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
+            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;
+            """
+            self.cur.execute(query)
+            result = self.cur.fetchall()
+            if self.biz != '전체': 
+                self.searchBiz()
+            if self.name != '' :
+                self.searchEmp()
+            if self.flag == 1:
+                self.filter()
+
             
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):
