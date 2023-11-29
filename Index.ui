@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1261</width>
-    <height>837</height>
+    <width>1265</width>
+    <height>846</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -747,21 +747,20 @@ border-radius:20px
           <widget class="QPushButton" name="logoutBtn">
            <property name="minimumSize">
             <size>
-             <width>93</width>
+             <width>75</width>
              <height>28</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>93</width>
+             <width>75</width>
              <height>28</height>
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: #ff5500;
-border-radius : 10px; 
-border : 2px solid #ff5500;
-color: white;
+            <string notr="true">background-color: white;
+border : 2px solid #dedede;
+color: #4c4c4c;
 </string>
            </property>
            <property name="text">
@@ -1081,8 +1080,8 @@ border-radius: 20px;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1261</width>
-     <height>26</height>
+     <width>1265</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>
