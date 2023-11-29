@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from datetime import datetime
 from add_img import AddImg
 
 def resource_path(relative_path):
@@ -90,6 +91,10 @@ class Regist(QMainWindow, form_class):
 
         #self.phoneNum_lineEdit.setValidator(QIntValidator(regExp, self))
         
+        # 231123사번을 12000000~올해년도*1000000까지 입력제한
+        year = ((datetime.today().year-2000)+1)*1000000
+        self.Emp_Number_lineEdit.setValidator(QIntValidator(12000000,year,self))        
+        self.personnum_lineEdit_1.setValidator(QIntValidator(120000,year,self))
         
         self.conn = pymysql.connect(
             host='192.168.2.20',
@@ -106,7 +111,8 @@ class Regist(QMainWindow, form_class):
     #편집 저장완료시 필수정보 확인 by김태균
     def userReg(self):
         self.namekr = self.namekr_lineEdit.text()
-        self.personnum = self.personnum_lineEdit.text()
+        self.personnum1 = self.personnum_lineEdit_1.text()
+        self.personnum2 = self.personnum_lineEdit_2.text()
         self.onlyint=QIntValidator()
         self.nameEng = self.nameEng_lineEdit.text()
         self.Emp_Number = self.Emp_Number_lineEdit.text()
@@ -128,8 +134,11 @@ class Regist(QMainWindow, form_class):
                 QMessageBox.warning(self,'Name Edit Failed','이름은 영문자, 자음, 모음이 입력될 수 없습니다. ')
                 return
             else:
-                if (len(self.personnum)<13): #주민등록번호 글자수 조건
-                    QMessageBox.warning(self,'Person number Failed','하이폰(-) 없이 주민번호 13자리를 입력해야 합니다. ')
+                if (len(self.personnum1)<6): #주민등록번호 글자수 조건
+                    QMessageBox.warning(self,'Person number Failed','생년월일 6자리를 입력해야 합니다. ')
+                    return
+                elif(len(self.personnum2)<7):
+                    QMessageBox.warning(self,'Person number Failed','생년월일 6자리를 입력해야 합니다. ')
                     return
                 elif(not self.personnum.isalnum()):
                     QMessageBox.warning(self,'Person number Failed','주민번호는 숫자만 사용하셔야 합니다.')
