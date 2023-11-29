@@ -153,7 +153,7 @@ class Regist(QMainWindow, form_class):
         self.phoneNum2 = self.phoneNum_lineEdit2.text()
         self.phoneNum3 = self.phoneNum_lineEdit3.text()
         self.dateEdt = self.dateEdit.setDate(QDate.currentDate())
-        #self.emp_rank = self.comboBox_6.et
+        #self.emp_rank = self.comboBox_6
         #self.comboBox_6.currentIndexChanged.connect(self.on_combobox_changed)
 
         self.address1 = self.address1_lineEdit.text()
@@ -195,7 +195,7 @@ class Regist(QMainWindow, form_class):
                         emptyYN = self.cur.fetchone()
 
                         if emptyYN is None:
-                            query ='insert into main_table (emp_num, name_kor, name_eng, reg_num, phone, mail, address, date_join, emp_rank, work_pos, last_edu) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'
+                            query ='insert into main_table (emp_num, name_kor, name_eng, reg_num, phone, mail, address, date_join) values(%s,%s,%s,%s,%s,%s,%s,%s);'
                             self.cur.execute(query, (self.Emp_Number, self.namekr,self.nameEng, (self.personnum+self.personnum2), (self.phoneNum+self.phoneNum2+self.phoneNum3), self.email, (self.address1+self.address2), self.dateEdt ))
                             self.conn.commit()
                             self.conn.close()
