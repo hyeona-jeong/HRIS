@@ -151,7 +151,7 @@ class EduList(QMainWindow, form_class):
     # 231118필터링 팝업창 생성 by 정현아
     def filter(self):
         self.table.blockSignals(True)
-        if self.flag == 0 :
+        if self.flag == 0:
             dialog = QInputDialog(self)
             dialog.setOkButtonText("검색")
             dialog.setCancelButtonText("취소")
@@ -161,9 +161,9 @@ class EduList(QMainWindow, form_class):
             if dialog.exec_() == QDialog.Accepted:
                 self.text = dialog.textValue()
                 self.table.setHorizontalHeaderItem(7, QTableWidgetItem('이수여부☑')) 
-                
-                if not(self.text == 'Y' or self.text == 'N' or self.text == 'y'or self.text == 'n'):
-                    QMessageBox.warning(self,"Update Item Failed","Y 또는 N만 검색가능합니다.")
+
+                if not (self.text == 'Y' or self.text == 'N' or self.text == 'y' or self.text == 'n'):
+                    QMessageBox.warning(self, "Update Item Failed", "Y 또는 N만 검색 가능합니다.")
                     return
                 elif self.text.islower():
                     self.text = self.text.upper()
@@ -172,22 +172,25 @@ class EduList(QMainWindow, form_class):
                 row_count = 1
 
                 for row in range(self.table.rowCount()):
-                    item = self.table.item(row, 7)  
+                    item = self.table.item(row, 7)
                     if item and item.text() == self.text:
                         self.table.setRowHidden(row, False)
-                        self.table.item(row, 0).setText(str(row_count))
+                        if self.flag == 1:
+                            self.table.item(row, 0).setText(str(row_count))
                         row_count += 1
                     else:
                         self.table.setRowHidden(row, True)
-            else:
-                for row in range(self.table.rowCount()):
-                    item = self.table.item(row, 7)  
-                    if item and item.text() == self.text:
-                        self.table.setRowHidden(row, False)
+        else:
+            row_count = 1
+            for row in range(self.table.rowCount()):
+                item = self.table.item(row, 7)
+                if item and item.text() == self.text:
+                    self.table.setRowHidden(row, False)
+                    if self.flag == 1:
                         self.table.item(row, 0).setText(str(row_count))
-                        row_count += 1
-                    else:
-                        self.table.setRowHidden(row, True)
+                    row_count += 1
+                else:
+                    self.table.setRowHidden(row, True)
 
         self.table.blockSignals(False)
                     
@@ -281,13 +284,6 @@ class EduList(QMainWindow, form_class):
                     self.conn.commit()
             self.chList = []
             QMessageBox.information(self,"Update Item Succeed","업데이트 되었습니다.") 
-            query = """
-            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
-            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
-            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;
-            """
-            self.cur.execute(query)
-            result = self.cur.fetchall()
             if self.biz != '전체': 
                 self.searchBiz()
             if self.name != '' :
