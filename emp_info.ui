@@ -476,7 +476,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>0</height>
+           <height>70</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -508,87 +508,6 @@ color white;</string>
             <string/>
            </property>
           </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_4">
-             <property name="minimumSize">
-              <size>
-               <width>39</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>39</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color:rgb(244, 244, 244);</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="pixmap">
-              <pixmap>diagram.png</pixmap>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBox">
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>39</height>
-              </size>
-             </property>
-             <item>
-              <property name="text">
-               <string>MIS</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>TSP</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>TC</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>FAB</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>경영지원실</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>전략기획실</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
          </item>
          <item>
           <widget class="QLabel" name="label_7">
@@ -638,78 +557,6 @@ color white;</string>
             <string/>
            </property>
           </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label">
-             <property name="minimumSize">
-              <size>
-               <width>39</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>39</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color:rgb(244, 244, 244);</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="pixmap">
-              <pixmap>peo.png</pixmap>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit">
-             <property name="minimumSize">
-              <size>
-               <width>171</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>171</width>
-               <height>40</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_2">
-             <property name="minimumSize">
-              <size>
-               <width>39</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>39</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">border: none;
-background-color:white;</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>find.png</normaloff>find.png</iconset>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </item>
          <item>
           <widget class="QLabel" name="label_5">
@@ -918,16 +765,6 @@ background-color:white;</string>
                 </size>
                </property>
               </spacer>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_138">
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap>nori.png</pixmap>
-               </property>
-              </widget>
              </item>
             </layout>
            </item>

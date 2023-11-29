@@ -1194,6 +1194,9 @@ background-color:white;</string>
            </item>
            <item>
             <widget class="QLabel" name="Emp_Number_label_2">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Ignored">
                <horstretch>0</horstretch>

@@ -3,6 +3,7 @@ import sys
 import re
 import pymysql
 
+
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
@@ -30,6 +31,8 @@ class Regist(QMainWindow, form_class):
 
         self.fcnt = 0
         self.tabWidget.setMovable(True)
+
+        
         
         self.layout = QVBoxLayout()
         self.family = QScrollArea()
@@ -79,16 +82,12 @@ class Regist(QMainWindow, form_class):
         
         self.fAdd_btn.clicked.connect(self.addfamily)
         self.saveBtn.clicked.connect(self.userReg)
-        
+        self.searchAddress.clicked.connect(self.get_geocode)
         #주민번호, 휴대폰번호 정수만 입력되게 제한
         # def __init__(self, parent=None):
         #     super(phoneNum_lineEdit, self).__init__(parent)
-
-        # self.personnum_lineEdit.setValidator(QIntValidator())
-        # regExp = QRegExp("[0-9]*")
-        # self.phoneNum_lineEdit.setValidator(QIntValidator())
-
-        #self.phoneNum_lineEdit.setValidator(QIntValidator(regExp, self))
+        #self.personnum_lineEdit.setValidator(Qt.QIntValidator())
+        #self.phoneNum_lineEdit.setValidator(Qt.QIntValidator())
         
         
         self.conn = pymysql.connect(
@@ -99,73 +98,7 @@ class Regist(QMainWindow, form_class):
             port=3306,
             charset='utf8'
         )
-        self.cur = self.conn.cursor()
-
-
-    
-    #편집 저장완료시 필수정보 확인 by김태균
-    def userReg(self):
-        self.namekr = self.namekr_lineEdit.text()
-        self.personnum = self.personnum_lineEdit.text()
-        self.onlyint=QIntValidator()
-        self.nameEng = self.nameEng_lineEdit.text()
-        self.Emp_Number = self.Emp_Number_lineEdit.text()
-        self.phoneNum = self.phoneNum_lineEdit.text()
-        self.address1 = self.address1_lineEdit.text()
-        self.address2 = self.address2_lineEdit.text()
-        
-        if(len(self.namekr)==0 or len(self.personnum)==0 or len(self.nameEng)==0 or len(self.Emp_Number)==0 or len(self.phoneNum)==0 or len(self.address1)==0 or len(self.address2)==0 ):
-            QMessageBox.warning(self, 'Regist failed','모든 항목을 입력하셔야 합니다.')
-            return
-        else:
-            if (len(self.namekr)<2): # 이름 글자수 조건
-                QMessageBox.warning(self,'Name Edit Failed','이름은 최소 두 글자입니다.')
-                return
-            elif (len(self.namekr)>4):
-                QMessageBox.warning(self,'Name Edit Failed','이름은 최대 네 글자입니다.')
-                return
-            elif (re.sub(r"[가-힣]","",self.namekr) != ''):
-                QMessageBox.warning(self,'Name Edit Failed','이름은 영문자, 자음, 모음이 입력될 수 없습니다. ')
-                return
-            else:
-                if (len(self.personnum)<13): #주민등록번호 글자수 조건
-                    QMessageBox.warning(self,'Person number Failed','하이폰(-) 없이 주민번호 13자리를 입력해야 합니다. ')
-                    return
-                elif(not self.personnum.isalnum()):
-                    QMessageBox.warning(self,'Person number Failed','주민번호는 숫자만 사용하셔야 합니다.')
-                    return
-                else:
-                    if(len(self.phoneNum)>11): #휴대폰번호 글자수 조건
-                        QMessageBox.warning(self,'Phone number Failed','하이폰(-) 없이 휴대폰번호 11자리를 입력해야 합니다. ')
-                        return
-                    elif(not self.phoneNum.isalnum()):
-                        QMessageBox.warning(self,'Phone number Failed','휴대폰 번호는 숫자만 사용하셔야 합니다.')
-                        return
-                    else:
-                        query = 'select emp_num from main_table where emp_num =\'' + self.Emp_Number + '\';'
-                        self.cur.execute(query)
-                        emptyYN = self.cur.fetchone()
-
-                        if emptyYN is None:
-                            QMessageBox.warning(self,'insert Failed','등록되지 않은 사번입니다.\n관리자에게 문의바랍니다.')
-                            return
-                        else: 
-                            query ='select emp_num from main_table where emp_num = ' + self.Emp_Number +';'
-                            self.cur.execute(query)
-                            emptyYN = self.cur.fetchone()
-                            if emptyYN is not None:
-                                QMessageBox.warning(self,'insert Failed','사원님의 ID가 이미 존재합니다.')
-                                return
-                                        
-                            # 231123 모든 체크 완료시 DB에 Insert. 권한 문제로 미완성 by 정현아
-                            else:
-                                query ='insert into main_table values(%s,%s,%s,%s);'
-                                self.cur.execute(query, (self.namekr,self.personnum,self.Emp_Number,'user'))
-                                self.conn.commit()
-                                self.conn.close()
-                                QMessageBox.information(self,'insert Succeed','등록완료되었습니다.')
- 
-                    
+        self.cur = self.conn.cursor()              
                         
                 
     # 231123 페이지 전환 함수 by 정현아    
@@ -207,7 +140,67 @@ class Regist(QMainWindow, form_class):
             
         else:
             QMessageBox.information(self,"경고","5명이상 등록하실 수 없습니다.")
+
+    #편집 저장완료시 필수정보 확인 by김태균
+    def userReg(self):
+        self.namekr = self.namekr_lineEdit.text()
+        self.personnum = self.personnum_lineEdit.text()
+        self.personnum2 = self.personnum_lineEdit2.text()
+        self.nameEng = self.nameEng_lineEdit.text()
+        self.Emp_Number = self.Emp_Number_lineEdit.text()
+        self.email = self.email_lineEdit.text()
+        self.phoneNum = self.phoneNum_lineEdit.text()
+        self.phoneNum2 = self.phoneNum_lineEdit2.text()
+        self.phoneNum3 = self.phoneNum_lineEdit3.text()
+        self.dateEdt = self.dateEdit.setDate(QDate.currentDate())
+        #self.emp_rank = self.comboBox_6.et
+        #self.comboBox_6.currentIndexChanged.connect(self.on_combobox_changed)
+
+        self.address1 = self.address1_lineEdit.text()
+        self.address2 = self.address2_lineEdit.text()
         
+        if(len(self.namekr)==0 or len(self.personnum)==0 or len(self.nameEng)==0 or len(self.Emp_Number)==0 or len(self.phoneNum)==0 or len(self.address1)==0 or len(self.address2)==0 ):
+            QMessageBox.warning(self, 'Regist failed','필수 항목을 입력하셔야 합니다.')
+            return
+        else:
+            if (len(self.namekr)<2): # 이름 글자수 조건
+                QMessageBox.warning(self,'Name Edit Failed','이름은 최소 두 글자입니다.')
+                return
+            elif (len(self.namekr)>4):
+                QMessageBox.warning(self,'Name Edit Failed','이름은 최대 네 글자입니다.')
+                return
+            elif (re.sub(r"[가-힣]","",self.namekr) != ''):
+                QMessageBox.warning(self,'Name Edit Failed','이름은 영문자, 자음, 모음이 입력될 수 없습니다. ')
+                return
+            else:
+                if (len(self.personnum)<13): #주민등록번호 글자수 조건
+                    QMessageBox.warning(self,'Person number Failed','하이폰(-) 없이 주민번호 13자리를 입력해야 합니다. ')
+                    return
+                elif(not self.personnum.isalnum()):
+                    QMessageBox.warning(self,'Person number Failed','주민번호는 숫자만 사용하셔야 합니다.')
+                    return
+                else:
+                    if(len(self.phoneNum)>11): #휴대폰번호 글자수 조건
+                        QMessageBox.warning(self,'Phone number Failed','하이폰(-) 없이 휴대폰번호 11자리를 입력해야 합니다. ')
+                        return
+                    elif(not self.phoneNum.isalnum()):
+                        QMessageBox.warning(self,'Phone number Failed','휴대폰 번호는 숫자만 사용하셔야 합니다.')
+                        return
+                    else:
+                        query = 'select emp_num from main_table where emp_num =\'' + self.Emp_Number + '\';'
+                        self.cur.execute(query)
+                        emptyYN = self.cur.fetchone()
+
+                        if emptyYN is None:
+                            query ='insert into main_table (emp_num, name_kor, name_eng, reg_num, phone, mail, address, date_join, emp_rank, work_pos, last_edu) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'
+                            self.cur.execute(query, (self.Emp_Number, self.namekr,self.nameEng, self.personnum, self.phoneNum, self.email, (self.address1+self.address2), self.dateEdt ))
+                            self.conn.commit()
+                            self.conn.close()
+                            QMessageBox.information(self,'insert Succeed','등록 완료되었습니다.')
+                        else: 
+                            QMessageBox.warning(self,'insert Failed','중복되는 사번입니다.\n관리자에게 문의바랍니다.')
+                            return
+
     
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):
