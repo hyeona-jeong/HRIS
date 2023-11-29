@@ -173,15 +173,18 @@ class Regist(QMainWindow, form_class):
                 QMessageBox.warning(self,'Name Edit Failed','이름은 영문자, 자음, 모음이 입력될 수 없습니다. ')
                 return
             else:
-                if (len(self.personnum)<13): #주민등록번호 글자수 조건
-                    QMessageBox.warning(self,'Person number Failed','하이폰(-) 없이 주민번호 13자리를 입력해야 합니다. ')
+                if (len(self.personnum)<6): #주민등록번호 글자수 조건
+                    QMessageBox.warning(self,'Person number Failed','생년월일 6자리를 입력해야 합니다. ')
+                    return
+                elif(len(self.personnum2)<7): #주민등록번호 글자수 조건
+                    QMessageBox.warning(self,'Person number Failed','주민번호 뒤에 7자리를 입력해야 합니다. ')
                     return
                 elif(not self.personnum.isalnum()):
                     QMessageBox.warning(self,'Person number Failed','주민번호는 숫자만 사용하셔야 합니다.')
                     return
                 else:
-                    if(len(self.phoneNum)>11): #휴대폰번호 글자수 조건
-                        QMessageBox.warning(self,'Phone number Failed','하이폰(-) 없이 휴대폰번호 11자리를 입력해야 합니다. ')
+                    if(len(self.phoneNum)<3 or len(self.phoneNum2)<4 or len(self.phoneNum3)<4): #휴대폰번호 글자수 조건
+                        QMessageBox.warning(self,'Phone number Failed','휴대폰번호 11자리를 입력해야 합니다. ')
                         return
                     elif(not self.phoneNum.isalnum()):
                         QMessageBox.warning(self,'Phone number Failed','휴대폰 번호는 숫자만 사용하셔야 합니다.')
@@ -193,7 +196,7 @@ class Regist(QMainWindow, form_class):
 
                         if emptyYN is None:
                             query ='insert into main_table (emp_num, name_kor, name_eng, reg_num, phone, mail, address, date_join, emp_rank, work_pos, last_edu) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'
-                            self.cur.execute(query, (self.Emp_Number, self.namekr,self.nameEng, self.personnum, self.phoneNum, self.email, (self.address1+self.address2), self.dateEdt ))
+                            self.cur.execute(query, (self.Emp_Number, self.namekr,self.nameEng, (self.personnum+self.personnum2), (self.phoneNum+self.phoneNum2+self.phoneNum3), self.email, (self.address1+self.address2), self.dateEdt ))
                             self.conn.commit()
                             self.conn.close()
                             QMessageBox.information(self,'insert Succeed','등록 완료되었습니다.')
