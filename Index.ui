@@ -471,43 +471,43 @@
       <height>791</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="indexlayout" stretch="0,0,0,0">
+    <layout class="QVBoxLayout" name="indexlayout" stretch="0,0,0,0,0">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="minimumSize">
+        <size>
+         <width>230</width>
+         <height>69</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>230</width>
+         <height>69</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>nori_230.jpg</pixmap>
+       </property>
+      </widget>
+     </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
-       <item alignment="Qt::AlignRight|Qt::AlignBottom">
-        <widget class="QLabel" name="label">
-         <property name="minimumSize">
-          <size>
-           <width>280</width>
-           <height>105</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>280</width>
-           <height>105</height>
-          </size>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="pixmap">
-          <pixmap>nori_230.jpg</pixmap>
-         </property>
-        </widget>
-       </item>
        <item>
         <widget class="QPushButton" name="toolhr">
          <property name="minimumSize">
           <size>
            <width>170</width>
-           <height>105</height>
+           <height>95</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>170</width>
-           <height>105</height>
+           <height>95</height>
           </size>
          </property>
          <property name="font">
@@ -537,13 +537,13 @@ QPushButton:hover {
          <property name="minimumSize">
           <size>
            <width>170</width>
-           <height>105</height>
+           <height>95</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>170</width>
-           <height>105</height>
+           <height>95</height>
           </size>
          </property>
          <property name="font">
@@ -573,13 +573,13 @@ QPushButton:hover {
          <property name="minimumSize">
           <size>
            <width>170</width>
-           <height>105</height>
+           <height>95</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>170</width>
-           <height>105</height>
+           <height>95</height>
           </size>
          </property>
          <property name="font">
@@ -609,13 +609,13 @@ QPushButton:hover {
          <property name="minimumSize">
           <size>
            <width>170</width>
-           <height>105</height>
+           <height>95</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>170</width>
-           <height>105</height>
+           <height>95</height>
           </size>
          </property>
          <property name="font">
@@ -666,7 +666,7 @@ QPushButton:hover {
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>21</height>
+             <height>16</height>
             </size>
            </property>
           </spacer>
@@ -718,7 +718,7 @@ border-radius:20px
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>32</height>
+             <height>27</height>
             </size>
            </property>
           </spacer>
@@ -738,7 +738,7 @@ border-radius:20px
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>27</height>
+             <height>22</height>
             </size>
            </property>
           </spacer>
@@ -779,7 +779,7 @@ color: #4c4c4c;
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>38</height>
+             <height>33</height>
             </size>
            </property>
           </spacer>
@@ -815,7 +815,7 @@ color: #4c4c4c;
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
-         <height>200</height>
+         <height>150</height>
         </size>
        </property>
       </spacer>

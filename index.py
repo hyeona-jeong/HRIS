@@ -30,7 +30,7 @@ class Index(QMainWindow, form_class):
 
         # 231125 툴버튼에 메뉴 추가 
         self.menuHr = QMenu()
-        self.menuHr.addAction('사원정보목록검색',self.showPage)
+        self.menuHr.addAction('사원정보검색',self.showPage)
         self.menuHr.addAction('사원개인정보조회',self.showPage)
         self.menuHr.addAction('사원정보등록',self.showPage)
 
@@ -38,7 +38,7 @@ class Index(QMainWindow, form_class):
         self.toolhr.setMenu(self.menuHr)
 
         menuEdu = QMenu()
-        menuEdu.addAction('교육이수정보',self.showPage)
+        menuEdu.addAction('교육이수정보 조회/편집',self.showPage)
         menuEdu.setStyleSheet(stylesheet)
 
         self.tooledu.setMenu(menuEdu)
@@ -51,13 +51,13 @@ class Index(QMainWindow, form_class):
     # 231126 버튼 별로 화면 페이지 구분하여 페이지 전환 by 정현아
     def showPage(self):
         sender = self.sender().text()
-        if sender == '사원정보목록검색' or sender == '인사':
+        if sender == '사원정보검색' or sender == '인사':
             self.w = Emplist()
         elif sender == '사원개인정보조회': 
             self.w = EmpInfo()
         elif sender == '사원정보등록':
             self.w = Regist()
-        elif sender == '교육' or sender == '교육이수정보':
+        elif sender == '교육' or sender == '교육이수정보 조회/편집':
             self.w = EduList()
         self.w.show()
         # self.w.center()

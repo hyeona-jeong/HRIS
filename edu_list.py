@@ -44,7 +44,7 @@ class EduList(QMainWindow, form_class):
         self.excelBtn.clicked.connect(self.addExcel)
 
         self.conn = pymysql.connect(
-                host='localhost',
+                host='192.168.2.20',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -89,23 +89,26 @@ class EduList(QMainWindow, form_class):
     # 231129 사업부검색 함수 
     def searchBiz(self,biz):
         self.table.blockSignals(True)
-        self.biz = biz
-        if self.biz == '전체':
-            query = """
-            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
-            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
-            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;
-            """
-            self.cur.execute(query)
-            self.result = self.cur.fetchall()
-        else:
-            query = """
-            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
-            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
-            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = \'""" + biz +'\';'
-            self.cur.execute(query)
-            result = self.cur.fetchall()
-            self.setTableItem(result)
+        self.biz = biz 
+        if self.name != '' :
+            if self.biz == '전체':
+                query = """
+                SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+                FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
+                WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;
+                """
+                self.cur.execute(query)
+                self.result = self.cur.fetchall()
+            else:
+                query = """
+                SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+                FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
+                WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = \'""" + biz +'\';'
+                self.cur.execute(query)
+                result = self.cur.fetchall()
+                self.setTableItem(result)
+        else : 
+            self.searchEmp()
         self.table.blockSignals(False)
         
     # 231129 사원검색 함수
