@@ -461,7 +461,7 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>1262</width>
+      <width>1350</width>
       <height>911</height>
      </rect>
     </property>
@@ -479,7 +479,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>0</height>
+           <height>70</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -511,87 +511,6 @@ color white;</string>
             <string/>
            </property>
           </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_19">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_4">
-             <property name="minimumSize">
-              <size>
-               <width>39</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>39</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color:rgb(244, 244, 244);</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="pixmap">
-              <pixmap>diagram.png</pixmap>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBox">
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>120</width>
-               <height>39</height>
-              </size>
-             </property>
-             <item>
-              <property name="text">
-               <string>MIS</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>TSP</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>TC</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>FAB</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>경영지원실</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>전략기획실</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
          </item>
          <item>
           <widget class="QLabel" name="label_7">
@@ -641,78 +560,6 @@ color white;</string>
             <string/>
            </property>
           </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_21">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item alignment="Qt::AlignHCenter|Qt::AlignBottom">
-            <widget class="QLabel" name="label">
-             <property name="minimumSize">
-              <size>
-               <width>39</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>39</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color:rgb(244, 244, 244);</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="pixmap">
-              <pixmap>peo.png</pixmap>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit">
-             <property name="minimumSize">
-              <size>
-               <width>171</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>171</width>
-               <height>40</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton">
-             <property name="minimumSize">
-              <size>
-               <width>39</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>39</width>
-               <height>39</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">border: none;
-background-color:white;</string>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>find.png</normaloff>find.png</iconset>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </item>
          <item>
           <widget class="QLabel" name="label_5">
@@ -870,7 +717,7 @@ background-color:white;</string>
           <number>12</number>
          </property>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,3,0,0,0,0">
+          <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,3,0,0,0,0,0,0">
            <item>
             <widget class="QLabel" name="namekr_label">
              <property name="sizePolicy">
@@ -976,7 +823,57 @@ background-color:white;</string>
              </property>
              <property name="minimumSize">
               <size>
-               <width>250</width>
+               <width>160</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>300</width>
+               <height>22</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="personnum_label_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Ignored">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>30</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;-&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="personnum_lineEdit_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Ignored">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>170</width>
                <height>22</height>
               </size>
              </property>
@@ -1110,13 +1007,13 @@ background-color:white;</string>
              </property>
              <property name="minimumSize">
               <size>
-               <width>250</width>
+               <width>375</width>
                <height>22</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>300</width>
+               <width>400</width>
                <height>22</height>
               </size>
              </property>
@@ -1138,7 +1035,7 @@ background-color:white;</string>
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0,0,0,0">
+          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0,0,0,0,0,0,0,0">
            <item>
             <widget class="QLabel" name="Emp_Number_label">
              <property name="sizePolicy">
@@ -1248,13 +1145,113 @@ background-color:white;</string>
              </property>
              <property name="minimumSize">
               <size>
-               <width>250</width>
+               <width>100</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>200</width>
+               <width>100</width>
+               <height>22</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="personnum_label_3">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Ignored">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;-&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="phoneNum_lineEdit_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Ignored">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>22</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="personnum_label_4">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Ignored">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;-&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="phoneNum_lineEdit_3">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Ignored">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
                <height>22</height>
               </size>
              </property>
@@ -1378,7 +1375,7 @@ background-color:white;</string>
              </property>
              <property name="minimumSize">
               <size>
-               <width>70</width>
+               <width>100</width>
                <height>0</height>
               </size>
              </property>
@@ -1401,7 +1398,7 @@ background-color:white;</string>
             <widget class="QComboBox" name="comboBox_10">
              <property name="minimumSize">
               <size>
-               <width>280</width>
+               <width>375</width>
                <height>22</height>
               </size>
              </property>

@@ -37,10 +37,47 @@ class Emplist(QMainWindow, form_class):
         self.centralwidget.setLayout(self.listLayout)
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)# 목록 편집 막기
         self.setStyleSheet(stylesheet)
-        #self.searchlineEdit.set
         self.table.horizontalHeader().sectionClicked.connect(self.onHeaderClicked)
         self.listRegBtn.clicked.connect(self.showRegist)
         
+      
+        for row in range(self.table.rowCount()):
+            checkbox_item = QTableWidgetItem()
+            checkbox = QCheckBox()
+            checkbox.setChecked(False)  # 체크박스 초기 상태 설정
+            self.table.setItem(row, 0, checkbox_item)
+            self.table.setCellWidget(row, 0, checkbox)
+            
+        checkbox.stateChanged.connect(self.checkboxStateChanged)
+        
+                #MySql DB 연결 정보
+        self.conn = pymysql.connect(
+            host='192.168.2.20',
+            user='dev',
+            password='nori1234',
+            db='dev',
+            port=3306,
+            charset='utf8'
+        )
+        self.cur = self.conn.cursor()
+        self.load_data()
+        self.show()
+    
+    #테이블위젯 내에 모든 데이터 추출
+    def load_data(self):
+        query = "select dept_biz, dept_group, name_kor, position, emp_rank, work_pos, phone, mail from main_table"
+        self.cur.execute(query)
+        data = self.cur.fetchall()
+
+
+    def checkboxStateChanged(self):
+        # 체크박스 상태가 변경될 때 호출되는 함수
+        for row in range(self.rowCount()):
+            checkbox = self.cellWidget(row, 0)
+
+        
+
+                
     def onHeaderClicked(self, logicalIndex):
         if(logicalIndex == 0):
             self.cnlFilter(logicalIndex)
@@ -51,24 +88,7 @@ class Emplist(QMainWindow, form_class):
                 else: 
                     self.flag[logicalIndex-1]-=1
                     self.cnlFilter(logicalIndex)
-    def filter(self,index):
-        self.s = []
-        dialog = QInputDialog(self)
-        dialog.setOkButtonText("검색")
-        dialog.setCancelButtonText("취소")
-        dialog.setLabelText("검색어를 입력하세요")
-        dialog.setWindowTitle("상세검색")
-        if dialog.exec_() == QDialog.Accepted:
-            text = dialog.textValue()
-            self.flag[index-1]+=1
-            for r in range(self.table.rowCount()):
-                item = self.table.item(r,index).text()
-                self.table.setHorizontalHeaderItem(index, QTableWidgetItem(str(self.header[index-1]+'☑')))
 
-                if(str(text) not in item):
-                    self.s.append(r)
-                    self.table.setRowHidden(r,True)
-            self.hRow[index-1] = self.s
 
         # 이름 검색 필터
         # layout = QVBoxLayout()
@@ -118,26 +138,7 @@ class Emplist(QMainWindow, form_class):
                     self.table.setRowHidden(r,False)
                 for c in range(1,self.table.columnCount()):
                     self.table.setHorizontalHeaderItem(c, QTableWidgetItem(str(self.header[c-1]+'☐')))
-                    
-        
-        #data = self.table
-        
-        #테이블위젯 내에 모든 데이터 추출
-        # self.conn = pymysql.connect(
-        #     host='192.168.2.20',
-        #     user='dev',
-        #     password='nori1234',
-        #     db='dev',
-        #     port=3306,
-        #     charset='utf8'
-        # )
-        # self.cur = self.conn.cursor()
-        # self
-        # query = "select (department, name_kor, postion, emp_rank, work_pos, phone, mail) from main_table"
-        # self.cur.execute(query)
-        # self.conn.commit()
-
-        
+      
                 
     #셀 클릭시     
     def Cell_Click(self, row):
