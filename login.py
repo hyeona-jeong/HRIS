@@ -50,7 +50,7 @@ class Login(QMainWindow, form_class):
             return
         #login_data에서 id,passwd가 일치하면 index페이지로 전환
         else:
-            query = 'SELECT passwd,cert_num FROM login_data WHERE id = %s'
+            query = 'SELECT PASSWD,CERT_NUM FROM LOGIN_DATA WHERE ID = %s'
             self.cur.execute(query, self.id)
             result_pass = self.cur.fetchone()
             if result_pass is not None:

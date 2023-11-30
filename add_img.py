@@ -23,18 +23,7 @@ class AddImg(QMainWindow, form_class):
     def __init__(self):
         super( ).__init__( )
         self.setupUi(self)
-        
-        self.searchbutton.clicked.connect(self.open_image)
-        self.savebtn.clicked.connect(self.saveimg)
-    
-    #찾아보기로 이미지파일 팝업 열기 11.24 by김태균
-    def open_image(self):
-        file_path = QFileDialog.getOpenFileName(self, '이미지 찾기', './')
-        print(file_path)
 
-    def saveimg(self):
-        self.w .close()
-        
     # 231128 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by김태균
     def closeEvent(self, e):
         self.closed.emit()
