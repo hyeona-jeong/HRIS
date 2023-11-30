@@ -106,7 +106,7 @@ class Regist(QMainWindow, form_class):
             '영문성명':'',             
             '사번':'', 
             '주민번호':'',
-            'pic':'',  
+            '사진':'',  
             '메일':'', 
             '휴대폰번호':'',  
             '입사일':'',             
@@ -131,7 +131,7 @@ class Regist(QMainWindow, form_class):
             buffer = QBuffer(byte_array)
             buffer.open(QIODevice.WriteOnly)
             self.pixmap.toImage().save(buffer, 'PNG')
-            attrDict['pic'] = byte_array
+            attrDict['사진'] = byte_array
         if self.empNum_lineEdit.text() == '':
             QMessageBox.warning(self, "사원등록실패", "사번이 입력되지 않았습니다.사번 입력바랍니다.")
             return
@@ -244,7 +244,7 @@ class Regist(QMainWindow, form_class):
                     QMessageBox.warning(self, "사원등록실패", "{}이(가) 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
                     return
 
-            elif not (key == '신장' or key == '체중' or key == '그룹' or key == '직무' or key == 'pic' or key == 'age' or key == 'gender'):
+            elif not (key == '신장' or key == '체중' or key == '그룹' or key == '직무' or key == 'age' or key == 'gender'):
                 if value == '':
                     QMessageBox.warning(self, "사원등록실패", "{}이(가) 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
                     return
