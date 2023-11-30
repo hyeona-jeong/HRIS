@@ -1,5 +1,5 @@
 insert into main_table(emp_num, name_kor,name_eng,reg_num, pic, age, phone, mail, address, date_join, emp_rank, position, department, salary, last_edu)
-     values (16120105,'정현아','jeong hyeona','9403101111111',
-     LOAD_FILE('C:\\ProgramData\\MySQL\\MySQL Server 8.2\\Uploads\\test.png'),30,
-     '01037073246','ha.jeong@norisystem.co.kr','경기도 안산시',
-     '2016-12-01','주임','파트원','MIS > PLM G','S41','대졸');
+     values (17120105,'김철수','kim chulsoo','9305101111111',
+     LOAD_FILE('C:\\ProgramData\\MySQL\\MySQL Server 8.2\\Uploads\\test.png'),31,
+     '01022222222','ha.jeong@norisystem.co.kr','서울특별시 송파구',
+     '2017-12-01','주임','파트원','MIS > PLM G','S31','대졸');

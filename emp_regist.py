@@ -31,13 +31,13 @@ class Regist(QMainWindow, form_class):
         
         # 각 입력항목들 입력 제한
         self.namekr_lineEdit.textChanged.connect(self.setValKor)
-        rep = QRegExp("[a-zA-Z\\s]{19}")
+        rep = QRegExp("[a-zA-Z\\s]{0,19}")
         self.nameEng_lineEdit.setValidator(QRegExpValidator(rep))
         self.regnum_lineEdit.setValidator(QIntValidator(1,100000,self))
         self.regnum_lineEdit2.setValidator(QIntValidator(1,1000000,self))
-        rep = QRegExp("[a-z0-9]+@[a-z]+.[a-z]+.[a-z]{2}")
-        self.email_lineEdit.setValidator(QRegExpValidator(rep))
-        rep = QRegExp("[가-힣0-9\\s]{49}")
+        # rep = QRegExp("[a-z0-9]+@[a-z]+.[a-z]+.[a-z]{,2}")
+        # self.email_lineEdit.setValidator(QRegExpValidator(rep))
+        rep = QRegExp("[가-힣0-9\\s,()]{0,49}")
         self.addre_lineEdit.setValidator(QRegExpValidator(rep))
         self.empNum_lineEdit.setValidator(QIntValidator(1,10000000,self))
         self.phone_lineEdit2.setValidator(QIntValidator(1,1000,self))
@@ -50,6 +50,8 @@ class Regist(QMainWindow, form_class):
         self.searchAddress.setVisible(False)  
         self.dateEdit.setDate(QDate.currentDate())
         
+        self.empNum_lineEdit.textEdited.connect(self.setDate)
+        
         self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄']
         self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G']
         self.MIS = ['전기운영 G','PLM G']
@@ -59,7 +61,7 @@ class Regist(QMainWindow, form_class):
         self.biz_combo.activated[str].connect(self.changeGroup)
 
         self.conn = pymysql.connect(
-                host='localhost',
+                host='192.168.2.20',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -79,7 +81,7 @@ class Regist(QMainWindow, form_class):
             QMessageBox.warning(self,'입력오류','한글을 입력해주세요')
             self.namekr_lineEdit.clear()
             return
-        rep = QRegExp("[가-힣]{4}")
+        rep = QRegExp("[가-힣]{3,4}")
         self.namekr_lineEdit.setValidator(QRegExpValidator(rep))
     
     # 231130 사업부별 그룹 콤보박스 생성
@@ -248,6 +250,23 @@ class Regist(QMainWindow, form_class):
                 if value == '':
                     QMessageBox.warning(self, "사원등록실패", "{}이(가) 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
                     return
+        t1 = (attrDict['사번'], attrDict['사번'], attrDict['주민번호'])
+        query = """
+        SELECT NULLIF(EMP_NUM, %s), REG_NUM FROM MAIN_TABLE WHERE EMP_NUM= %s OR REG_NUM = %s;
+        """
+        try:
+            self.cur.execute(query, t1)
+            result = self.cur.fetchone()
+            if result is not None :
+                if result[0] is None:
+                    QMessageBox.warning(self, "사원등록실패", "이미 등록된 사번입니다.")
+                    return
+                else : 
+                    QMessageBox.warning(self, "사원등록실패", "이미 등록된 주민번호입니다.")
+                    return
+        except Exception as e:
+            QMessageBox.warning(self, "사원등록실패", "Error: " + str(e))
+            return
         
         query = """
         INSERT INTO MAIN_TABLE (
@@ -282,25 +301,42 @@ class Regist(QMainWindow, form_class):
         try:
             self.cur.execute(query, tuple(attrDict.values()))
             self.conn.commit()
-            QMessageBox.information(self, "등록되었습니다.")
-        except Exception as e:
-                print(self, "사원등록실패", "Error: " + str(e))
-
-        self.namekr_lineEdit.clear()
-        self.regnum_lineEdit.clear()
-        self.regnum_lineEdit2.clear()
-        self.nameEng_lineEdit.clear()
-        self.email_lineEdit.clear()
-        self.empNum_lineEdit.clear()
-        self.phone_lineEdit2.clear()
-        self.phone_lineEdit3.clear()
-        self.addressNum_lineEdit.clear()
-        self.addre_lineEdit.clear()
-        self.sal_lineEdit.clear()
-        self.height_lineEdit.clear()
-        self.weight_lineEdit.clear()
+            QMessageBox.information(self, "사원등록성공", "등록되었습니다.")
+            
+            # 231201 등록된 내용 초기화 by 정현아
+            self.namekr_lineEdit.clear()
+            self.regnum_lineEdit.clear()
+            self.regnum_lineEdit2.clear()
+            self.nameEng_lineEdit.clear()
+            self.email_lineEdit.clear()
+            self.empNum_lineEdit.clear()
+            self.phone_lineEdit2.clear()
+            self.phone_lineEdit3.clear()
+            self.addressNum_lineEdit.clear()
+            self.addre_lineEdit.clear()
+            self.sal_lineEdit.clear()
+            self.height_lineEdit.clear()
+            self.weight_lineEdit.clear()
+            self.biz_combo.setCurrentIndex(0)
+            self.rank_combo.setCurrentIndex(0)
+            self.workPos_combo.setCurrentIndex(0)
+            self.position_combo.setCurrentIndex(0)
+            self.sal_combo.setCurrentIndex(0)
+            self.lastEdu_combo.setCurrentIndex(1)
+            self.dateEdit.setDate(QDate.currentDate())
         
-    # 231123 페이지 전환 함수 by 정현아    
+            self.pixmap = QPixmap('C:/Users/정현아/.ssh/HRIS/unknown.png')
+            width = 130
+            height = 150
+            resize_pixmap = self.pixmap.scaled(width,height)
+            self.img_label.setPixmap(resize_pixmap)                    
+                
+        except Exception as e:
+                QMessageBox.warning(self, "사원등록실패", "Error: " + str(e))
+                return
+    def setDate(self):
+        pass
+    # 231123 이미지 등록화면 전환 및 버튼이벤트 등록 함수 by 정현아    
     def showAddImg(self):
         self.w = AddImg()
         self.w.show()
@@ -316,6 +352,8 @@ class Regist(QMainWindow, form_class):
         if self.fname:
             max_file_size_mb = 1
             max_file_size_bytes = max_file_size_mb * 1024 * 1024
+            
+            print(self.fname)
 
             size, self.path = self.get_file_size(self.fname)
             if size >= max_file_size_bytes:
@@ -329,6 +367,7 @@ class Regist(QMainWindow, form_class):
     def get_file_size(self, file_path):
         return os.path.getsize(file_path), file_path
     
+    # 231130 선택한 이미지 등록화면에 띄우기 by 정현아
     def save_img(self):
         if self.path is None :
             QMessageBox.warning(self,'사진등록실패','선택된 사진이 없습니다.\n사진을 선택해주세요.')
