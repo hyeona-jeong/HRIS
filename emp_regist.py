@@ -22,167 +22,177 @@ class Regist(QMainWindow, form_class):
     def __init__(self):
         super( ).__init__( )
         self.setupUi(self)
-        #그룹박스내에 생성창 리스트
+        
         self.regist.setLayout(self.regLayout)
-        
-        
         self.addImgBtn.clicked.connect(self.showAddImg)
-
-        self.fcnt = 0
-        self.tabWidget.setMovable(True)
         
-        self.layout = QVBoxLayout()
-        self.family = QScrollArea()
-        self.tabWidget.addTab(self.family,'가족관계')
+        # 각 입력항목들 입력 제한
+        self.namekr_lineEdit.textChanged.connect(self.setValKor)
+        self.regnum_lineEdit.setValidator(QIntValidator(1,100000,self))
+        self.regnum_lineEdit2.setValidator(QIntValidator(1,1000000,self))
+        self.empNum_lineEdit.setValidator(QIntValidator(1,10000000,self))
+        self.phone_lineEdit.setValidator(QIntValidator(1,100,self))
+        self.phone_lineEdit2.setValidator(QIntValidator(1,1000,self))
+        self.phone_lineEdit3.setValidator(QIntValidator(1,1000,self))
+        self.addressNum_lineEdit.setValidator(QIntValidator(1,10000,self))
+        self.sal_lineEdit.setValidator(QIntValidator(1,10,self))
+        self.height_lineEdit.setValidator(QIntValidator(1,100,self))
+        self.weight_lineEdit.setValidator(QIntValidator(1,100,self))
+        self.lastEdu_combo.setCurrentIndex(1)
+        self.searchAddress.setVisible(False)  
+        self.dateEdit.setDate(QDate.currentDate())
         
-        self.fwidget = QWidget()
-        self.family.setWidget(self.fwidget)
-        self.flay = QGridLayout(self.fwidget)
-        self.family.setWidgetResizable(True)
+        self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄','']
+        self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G','']
+        self.MIS = ['전기운영 G','PLM G','']
+        self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5','']
+        self.SP = ['사업기획팀','기술전략팀','']
+        self.group_combo.addItems(self.TSP)
+        self.biz_combo.activated[str].connect(self.changeGroup)
         
-        self.fName_lbl = []
-        self.fName_le = []
-        self.fYear_lbl = []
-        self.fYear_de = []
-        self.fRel_lbl = []
-        self.fRel_cb = []
-        self.fLive_lbl = []
-        self.fLive_cb = []
+        self.saveBtn.clicked.connect(self.saveEmp)
         
-        self.fName_lbl.append(QLabel("가족성명",self))
-        self.fName_le.append(QLineEdit(self))
-        self.fYear_lbl.append(QLabel("생년월일"))
-        self.fYear_de.append(QDateEdit(self))
-        self.fRel_lbl.append(QLabel("관계"))
-        self.fRel_cb.append(QComboBox())
-        self.f_list = ['조부','조모','외조부','외조모','부','모','빙부','빙모','형제','배우자','자녀']
-        for i in range(len(self.f_list)):
-            self.fRel_cb[0].addItem(self.f_list[i])
-        self.fLive_lbl.append(QLabel("동거여부"))
-        self.fLive_cb.append(QComboBox())
-        self.fLive_cb[0].addItem('Y')
-        self.fLive_cb[0].addItem('N')
-        self.fAdd_btn = QPushButton("추가")
-        
-        self.flay.addWidget(self.fName_lbl[0],0,0)
-        self.flay.addWidget(self.fName_le[0],0,1)
-        self.flay.addWidget(self.fYear_lbl[0],1,0)
-        self.flay.addWidget(self.fYear_de[0],1,1)
-        self.flay.addWidget(self.fRel_lbl[0],2,0)
-        self.flay.addWidget(self.fRel_cb[0],2,1)
-        self.flay.addWidget(self.fLive_lbl[0],3,0)
-        self.flay.addWidget(self.fLive_cb[0],3,1)
-        self.flay.addWidget(self.fAdd_btn,3,2)
-        self.flay.setRowStretch((self.flay.rowCount()*(4-self.fcnt)),1)
-
-        self.layout.addWidget(self.tabWidget)
-        
-        self.fAdd_btn.clicked.connect(self.addfamily)
-        self.saveBtn.clicked.connect(self.userReg)
-        
-        #DB 연결
-        #self.conn = pymysql.connect(
-        #    host='localhost',
-        #    user='dev',
-        #    password='nori1234',
-        #    db='dev',
-        #    port=3306,
-        #    charset='utf8'
-        #)
-        #self.cur = self.conn.cursor()
-        
-
+    # 231130 한글성명입력제한 함수 by 정현아
+    def setValKor(self):
+        text = self.namekr_lineEdit.text()
+        if text == '':
+            return
+        elif not re.match("[가-힣]", text):
+            QMessageBox.warning(self,'입력오류','한글을 입력해주세요')
+            self.namekr_lineEdit.clear()
+            return
+        rep = QRegExp("[가-힣]{0,4}")
+        self.namekr_lineEdit.setValidator(QRegExpValidator(rep))
     
-    #편집 저장완료시 필수정보 확인 by김태균
-    def userReg(self):
-        self.namekr = self.namekr_lineEdit.text()
-        self.personnum = self.personnum_lineEdit.text()
-        self.nameEng = self.nameEng_lineEdit.text()
-        self.Emp_Number = self.Emp_Number_lineEdit.text()
-        self.phonennum = self.phonennum_lineEdit.text()
-        self.address1 = self.address1_lineEdit.text()
-        self.address2 = self.address2_lineEdit.text()
-        
-        if(len(self.namekr)==0 or len(self.personnum)==0 or len(self.nameEng)==0 or len(self.Emp_Number)==0 or len(self.phonennum)==0 or len(self.address1)==0 or len(self.address2)==0 ):
-            QMessageBox.warning(self, 'Regist failed','모든 항목을 입력하셔야 합니다.')
+    # 231130 사업부별 그룹 콤보박스 생성
+    def changeGroup(self,biz):
+        self.group_combo.clear()
+        if biz == '경영지원실':
+            return
+        elif biz == 'TSP':
+            self.group_combo.addItems(self.TSP)
+        elif biz == 'FAB':
+            self.group_combo.addItems(self.FAB)
+        elif biz == 'MIS':
+            self.group_combo.addItems(self.MIS)
+        elif biz == 'TC':
+            self.group_combo.addItems(self.TC)
+        elif biz == '전략기획실':    
+            self.group_combo.addItems(self.SP) 
+    
+    # 231130 사원정보저장 함수 by 정현아
+    def saveEmp(self):
+        birthYear = 0
+        attrDict ={'사번':'', 
+                   '한글성명':'',  
+                   '영문성명':'',  
+                   '주민번호':'',  
+                   'pic':'',
+                   'age':'',
+                   '휴대폰번호':'', 
+                   '메일':'',   
+                   '주소':'',  
+                   '우편번호':'',  
+                   '사업부':'',  
+                   '그룹':'',  
+                   '입사일':'',  
+                   '직급':'',  
+                   '직책':'',  
+                   '직무':'',  
+                   '호봉':'',  
+                   '최종학력':'',
+                   '군필여부':'', 
+                   '결혼여부':'',  
+                   '신장':'',  
+                   '체중':'',     
+                   'gender':'',  
+                    }
+        if self.empNum_lineEdit.text() == '':
+            QMessageBox.warning(self, "사원등록실패", "사번이 입력되지 않았습니다.사번 입력바랍니다.")
+            return
         else:
-            if (len(self.namekr)<2): # 이름 글자수 조건
-                QMessageBox.warning(self,'Sign up Failed','이름은 최소 두 글자입니다.')
+            attrDict['emp_num'] = int(self.empNum_lineEdit.text())
+        attrDict['name_kor'] = self.namekr_lineEdit.text()
+        attrDict['name_eng'] = self.namekr_lineEdit.text()
+        attrDict['reg_num'] = self.regnum_lineEdit.text() + self.regnum_lineEdit2.text()
+        reg_num = self.regnum_lineEdit.text() + self.regnum_lineEdit2.text()
+        attrDict['mail'] = self.email_lineEdit.text()
+        attrDict['phone'] = self.phone_lineEdit.text() + self.phone_lineEdit2.text() + self.phone_lineEdit3.text()
+        attrDict['address'] = self.addre_lineEdit.text()
+        attrDict['dept_biz'] = self.biz_combo.currentText()
+        attrDict['dept_group'] = self.group_combo.currentText()
+        attrDict['date_join'] = self.dateEdit.date().toString("yyyy-MM-dd")
+        attrDict['emp_rank'] = self.rank_combo.currentText()
+        attrDict['work_pos'] = self.workPos_combo.currentText()
+        attrDict['position'] = self.position_combo.currentText()
+        attrDict['salary'] = self.sal_combo.currentText() + self.sal_lineEdit.text()
+        attrDict['last_edu'] = self.lastEdu_combo.currentText() 
+         
+        if self.height_lineEdit.text() != '':
+            attrDict['height'] = int(self.height_lineEdit.text())
+        if self.weight_lineEdit.text() != '':
+            attrDict['weight'] = int(self.weight_lineEdit.text())
+        
+        if self.military_btn.isChecked():
+            attrDict['military'] = self.military_btn.text()
+        elif self.military_btn2.isChecked():
+            attrDict['military'] = self.military_btn2.text()
+        else:
+            attrDict['military'] = self.military_btn3.text()
+            
+        if self.marry_btn.isChecked():
+            attrDict['marry'] = self.marry_btn.text()
+        elif self.marry_btn2.isChecked():
+            attrDict['marry'] = self.marry_btn2.text()
+        
+        # 231130 만나이계산 및 성별 by 정현아
+        if attrDict['reg_num'] == '':
+            QMessageBox.warning(self, "사원등록실패", "주민번호가 입력되지 않았습니다. 주민번호 입력바랍니다.")
+            return
+        else:
+            if reg_num[6] == '0' or reg_num[6] == '9' :
+                QMessageBox.warning(self, "사원등록실패", "주민번호2번째 첫자리는 1~8까지만 입력가능합니다.")
                 return
-            elif (len(self.namekr)>4):
-                QMessageBox.warning(self,'Sign up Failed','이름은 최대 네 글자입니다.')
+            elif reg_num[6] == '1' or reg_num[6] == '2' or reg_num[6] == '5' or reg_num[6] == '6':
+                birthYear = 1900 + int(reg_num[:2])
+            elif reg_num[6] == '3' or reg_num[6] == '4' or reg_num[6] == '7' or reg_num[6] == '8':
+                birthYear = 2000 + int(reg_num[:2])
+
+            if int(reg_num[6]) % 2 == 1:
+                attrDict['gender'] = '남'
+            else : 
+                attrDict['gender'] = '여'
+        
+            age =  int(QDate(birthYear,int(reg_num[2:4]),int(reg_num[4:6])).daysTo(QDate.currentDate())/365)
+            if age < 19:
+                QMessageBox.warning(self, "사원등록실패", "나이가 만 19세보다 어립니다.주민번호 확인바랍니다.")
                 return
-            elif (re.sub(r"[가-힣]","",self.namekr) != ''):
-                QMessageBox.warning(self,'Sign up Failed','이름은 영문자, 자음, 모음이 입력될 수 없습니다. ')
+            elif age > 80:
+                QMessageBox.warning(self, "사원등록실패", "나이가 만 80세보다 많습니다.주민번호 확인바랍니다.")
                 return
             else:
-                if (len(self.personnum)<13): #주민등록번호 글자수 조건
-                    QMessageBox.warning(self,'Person number Failed','하이폰(-) 없이 주민번호 13자리를 입력해야 합니다. ')
-                    return
-                else:
-                    if(len(self.phonennum)>11): #휴대폰번호 글자수 조건
-                        QMessageBox.warning(self,'Phone number Failed','하이폰(-) 없이 휴대폰번호 11자리를 입력해야 합니다. ')
-                        return
-                    else:
-                        if emptyYN is None: #사번 밑으로는 권한 확인차 미완성
-                            QMessageBox.warning(self,'Sign up Failed','등록되지 않은 사번입니다.\n관리자에게 문의바랍니다.')
-                            return
-                        else: 
-                            query ='select id from login_data where emp_num = ' + self.emp_num +';'
-                            self.cur.execute(query)
-                            emptyYN = self.cur.fetchone()
-                            if emptyYN is not None:
-                                QMessageBox.warning(self,'Sign up Failed','사원님의 ID가 이미 존재합니다.')
-                                return
-                            else:
-                                query ='insert into login_data values(%s,%s,%s,%s);'
-                                self.cur.execute(query, (self.id,self.passwd,self.emp_num,'user'))
-                                # self.conn.commit()
-                                self.conn.close()   
-                    
-                        
-                
+                attrDict['age'] = age
+        
+        if self.addressNum_lineEdit.text() == '':
+            QMessageBox.warning(self, "사원등록실패", "우편번호가 입력되지 않았습니다. 우편번호 입력바랍니다.")
+            return
+        else:
+            attrDict['address_num'] = int(self.addressNum_lineEdit.text())        
+            
+        for key,value in attrDict.items():
+            if not (key == '신장' or  key == '체중' or key == '그룹' or key == '직무' or key == 'pic' or key == 'age' or key == 'gender') :
+                if value == '':
+                    QMessageBox.warning(self, "사원등록실패", "{}가 입력되지 않았습니다. {} 입력바랍니다.".format(value))
+        
+        
+
+        
     # 231123 페이지 전환 함수 by 정현아    
     def showAddImg(self):
         self.w = AddImg()
         self.w.show()
         self.w.cnlBtn.clicked.connect(self.w.close)
         
-    # 231115 가족 정보 추가작성을 위해 새로운 작성폼 생성 by 정현아        
-    def addfamily(self):
-        if(self.fcnt<=3):
-            self.fcnt+=1;
-            
-            self.fName_lbl.append(QLabel("가족성명",self))
-            self.fName_le.append(QLineEdit(self))
-            self.fYear_lbl.append(QLabel("생년월일"))
-            self.fYear_de.append(QDateEdit(self))
-            self.fRel_lbl.append(QLabel("관계"))
-            self.fRel_cb.append(QComboBox())
-            self.f_list = ['조부','조모','외조부','외조모','부','모','빙부','빙모','형제','배우자','자녀']
-            for i in range(len(self.f_list)):
-                self.fRel_cb[self.fcnt].addItem(self.f_list[i])
-            self.fLive_lbl.append(QLabel("동거여부"))
-            self.fLive_cb.append(QComboBox())
-            self.fLive_cb[self.fcnt].addItem('Y')
-            self.fLive_cb[self.fcnt].addItem('N')
-        
-            self.flay.addWidget(self.fName_lbl[self.fcnt],(4*self.fcnt),0)
-            self.flay.addWidget(self.fName_le[self.fcnt],(4*self.fcnt),1)
-            self.flay.addWidget(self.fYear_lbl[self.fcnt],1+(4*self.fcnt),0)
-            self.flay.addWidget(self.fYear_de[self.fcnt],1+(4*self.fcnt),1)
-            self.flay.addWidget(self.fRel_lbl[self.fcnt],2+(4*self.fcnt),0)
-            self.flay.addWidget(self.fRel_cb[self.fcnt],2+(4*self.fcnt),1)
-            self.flay.addWidget(self.fLive_lbl[self.fcnt],3+(4*self.fcnt),0)
-            self.flay.addWidget(self.fLive_cb[self.fcnt],3+(4*self.fcnt),1)
-            self.flay.addWidget(self.fAdd_btn,3+(4*self.fcnt),2)
-            
-            self.flay.setRowStretch((self.flay.rowCount()*(4-self.fcnt)),1)
-            
-        else:
-            QMessageBox.information(self,"경고","5명이상 등록하실 수 없습니다.")
-        
-    
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):
         self.closed.emit()

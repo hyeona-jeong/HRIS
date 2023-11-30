@@ -90,7 +90,7 @@ class EduList(QMainWindow, form_class):
     def searchBiz(self,biz):
         self.table.blockSignals(True)
         self.biz = biz 
-        if self.name != '' :
+        if self.name == '' :
             if self.biz == '전체':
                 query = """
                 SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
