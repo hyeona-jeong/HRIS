@@ -1775,7 +1775,12 @@ color white;</string>
              </item>
              <item>
               <property name="text">
-               <string/>
+               <string>지원</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>기타</string>
               </property>
              </item>
             </widget>

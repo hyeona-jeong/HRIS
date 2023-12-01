@@ -31,7 +31,7 @@ class Index(QMainWindow, form_class):
         # 231125 툴버튼에 메뉴 추가 
         self.menuHr = QMenu()
         self.menuHr.addAction('사원정보검색',self.showPage)
-        self.menuHr.addAction('사원개인정보조회',self.showPage)
+        self.menuHr.addAction('개인정보조회/편집',self.showPage)
         self.menuHr.addAction('사원정보등록',self.showPage)
 
         self.menuHr.setStyleSheet(stylesheet)
@@ -53,7 +53,7 @@ class Index(QMainWindow, form_class):
         sender = self.sender().text()
         if sender == '사원정보검색' or sender == '인사':
             self.w = Emplist()
-        elif sender == '사원개인정보조회': 
+        elif sender == '개인정보조회/편집': 
             self.w = EmpInfo()
         elif sender == '사원정보등록':
             self.w = Regist()

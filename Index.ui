@@ -472,7 +472,7 @@
      </rect>
     </property>
     <layout class="QVBoxLayout" name="indexlayout" stretch="0,0,0,0,0">
-     <item>
+     <item alignment="Qt::AlignRight">
       <widget class="QLabel" name="label">
        <property name="minimumSize">
         <size>

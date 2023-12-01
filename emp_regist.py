@@ -50,7 +50,8 @@ class Regist(QMainWindow, form_class):
         self.searchAddress.setVisible(False)  
         self.dateEdit.setDate(QDate.currentDate())
         
-        self.empNum_lineEdit.textEdited.connect(self.setDate)
+        # 231201 사번에 맞춰 기본세팅된 입사일 데이트 에디트 변경 by 정현아
+        self.empNum_lineEdit.textEdited.connect(self.setJoinDate)
         
         self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄']
         self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G']
@@ -298,44 +299,56 @@ class Regist(QMainWindow, form_class):
             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
         )
         """  
-        try:
-            self.cur.execute(query, tuple(attrDict.values()))
-            self.conn.commit()
-            QMessageBox.information(self, "사원등록성공", "등록되었습니다.")
+        reply = QMessageBox.question(self, '저장 확인', '저장하시겠습니까??', 
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            try:
+                self.cur.execute(query, tuple(attrDict.values()))
+                self.conn.commit()
+                QMessageBox.information(self, "사원등록성공", "사원정보가 등록되었습니다.")
             
-            # 231201 등록된 내용 초기화 by 정현아
-            self.namekr_lineEdit.clear()
-            self.regnum_lineEdit.clear()
-            self.regnum_lineEdit2.clear()
-            self.nameEng_lineEdit.clear()
-            self.email_lineEdit.clear()
-            self.empNum_lineEdit.clear()
-            self.phone_lineEdit2.clear()
-            self.phone_lineEdit3.clear()
-            self.addressNum_lineEdit.clear()
-            self.addre_lineEdit.clear()
-            self.sal_lineEdit.clear()
-            self.height_lineEdit.clear()
-            self.weight_lineEdit.clear()
-            self.biz_combo.setCurrentIndex(0)
-            self.rank_combo.setCurrentIndex(0)
-            self.workPos_combo.setCurrentIndex(0)
-            self.position_combo.setCurrentIndex(0)
-            self.sal_combo.setCurrentIndex(0)
-            self.lastEdu_combo.setCurrentIndex(1)
-            self.dateEdit.setDate(QDate.currentDate())
-        
-            self.pixmap = QPixmap('C:/Users/정현아/.ssh/HRIS/unknown.png')
-            width = 130
-            height = 150
-            resize_pixmap = self.pixmap.scaled(width,height)
-            self.img_label.setPixmap(resize_pixmap)                    
-                
-        except Exception as e:
+                # 231201 등록된 내용 초기화 by 정현아
+                self.namekr_lineEdit.clear()
+                self.regnum_lineEdit.clear()
+                self.regnum_lineEdit2.clear()
+                self.nameEng_lineEdit.clear()
+                self.email_lineEdit.clear()
+                self.empNum_lineEdit.clear()
+                self.phone_lineEdit2.clear()
+                self.phone_lineEdit3.clear()
+                self.addressNum_lineEdit.clear()
+                self.addre_lineEdit.clear()
+                self.sal_lineEdit.clear()
+                self.height_lineEdit.clear()
+                self.weight_lineEdit.clear()
+                self.biz_combo.setCurrentIndex(0)
+                self.rank_combo.setCurrentIndex(0)
+                self.workPos_combo.setCurrentIndex(0)
+                self.position_combo.setCurrentIndex(0)
+                self.sal_combo.setCurrentIndex(0)
+                self.lastEdu_combo.setCurrentIndex(1)
+                self.dateEdit.setDate(QDate.currentDate())
+            
+                self.pixmap = QPixmap('C:/Users/정현아/.ssh/HRIS/unknown.png')
+                width = 130
+                height = 150
+                resize_pixmap = self.pixmap.scaled(width,height)
+                self.img_label.setPixmap(resize_pixmap)   
+                         
+            except Exception as e:
                 QMessageBox.warning(self, "사원등록실패", "Error: " + str(e))
-                return
-    def setDate(self):
-        pass
+                return                        
+                
+
+    # 231201 사번에 맞춰 입사일 디폴트값 세팅 by 정현아
+    def setJoinDate(self):
+        year_str = "20"  + self.empNum_lineEdit.text()[:2]
+        year = int(year_str)
+        
+        date = QDate(year, 1, 1)        
+        self.dateEdit.setDate(date)
+        
     # 231123 이미지 등록화면 전환 및 버튼이벤트 등록 함수 by 정현아    
     def showAddImg(self):
         self.w = AddImg()
@@ -370,7 +383,7 @@ class Regist(QMainWindow, form_class):
     # 231130 선택한 이미지 등록화면에 띄우기 by 정현아
     def save_img(self):
         if self.path is None :
-            QMessageBox.warning(self,'사진등록실패','선택된 사진이 없습니다.\n사진을 선택해주세요.')
+            QMessageBox.warning(self,'사진등록실패','선택된 사진이 없습니다.')
             return
         else: 
                 self.pixmap = QPixmap(self.fname)

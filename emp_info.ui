@@ -490,7 +490,7 @@
 color white;</string>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt; 사원개인정보조회&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt; 개인정보조회/편집&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -2942,7 +2942,7 @@ color white;</string>
      <x>0</x>
      <y>0</y>
      <width>1261</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
