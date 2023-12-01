@@ -22,7 +22,10 @@ form_class = uic.loadUiType(form)[0]
 class Login(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
+        self.emp_num = None
         self.result_pass = None
+        self.img = None
+        
         self.setupUi(self)
         self.loginBtn.clicked.connect(self.loginfunction)
         self.passwdlineEdit.returnPressed.connect(self.loginfunction)
@@ -89,18 +92,23 @@ class Login(QMainWindow, form_class):
                 break
         if self.result_pass[2] == 'regular' :
             regist_action.setVisible(False)
+            self.w.showedList.connect(self.controlEmpListBtn)
+            
+        self.w.showedInfo.connect(self.showMyInfo)
+        self.w.showedEdit.connect(self.showEdit)
         
         # 231128 인덱스 페이지에 DB를 가져와 사원 사진 출력 by 정현아
         query = 'SELECT ID, PIC, MAIN_TABLE.EMP_NUM FROM LOGIN_DATA, MAIN_TABLE WHERE LOGIN_DATA.EMP_NUM = MAIN_TABLE.EMP_NUM AND ID = %s'
         self.cur.execute(query,(self.id))
         result = self.cur.fetchone()
+        self.emp_num = result[2]
         data = result[1]
-        img = QPixmap()
-        img.loadFromData(data, 'PNG')
-        icon = QIcon(img)        
+        self.img = QPixmap()
+        self.img.loadFromData(data, 'PNG')
+        icon = QIcon(self.img)        
         self.w.chgBtn.setIcon(icon)
         
-        # 231128
+        # 231128 사원 증명사진 버튼에 패스워드 변경 메뉴 추가 by 정현아
         chmenu = QMenu()
         chmenu.setStyleSheet(stylesheet)
         chmenu.addAction('패스워드 변경',self.showChPw)
@@ -109,7 +117,103 @@ class Login(QMainWindow, form_class):
         self.hide()
         self.w.logoutBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)
-
+        
+    # 231201 사원권한이 regular일 경우 리스트의 등록,삭제 버튼이 안보이게 하기 by 정현아
+    def controlEmpListBtn(self):
+        self.w.w.listRegBtn.setVisible(False)
+        self.w.w.listDelBtn.setVisible(False)
+    
+    # 231201 개인정보조회/편집 화면 데이터 바인딩    
+    def showMyInfo(self):
+        query = """
+        SELECT 
+        NAME_KOR, EMP_NUM, EMP_RANK, POSITION, PHONE, MAIL, CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_ENG, ADDRESS, WORK_POS, SALARY, DATE_JOIN, IFNULL(HEIGHT,''), IFNULL(WEIGHT,''), MILITARY, MARRY, LAST_EDU,ADDRESS_NUM 
+        FROM MAIN_TABLE 
+        WHERE EMP_NUM = %s; 
+        """
+        self.cur.execute(query,(self.emp_num))
+        result = self.cur.fetchone()
+        
+        self.w.w.namekor.setText(result[0])
+        self.w.w.empnum.setText(str(result[1]))
+        self.w.w.emprank.setText(result[2])
+        self.w.w.position.setText(result[3])
+        self.w.w.phone.setText(result[4])
+        self.w.w.mail.setText(result[5])
+        self.w.w.dept.setText(result[6])
+        self.w.w.nameeng.setText(result[7])
+        self.w.w.address.setText(result[8])
+        self.w.w.work_pos.setText(result[9])
+        self.w.w.sal.setText(result[10])
+        self.w.w.joindate.setText(str(result[11]))
+        self.w.w.height.setText(str(result[12]))
+        self.w.w.weight.setText(str(result[13]))
+        self.w.w.militay.setText(result[14])
+        self.w.w.marry.setText(result[15])
+        self.w.w.lastedu.setText(result[16])
+        self.w.w.addressnum.setText(str(result[17]))
+        
+        resize_pixmap = self.img.scaled(130,150)
+        self.w.w.pic.setPixmap(resize_pixmap) 
+        
+        
+    # 231201 개인정보수정화면 by 정현아 
+    def showEdit(self):
+        self.w.w.w.regnum_lineEdit.setEchoMode(QLineEdit.Password)
+        query = """
+        SELECT 
+        NAME_KOR, NAME_ENG, EMP_NUM, DATE_JOIN, EMP_RANK, REG_NUM, MAIL, PHONE, CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, WORK_POS, 
+        POSITION, ADDRESS_NUM,ADDRESS, SALARY, IFNULL(HEIGHT,''), IFNULL(WEIGHT,''), IFNULL(MILITARY,''), IFNULL(MARRY,''), LAST_EDU 
+        FROM MAIN_TABLE 
+        WHERE EMP_NUM = %s; 
+        """
+        self.cur.execute(query,(self.emp_num))
+        result = self.cur.fetchone()
+        self.w.w.w.namekor.setText(result[0])
+        self.w.w.w.nameeng.setText(result[1])
+        self.w.w.w.empnum.setText(str(result[2]))
+        self.w.w.w.joindate.setText(str(result[3]))
+        self.w.w.w.emprank.setText(result[4])
+        self.w.w.w.regnum_lineEdit.setText(result[5])
+        self.w.w.w.mail_lineEdit.setText(result[6])
+        self.w.w.w.phone_lineEdit.setText(result[7])
+        self.w.w.w.dept.setText(result[8])
+        self.w.w.w.work_pos.setText(result[9])
+        self.w.w.w.position.setText(result[10])
+        self.w.w.w.addressnum_lineEdit.setText(str(result[11]))
+        self.w.w.w.address_lineEdit.setText(result[12])
+        self.w.w.w.salary.setText(result[13])
+        self.w.w.w.weight_lineEdit.setText(str(result[14]))
+        self.w.w.w.height_lineEdit.setText(str(result[15]))
+        mil = result[16]
+        if mil == '군필':
+            self.w.w.w.milBtn.setChecked(True)
+        elif mil == '미필':
+            self.w.w.w.milBtn2.setChecked(True)
+        else:
+            self.w.w.w.milBtn3.setChecked(True)
+        
+        marry = result[17]
+        if marry == '미혼':
+            self.w.w.w.maryyBtn2.setChecked(True)
+        else : 
+            self.w.w.w.maryyBtn.setChecked(True)
+        
+        if result[17] == '고졸':
+            self.w.w.w.lastedu_combo.setCurrentIndex(0)
+        elif result[17] == '초대졸':
+            self.w.w.w.lastedu_combo.setCurrentIndex(1)
+        elif result[17] == '대졸':
+            self.w.w.w.lastedu_combo.setCurrentIndex(2)
+        elif result[17] == '대학원석사':
+            self.w.w.w.lastedu_combo.setCurrentIndex(3)
+        else:
+            self.w.w.w.lastedu_combo.setCurrentIndex(4)
+            
+        resize_pixmap = self.img.scaled(130,150)
+        self.w.w.w.pic.setPixmap(resize_pixmap) 
+        
+        
     def back(self):
         self.w.close()
         self.idlineEdit.clear()

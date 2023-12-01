@@ -16,6 +16,7 @@ form_class = uic.loadUiType(form)[0]
 
 class EmpInfo(QMainWindow, form_class):
     closed = pyqtSignal()
+    showedEdit = pyqtSignal()
 
     def __init__(self):
         super( ).__init__( )
@@ -23,18 +24,7 @@ class EmpInfo(QMainWindow, form_class):
         self.flag = 0;
         
         self.empinfo.setLayout(self.empinfolayout)
-        self.listChgbtn.clicked.connect(self.showRegist)
-    #     self.tabWidget.hide()
-    #     self.pushButton.clicked.connect(self.tab_show)
-        
-        
-    # def tab_show(self):
-    #     if(self.flag == 0):
-    #         self.tabWidget.show()
-    #         self.flag+=1
-    #     else:
-    #         self.tabWidget.hide()
-    #         self.flag-=1
+        self.listChgbtn.clicked.connect(self.showEdit)
     
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):
@@ -52,9 +42,10 @@ class EmpInfo(QMainWindow, form_class):
         self.show()
 
     #편집 화면으로 전환
-    def showRegist(self):
+    def showEdit(self):
         self.w = Edit()
-        self.w .show()
+        self.w.show()
+        self.showedEdit.emit()
         self.hide()
         self.w.cnlBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)

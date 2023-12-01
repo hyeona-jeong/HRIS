@@ -21,6 +21,8 @@ class Regist(QMainWindow, form_class):
 
     def __init__(self):
         super( ).__init__( )
+        
+        self.setWindowIcon(QIcon())
         self.setupUi(self)
 
         self.path = None
@@ -133,16 +135,22 @@ class Regist(QMainWindow, form_class):
             byte_array = QByteArray()
             buffer = QBuffer(byte_array)
             buffer.open(QIODevice.WriteOnly)
-            self.pixmap.toImage().save(buffer, 'PNG')
+            if image.format() == QImage.Format_RGB32 or image.format() == QImage.Format_ARGB32:
+                self.pixmap.toImage().save(buffer, 'PNG')
+            elif image.format() == QImage.Format_MonoLSB or image.format() == QImage.Format_Indexed8:
+                self.pixmap.toImage().save(buffer, 'GIF')
+            else:
+                self.pixmap.toImage().save(buffer, 'JPG')
+                
             attrDict['사진'] = byte_array.data()
-            
+                        
         if self.empNum_lineEdit.text() == '':
             QMessageBox.warning(self, "사원등록실패", "사번이 입력되지 않았습니다.사번 입력바랍니다.")
             return
         else:
             attrDict['사번'] = int(self.empNum_lineEdit.text())
         attrDict['한글성명'] = self.namekr_lineEdit.text()
-        attrDict['영문성명'] = self.nameEng_lineEdit.text()
+        attrDict['영문성명'] = self.namekr_lineEdit.text()
         attrDict['주민번호'] = self.regnum_lineEdit.text() + self.regnum_lineEdit2.text()
         reg_num = self.regnum_lineEdit.text() + self.regnum_lineEdit2.text()
         attrDict['메일'] = self.email_lineEdit.text()
@@ -354,12 +362,12 @@ class Regist(QMainWindow, form_class):
     def showAddImg(self):
         self.w = AddImg()
         self.w.show()
-        self.w.searchbutton.clicked.connect(self.openImage)
+        self.w.searchbutton.clicked.connect(self.open_image)
         self.w.savebtn.clicked.connect(self.save_img)
         self.w.cnlBtn.clicked.connect(self.w.close)
     
     # 231130 이미지 선택하고 다이알로그 텍스트 라인 에디트에 파일경로 세팅 by 정현아
-    def openImage(self):
+    def open_image(self):
         self.path = None
         self.fname = None
         self.fname, _ = QFileDialog.getOpenFileName(self, '이미지 파일 찾기', 'C:/Program Files', '이미지 파일(*.jpg *.gif, *.png)')
@@ -369,7 +377,7 @@ class Regist(QMainWindow, form_class):
             
             print(self.fname)
 
-            size, self.path = self.getFileSize(self.fname)
+            size, self.path = self.get_file_size(self.fname)
             if size >= max_file_size_bytes:
                 QMessageBox.warning(self,'사진등록실패','사진 사이즈가 1MB를 초과하였습니다.')
                 return
@@ -378,7 +386,7 @@ class Regist(QMainWindow, form_class):
                 self.w.hide()
                 self.w.show()
 
-    def getFileSize(self, file_path):
+    def get_file_size(self, file_path):
         return os.path.getsize(file_path), file_path
     
     # 231130 선택한 이미지 등록화면에 띄우기 by 정현아
