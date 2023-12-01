@@ -21,6 +21,8 @@ class Regist(QMainWindow, form_class):
 
     def __init__(self):
         super( ).__init__( )
+        
+        self.setWindowIcon(QIcon())
         self.setupUi(self)
 
         self.path = None
@@ -134,7 +136,8 @@ class Regist(QMainWindow, form_class):
             buffer = QBuffer(byte_array)
             buffer.open(QIODevice.WriteOnly)
             self.pixmap.toImage().save(buffer, 'PNG')
-            attrDict['사진'] = byte_array
+            attrDict['사진'] = byte_array.data()
+            
         if self.empNum_lineEdit.text() == '':
             QMessageBox.warning(self, "사원등록실패", "사번이 입력되지 않았습니다.사번 입력바랍니다.")
             return

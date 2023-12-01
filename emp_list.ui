@@ -467,6 +467,10 @@
   <property name="windowTitle">
    <string>사원정보검색</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>windowicon.jpg</normaloff>windowicon.jpg</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">

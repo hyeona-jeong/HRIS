@@ -22,6 +22,7 @@ form_class = uic.loadUiType(form)[0]
 class Login(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
+        self.result_pass = None
         self.setupUi(self)
         self.loginBtn.clicked.connect(self.loginfunction)
         self.passwdlineEdit.returnPressed.connect(self.loginfunction)
@@ -50,33 +51,44 @@ class Login(QMainWindow, form_class):
             return
         #login_data에서 id,passwd가 일치하면 index페이지로 전환
         else:
-            query = 'SELECT PASSWD,CERT_NUM FROM LOGIN_DATA WHERE ID = %s'
-            self.cur.execute(query, self.id)
-            result_pass = self.cur.fetchone()
-            if result_pass is not None:
-                if result_pass[0] == password:
-                    self.showIndex()
-                    # 231125 비밀번호 찾기로 생긴 인증번호값 초기화
-                    if (result_pass[1] is None):
-                        return
+            query = 'SELECT PASSWD,CERT_NUM,AUTHORITY FROM LOGIN_DATA WHERE ID = %s'
+            try:
+                self.cur.execute(query, self.id)
+                self.result_pass = self.cur.fetchone()
+                if self.result_pass is not None:
+                    if self.result_pass[0] == password:
+                        self.showIndex()
+                        # 231125 비밀번호 찾기로 생긴 인증번호값 초기화
+                        if (self.result_pass[1] is None):
+                            return
+                        else:
+                            query='update login_data set cert_num = Null;'
+                            self.cur.execute(query)
+                            self.conn.commit()
+                            self.conn.close()
                     else:
-                        query='update login_data set cert_num = Null;'
-                        self.cur.execute(query)
-                        self.conn.commit()
-                        self.conn.close()
+                        QMessageBox.warning(self, "Login Failed", "잘못된 패스워드입니다.")
+                        self.passwdlineEdit.clear()
+                        return
+        
                 else:
-                    QMessageBox.warning(self, "Login Failed", "잘못된 패스워드입니다.")
-                    self.passwdlineEdit.clear()
-                    return
-    
-            else:
-                QMessageBox.warning(self, "Login Failed", "존재하지 않는 ID입니다.")
+                    QMessageBox.warning(self, "Login Failed", "존재하지 않는 ID입니다.")
+            except Exception as e:
+                QMessageBox.warning(self, "로그인실패", "Error: " + str(e))
+                return
     
     # 231122 인덱스 페이지 by정현아
     def showIndex(self):
         self.w = Index()
         self.w.show()
         # self.w.chgBtn.clicked.connect(self.showChPw)
+        regist_action = None
+        for action in self.w.menuHr.actions():
+            if action.text() == '사원정보등록':
+                regist_action = action
+                break
+        if self.result_pass[2] == 'regular' :
+            regist_action.setVisible(False)
         
         # 231128 인덱스 페이지에 DB를 가져와 사원 사진 출력 by 정현아
         query = 'SELECT ID, PIC, MAIN_TABLE.EMP_NUM FROM LOGIN_DATA, MAIN_TABLE WHERE LOGIN_DATA.EMP_NUM = MAIN_TABLE.EMP_NUM AND ID = %s'
@@ -84,7 +96,7 @@ class Login(QMainWindow, form_class):
         result = self.cur.fetchone()
         data = result[1]
         img = QPixmap()
-        img.loadFromData(data)
+        img.loadFromData(data, 'PNG')
         icon = QIcon(img)        
         self.w.chgBtn.setIcon(icon)
         

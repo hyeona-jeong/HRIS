@@ -461,6 +461,10 @@
   <property name="windowTitle">
    <string>사원정보등록</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>windowicon.jpg</normaloff>windowicon.jpg</iconset>
+  </property>
   <widget class="QWidget" name="regist">
    <widget class="QWidget" name="verticalLayoutWidget_3">
     <property name="geometry">

@@ -461,6 +461,10 @@
   <property name="windowTitle">
    <string>Inex</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>windowicon.jpg</normaloff>windowicon.jpg</iconset>
+  </property>
   <widget class="QWidget" name="index">
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
@@ -468,7 +472,7 @@
       <x>0</x>
       <y>0</y>
       <width>1261</width>
-      <height>791</height>
+      <height>852</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="indexlayout" stretch="0,0,0,0,0">

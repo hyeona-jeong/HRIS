@@ -455,6 +455,10 @@
   <property name="windowTitle">
    <string>ID/PW찾기</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>windowicon.jpg</normaloff>windowicon.jpg</iconset>
+  </property>
   <widget class="QTabWidget" name="tab">
    <property name="geometry">
     <rect>

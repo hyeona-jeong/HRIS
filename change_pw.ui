@@ -455,6 +455,10 @@
   <property name="windowTitle">
    <string>패스워드 변경</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>windowicon.jpg</normaloff>windowicon.jpg</iconset>
+  </property>
   <widget class="QWidget" name="chgpw">
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">

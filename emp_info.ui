@@ -455,6 +455,10 @@
   <property name="windowTitle">
    <string>사원개인정보조회</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>windowicon.jpg</normaloff>windowicon.jpg</iconset>
+  </property>
   <widget class="QWidget" name="empinfo">
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
