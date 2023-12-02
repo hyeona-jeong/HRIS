@@ -392,6 +392,12 @@ class Regist(QMainWindow, form_class):
                 resize_pixmap = self.pixmap.scaled(width,height)
                 self.img_label.setPixmap(resize_pixmap)
         self.w.close()
+        
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):

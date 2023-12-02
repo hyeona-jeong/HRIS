@@ -24,6 +24,7 @@ class Index(QMainWindow, form_class):
     showedInfo = pyqtSignal()
     showedRegist = pyqtSignal()
     showedEdit = pyqtSignal()
+    listToInfo = pyqtSignal()
 
     def __init__(self):
         super( ).__init__()
@@ -59,6 +60,7 @@ class Index(QMainWindow, form_class):
         if sender == '사원정보검색' or sender == '인사':
             self.w = Emplist()
             self.showedList.emit()
+            self.w.listToInfo.connect(self.listToInfo.emit)
             
         elif sender == '개인정보조회/편집': 
             self.w = EmpInfo()
@@ -72,7 +74,7 @@ class Index(QMainWindow, form_class):
         elif sender == '교육' or sender == '교육이수정보 조회/편집':
             self.w = EduList()
         self.w.show()
-        # self.w.center()
+        self.w.center()
         self.hide()
         self.w.cnlBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)            

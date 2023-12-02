@@ -482,6 +482,9 @@
      </rect>
     </property>
     <layout class="QVBoxLayout" name="listLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout" stretch="5">
        <property name="spacing">
@@ -524,6 +527,36 @@ color white;</string>
         <number>0</number>
        </property>
        <item>
+        <layout class="QHBoxLayout" name="delete_2">
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item alignment="Qt::AlignRight">
+          <widget class="QLabel" name="countLabel">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -535,71 +568,6 @@ color white;</string>
           </size>
          </property>
         </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="minimumSize">
-          <size>
-           <width>38</width>
-           <height>38</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>38</width>
-           <height>38</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color:rgb(244, 244, 244);</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="pixmap">
-          <pixmap>peo.png</pixmap>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="searchlineEdit">
-         <property name="minimumSize">
-          <size>
-           <width>171</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>171</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="minimumSize">
-          <size>
-           <width>39</width>
-           <height>39</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>39</width>
-           <height>39</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">border: none;
-background-color:white;</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>find.png</normaloff>find.png</iconset>
-         </property>
-        </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_4">
@@ -630,7 +598,7 @@ background-color:white;</string>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox">
+        <widget class="QComboBox" name="bizCombo">
          <property name="minimumSize">
           <size>
            <width>120</width>
@@ -643,6 +611,11 @@ background-color:white;</string>
            <height>39</height>
           </size>
          </property>
+         <item>
+          <property name="text">
+           <string>전체</string>
+          </property>
+         </item>
          <item>
           <property name="text">
            <string>MIS</string>
@@ -673,6 +646,71 @@ background-color:white;</string>
            <string>전략기획실</string>
           </property>
          </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="minimumSize">
+          <size>
+           <width>38</width>
+           <height>38</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>38</width>
+           <height>38</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color:rgb(244, 244, 244);</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap>peo.png</pixmap>
+         </property>
+        </widget>
+       </item>
+       <item alignment="Qt::AlignVCenter">
+        <widget class="QLineEdit" name="namelineEdit">
+         <property name="minimumSize">
+          <size>
+           <width>171</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>171</width>
+           <height>40</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="empSearchBtn">
+         <property name="minimumSize">
+          <size>
+           <width>39</width>
+           <height>39</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>39</width>
+           <height>39</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border: none;
+background-color:white;</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>find.png</normaloff>find.png</iconset>
+         </property>
         </widget>
        </item>
        <item>

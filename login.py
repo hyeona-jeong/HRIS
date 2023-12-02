@@ -23,10 +23,16 @@ form_class = uic.loadUiType(form)[0]
 class Login(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
+        self.result =None
         self.emp_num = None
         self.result_pass = None
         self.img = None
         self.pixmap = None
+        self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄']
+        self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G']
+        self.MIS = ['전기운영 G','PLM G']
+        self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5']
+        self.SP = ['사업기획팀','기술전략팀']
         
         self.setupUi(self)
         self.loginBtn.clicked.connect(self.loginfunction)
@@ -86,8 +92,9 @@ class Login(QMainWindow, form_class):
     def showIndex(self):
         self.w = Index()
         self.w.show()
-        # self.w.chgBtn.clicked.connect(self.showChPw)
         regist_action = None
+
+        # 231202 권한제어 권한이 레귤러이면 사원정보등록화면 및 리스트 화면에서 삭제 버튼 비활성화 by 정현아
         for action in self.w.menuHr.actions():
             if action.text() == '사원정보등록':
                 regist_action = action
@@ -95,7 +102,8 @@ class Login(QMainWindow, form_class):
         if self.result_pass[2] == 'regular' :
             regist_action.setVisible(False)
             self.w.showedList.connect(self.controlEmpListBtn)
-            
+            self.w.listToInfo.connect(self.controlEmpListBtn)
+
         self.w.showedInfo.connect(self.showMyInfo)
         self.w.showedEdit.connect(self.showEdit)
         
@@ -120,11 +128,14 @@ class Login(QMainWindow, form_class):
         self.w.logoutBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)
         
-    # 231201 사원권한이 regular일 경우 리스트의 등록,삭제 버튼이 안보이게 하기 by 정현아
+    # 231201 사원권한이 regular일 경우 리스트의 등록,삭제 버튼, 체크박스가 안보이게 하기 by 정현아
     def controlEmpListBtn(self):
         self.w.w.listRegBtn.setVisible(False)
         self.w.w.listDelBtn.setVisible(False)
-    
+        self.w.w.table.setColumnHidden(0,True)
+        if self.w.w.w is not None:
+            self.w.w.w.listChgbtn.setVisible(False)
+
     # 231201 개인정보조회/편집 화면 데이터 바인딩    
     def showMyInfo(self):
         query = """
@@ -134,29 +145,30 @@ class Login(QMainWindow, form_class):
         FROM MAIN_TABLE 
         WHERE EMP_NUM = %s; 
         """
+        # 나중에 self.result 굳이 self.안써도 되는지 확인
         self.cur.execute(query,(self.emp_num))
-        result = self.cur.fetchone()
+        self.result = self.cur.fetchone()
         
-        self.w.w.namekor.setText(result[0])
-        self.w.w.empnum.setText(str(result[1]))
-        self.w.w.emprank.setText(result[2])
-        self.w.w.position.setText(result[3])
-        self.w.w.phone.setText(result[4])
-        self.w.w.mail.setText(result[5])
-        self.w.w.dept.setText(result[6])
-        self.w.w.nameeng.setText(result[7])
-        self.w.w.address.setText(result[8])
-        self.w.w.work_pos.setText(result[9])
-        self.w.w.sal.setText(result[10])
-        self.w.w.joindate.setText(str(result[11]))
-        self.w.w.height.setText(str(result[12]))
-        self.w.w.weight.setText(str(result[13]))
-        self.w.w.militay.setText(result[14])
-        self.w.w.marry.setText(result[15])
-        self.w.w.lastedu.setText(result[16])
-        self.w.w.addressnum.setText(str(result[17]))
+        self.w.w.namekor.setText(self.result[0])
+        self.w.w.empnum.setText(str(self.result[1]))
+        self.w.w.emprank.setText(self.result[2])
+        self.w.w.position.setText(self.result[3])
+        self.w.w.phone.setText(self.result[4])
+        self.w.w.mail.setText(self.result[5])
+        self.w.w.dept.setText(self.result[6])
+        self.w.w.nameeng.setText(self.result[7])
+        self.w.w.address.setText(self.result[8])
+        self.w.w.work_pos.setText(self.result[9])
+        self.w.w.sal.setText(self.result[10])
+        self.w.w.joindate.setText(str(self.result[11]))
+        self.w.w.height.setText(str(self.result[12]))
+        self.w.w.weight.setText(str(self.result[13]))
+        self.w.w.militay.setText(self.result[14])
+        self.w.w.marry.setText(self.result[15])
+        self.w.w.lastedu.setText(self.result[16])
+        self.w.w.addressnum.setText(str(self.result[17]))
 
-        data = result[18]
+        data = self.result[18]
         img = QPixmap()
         img.loadFromData(data, 'PNG')
 
@@ -166,6 +178,18 @@ class Login(QMainWindow, form_class):
         
     # 231201 개인정보수정화면 by 정현아 
     def showEdit(self):
+        query = """
+        SELECT 
+        NAME_KOR, NAME_ENG, EMP_NUM, DATE_JOIN, EMP_RANK, SUBSTRING(REG_NUM,1,6), SUBSTRING(REG_NUM,7,7), MAIL, SUBSTRING(PHONE,1,3), SUBSTRING(PHONE,4,4), 
+        SUBSTRING(PHONE,8,4), DEPT_BIZ, WORK_POS, POSITION, ADDRESS_NUM, ADDRESS, SUBSTRING(SALARY,1,1), 
+        IFNULL(HEIGHT,''), IFNULL(WEIGHT,''), IFNULL(MILITARY,''), IFNULL(MARRY,''), LAST_EDU, PIC, DEPT_GROUP, SUBSTRING(SALARY,2,3), AGE, GENDER
+        FROM MAIN_TABLE
+        WHERE EMP_NUM = %s; 
+        """
+        self.cur.execute(query,(self.emp_num))
+        self.result = self.cur.fetchone()
+
+        self.w.w.w.dept.activated[str].connect(self.changeGroup)
         self.w.w.w.addImgBtn.clicked.connect(self.showAddImg)
         self.w.w.w.SearchAddress.setVisible(False)
         self.w.w.w.regnum_lineEdit2.setEchoMode(QLineEdit.Password)
@@ -181,34 +205,40 @@ class Login(QMainWindow, form_class):
         self.w.w.w.height_lineEdit.setValidator(QIntValidator(1,100,self))
         self.w.w.w.weight_lineEdit.setValidator(QIntValidator(1,100,self))
 
+        if(self.result_pass[2] == 'regular'):
+            self.w.w.w.namekor.setDisabled(True)
+            self.w.w.w.nameeng.setDisabled(True)
+            self.w.w.w.empnum.setDisabled(True)
+            self.w.w.w.emprank.setDisabled(True)
+            self.w.w.w.dept.setDisabled(True)
+            self.w.w.w.dept_g.setDisabled(True)
+            self.w.w.w.work_pos.setDisabled(True)
+            self.w.w.w.position.setDisabled(True)
+            self.w.w.w.sal.setDisabled(True)
+            self.w.w.w.sal2.setDisabled(True)
+            self.w.w.w.joindate.setDisabled(True)
+
         # 231201 저장된 사원정보가져와 라벨 및 에디트에 세팅 by 정현아
-        query = """
-        SELECT 
-        NAME_KOR, NAME_ENG, EMP_NUM, DATE_JOIN, EMP_RANK, SUBSTRING(REG_NUM,1,6), SUBSTRING(REG_NUM,7,7), MAIL, SUBSTRING(PHONE,1,3), SUBSTRING(PHONE,4,4), 
-        SUBSTRING(PHONE,8,4), CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, WORK_POS, POSITION, ADDRESS_NUM, ADDRESS, SALARY, 
-        IFNULL(HEIGHT,''), IFNULL(WEIGHT,''), IFNULL(MILITARY,''), IFNULL(MARRY,''), LAST_EDU, PIC
-        FROM MAIN_TABLE
-        WHERE EMP_NUM = %s; 
-        """
-        self.cur.execute(query,(self.emp_num))
-        self.result = self.cur.fetchone()
         self.w.w.w.namekor.setText(self.result[0])
         self.w.w.w.nameeng.setText(self.result[1])
         self.w.w.w.empnum.setText(str(self.result[2]))
-        self.w.w.w.joindate.setText(str(self.result[3]))
-        self.w.w.w.emprank.setText(self.result[4])
+        date_str = self.result[3].strftime("%Y-%m-%d")
+        date = QDate.fromString(date_str, "yyyy-MM-dd")
+        self.w.w.w.joindate.setDate(date)
+        self.w.w.w.emprank.setCurrentText(self.result[4])
         self.w.w.w.regnum_lineEdit.setText(self.result[5])
         self.w.w.w.regnum_lineEdit2.setText(self.result[6])
         self.w.w.w.mail_lineEdit.setText(self.result[7])
         self.w.w.w.phone_combo.setCurrentText(self.result[8])
         self.w.w.w.phone_lineEdit2.setText(self.result[9])
         self.w.w.w.phone_lineEdit3.setText(self.result[10])
-        self.w.w.w.dept.setText(self.result[11])
-        self.w.w.w.work_pos.setText(self.result[12])
-        self.w.w.w.position.setText(self.result[13])
+        self.w.w.w.dept.setCurrentText(self.result[11])
+
+        self.w.w.w.work_pos.setCurrentText(self.result[12])
+        self.w.w.w.position.setCurrentText(self.result[13])
         self.w.w.w.addressnum_lineEdit.setText(str(self.result[14]))
         self.w.w.w.address_lineEdit.setText(self.result[15])
-        self.w.w.w.salary.setText(self.result[16])
+        self.w.w.w.sal.setCurrentText(self.result[16])
         self.w.w.w.height_lineEdit.setText(str(self.result[17]))
         self.w.w.w.weight_lineEdit.setText(str(self.result[18]))
         mil = self.result[19]
@@ -229,8 +259,34 @@ class Login(QMainWindow, form_class):
         resize_pixmap = self.img.scaled(130,150)
         self.w.w.w.pic.setPixmap(resize_pixmap) 
         self.w.w.w.saveBtn.clicked.connect(self.saveEdit)
+        
+        self.changeGroup(self.result[11])
+        self.w.w.w.dept_g.setCurrentText(self.result[23])
+        self.w.w.w.sal2.setText(self.result[24])
+    
+    def changeGroup(self,biz):
+        self.w.w.w.dept_g.clear()
+        if biz == '경영지원실':
+            return
+        elif biz == 'TSP':
+            self.w.w.w.dept_g.addItems(self.TSP)
+            return
+        elif biz == 'FAB':
+            self.w.w.w.dept_g.addItems(self.FAB)
+            return
+        elif biz == 'MIS':
+            self.w.w.w.dept_g.addItems(self.MIS)
+            return
+        elif biz == 'TC':
+            self.w.w.w.dept_g.addItems(self.TC)
+            return
+        elif biz == '전략기획실':    
+            self.w.w.w.dept_g.addItems(self.SP) 
+            return        
 
     def saveEdit(self):
+        date_str = self.result[3].strftime("%Y-%m-%d")
+        date = QDate.fromString(date_str, "yyyy-MM-dd")
         attrDict ={
             '주민번호': self.result[5] + self.result[6],  
             '메일': self.result[7], 
@@ -242,9 +298,22 @@ class Login(QMainWindow, form_class):
             '군필여부': self.result[19], 
             '결혼여부': self.result[20],  
             '최종학력': self.result[21],            
-            '사진': self.result[22]
+            '사진': self.result[22],
+            '한글성명': self.result[0],
+            '영문성명': self.result[1],
+            '사번': self.result[2],
+            '입사일': date,
+            '직급': self.result[4],
+            '사업부': self.result[11],
+            '직책': self.result[12],
+            '그룹': self.result[23],
+            '직무': self.result[13],
+            '호봉': self.result[16] + self.result[24],
+            '나이': self.result[25],
+            '성별': self.result[26]
             }        
         attrDict['주민번호'] = self.w.w.w.regnum_lineEdit.text() + self.w.w.w.regnum_lineEdit2.text()
+        reg_num = self.w.w.w.regnum_lineEdit.text() + self.w.w.w.regnum_lineEdit2.text()
         attrDict['메일'] = self.w.w.w.mail_lineEdit.text()
         attrDict['휴대폰번호'] = self.w.w.w.phone_combo.currentText() + self.w.w.w.phone_lineEdit2.text() + self.w.w.w.phone_lineEdit3.text()
         if self.w.w.w.addressnum_lineEdit.text() == '':
@@ -286,12 +355,26 @@ class Login(QMainWindow, form_class):
             buffer = QBuffer(byte_array)
             buffer.open(QIODevice.WriteOnly)
             self.pixmap.toImage().save(buffer, 'PNG')
-            attrDict['사진'] = byte_array.data()    
-        
+            attrDict['사진'] = byte_array.data()  
+
+        attrDict['한글성명'] = self.w.w.w.namekor.text()
+        attrDict['영문성명'] = self.w.w.w.nameeng.text()
+        # 사번은 int type
+        if self.w.w.w.empnum.text() != '' :
+            attrDict['사번'] = int(self.w.w.w.empnum.text())
+        attrDict['입사일'] = self.w.w.w.joindate.date().toString("yyyy-MM-dd")
+        attrDict['직급'] = self.w.w.w.emprank.currentText()
+        attrDict['사업부'] = self.w.w.w.dept.currentText()
+        attrDict['직책'] = self.w.w.w.work_pos.currentText()
+        attrDict['그룹'] = self.w.w.w.dept_g.currentText()
+        attrDict['직무'] = self.w.w.w.position.currentText()
+        attrDict['호봉'] = self.w.w.w.sal.currentText() + self.w.w.w.sal2.text()
+
+
         for key, value in attrDict.items():
             if key =='휴대폰번호':
                 if len(value) < 11 :
-                    QMessageBox.warning(self, "개인정보변경실패", "{}11자리가 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
+                    QMessageBox.warning(self, "개인정보변경실패", "{} 11자리가 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
                     return
             elif not (key == '신장' or key == '체중'):
                 if value == '':
@@ -301,6 +384,55 @@ class Login(QMainWindow, form_class):
         if attrDict['주민번호'] == '' or len(attrDict['주민번호']) != 13:
             QMessageBox.warning(self, "개인정보변경실패", "주민번호 13자리가 입력되지 않았습니다. 주민번호 입력바랍니다.")
             return
+        else:
+            if reg_num[6] == '0' or reg_num[6] == '9' :
+                QMessageBox.warning(self, "개인정보변경실패", "주민번호 2번째 첫자리는 1~8까지 입력가능합니다.")
+                return
+            elif reg_num[6] == '1' or reg_num[6] == '2' or reg_num[6] == '5' or reg_num[6] == '6':
+                birthYear = 1900 + int(reg_num[:2])
+            elif reg_num[6] == '3' or reg_num[6] == '4' or reg_num[6] == '7' or reg_num[6] == '8':
+                birthYear = 2000 + int(reg_num[:2])
+            
+
+            if int(reg_num[2:4])>12 or reg_num[2:4] =='00' or reg_num[4:6] == '00':
+                QMessageBox.warning(self, "개인정보변경실패", "주민번호 형식이 맞지 않습니다. 생년월일 확인바랍니다.")
+                return
+            elif reg_num[2:4] =='01' or  reg_num[2:4] =='03' or reg_num[2:4] =='05' or reg_num[2:4] == '07' or reg_num[2:4] == '08' or reg_num[2:4] == '10' or reg_num[2:4] == '12':
+                if int(reg_num[4:6]) > 31:
+                    QMessageBox.warning(self, "개인정보변경실패", "주민번호 형식이 맞지 않습니다. 생년월일 확인바랍니다.")
+                    return
+            elif reg_num[2:4] =='04' or reg_num[2:4] =='06' or reg_num[2:4] =='09' or reg_num[2:4] =='11':
+                if int(reg_num[4:6]) > 30:
+                    QMessageBox.warning(self, "개인정보변경실패", "주민번호 형식이 맞지 않습니다. 생년월일 확인바랍니다.")
+                    return
+            else:
+                if int(reg_num[4:6]) > 28:
+                    QMessageBox.warning(self, "개인정보변경실패", "주민번호 형식이 맞지 않습니다. 생년월일 확인바랍니다.")
+                    return
+                
+            age =  int(QDate(birthYear,int(reg_num[2:4]),int(reg_num[4:6])).daysTo(QDate.currentDate())/365)
+            if age < 19:
+                QMessageBox.warning(self, "개인정보변경실패", "나이가 만 19세보다 어립니다.주민번호 확인바랍니다.")
+                return
+            elif age > 80:
+                QMessageBox.warning(self, "개인정보변경실패", "나이가 만 80세보다 많습니다.주민번호 확인바랍니다.")
+                return
+            else:
+                attrDict['나이'] = age
+
+            if int(reg_num[6]) % 2 == 1:
+                attrDict['성별'] = '남'
+            else : 
+                attrDict['성별'] = '여'
+
+        if len(str(attrDict['사번'])) < 8:
+            QMessageBox.warning(self,'개인정보변경실패','사번은 8자리를 입력하셔야 합니다.')
+            return
+        
+        if int(str(attrDict['사번'])[:2]) < 12 or int(str(attrDict['사번'])[:2]) > int(QDate.currentDate().year())-2000:
+            QMessageBox.warning(self,'개인정보변경실패','사번은 앞 2자리는 12보다 작거나 현재년도보다 클 수 없습니다.')
+            return
+
         
         if not re.match(r"^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", attrDict['메일']):
             QMessageBox.warning(self,'개인정보변경실패','메일 형식이 틀립니다.메일 확인바랍니다.')
@@ -309,13 +441,34 @@ class Login(QMainWindow, form_class):
         if len(str(attrDict['우편번호'])) != 5:
             QMessageBox.warning(self, "개인정보변경실패", "우편번호는 5자리를 입력하셔야 합니다.")
             return
+        
+        if self.result[5] + self.result[6] != attrDict['주민번호'] or self.result[2] != attrDict['사번']:
+            t1 = (attrDict['사번'], attrDict['사번'], attrDict['주민번호'])
+            query = """
+            SELECT NULLIF(EMP_NUM, %s), REG_NUM FROM MAIN_TABLE WHERE EMP_NUM= %s OR REG_NUM = %s;
+            """
+            try:
+                self.cur.execute(query, t1)
+                result = self.cur.fetchone()
+                if result is not None :
+                    if result[0] is None:
+                        QMessageBox.warning(self, "개인정보변경실패", "이미 등록된 사번입니다.")
+                        return
+                    else : 
+                        QMessageBox.warning(self, "개인정보변경실패", "이미 등록된 주민번호입니다.")
+                        return
+            except Exception as e:
+                QMessageBox.warning(self, "사원등록실패", "Error: " + str(e))
+                return        
 
         query = """
         UPDATE MAIN_TABLE 
-        SET REG_NUM = %s, MAIL = %s, PHONE = %s, ADDRESS_NUM = %s, ADDRESS = %s, HEIGHT = %s, WEIGHT = %s, MILITARY = %s, MARRY = %s, LAST_EDU = %s, PIC = %s
+        SET REG_NUM = %s, MAIL = %s, PHONE = %s, ADDRESS_NUM = %s, ADDRESS = %s, HEIGHT = %s, WEIGHT = %s, MILITARY = %s, 
+        MARRY = %s, LAST_EDU = %s, PIC = %s, NAME_KOR = %s, NAME_ENG = %s, EMP_NUM = %s, DATE_JOIN =%s, EMP_RANK = %s, 
+        DEPT_BIZ = %s, WORK_POS = %s, DEPT_GROUP = %s, POSITION = %s, SALARY =%s, AGE = %s, GENDER = %s
         WHERE EMP_NUM = %s; 
         """
-        reply = QMessageBox.question(self, '저장 확인', '저장하시겠습니까??', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        reply = QMessageBox.question(self, '변경 확인', '변경하시겠습니까??', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             try:
                 self.cur.execute(query,tuple(attrDict.values()) + (self.emp_num,))
