@@ -1,14 +1,12 @@
 import os
 import sys
 import pymysql
-import pandas as pd
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from emp_regist import Regist
-from emp_info import EmpInfo
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -23,36 +21,16 @@ class Emplist(QMainWindow, form_class):
     def __init__(self):
         super( ).__init__( )
         self.setupUi(self)
-        
-        self.header = ['사업부','그룹','이름','직책','직급','직무','휴대폰번호','메일']
-        self.flag = [0,0,0,0,0,0,0,0]
-        #각 컬럼별 필터링 로우를 저장하기 위한 리스트
-        self.hRow = [0,0,0,0,0,0,0,0]
-        self.s = []
-        
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)   
-        self.table.horizontalHeader().setSectionResizeMode(6,QHeaderView.ResizeToContents)
-        self.table.cellClicked.connect(self.Cell_Click) # 셀 클릭시 함수 이벤트
-        self.table.cellDoubleClicked.connect(self.Cell_DoubleClick) # 셀 더블클릭시 함수 이벤트
-        self.centralwidget.setLayout(self.listLayout)
-        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)# 목록 편집 막기
+        self.empList.setLayout(self.listLayout)
         self.setStyleSheet(stylesheet)
-        self.table.horizontalHeader().sectionClicked.connect(self.onHeaderClicked)
-        self.listRegBtn.clicked.connect(self.showRegist)
-        
-      
-        for row in range(self.table.rowCount()):
-            checkbox_item = QTableWidgetItem()
-            checkbox = QCheckBox()
-            checkbox.setChecked(False)  # 체크박스 초기 상태 설정
-            self.table.setItem(row, 0, checkbox_item)
-            self.table.setCellWidget(row, 0, checkbox)
-            
-        checkbox.stateChanged.connect(self.checkboxStateChanged)
-        
-                #MySql DB 연결 정보
+
+        self.table.setRowCount(0)
+        self.table.setRowCount(8)
+        header = ['','부서','이름','직무','직급','직책','휴대폰번호','메일']
+        self.table.setHorizontalHeaderLabels(header)
+
         self.conn = pymysql.connect(
-            host='192.168.2.20',
+            host='localhost',
             user='dev',
             password='nori1234',
             db='dev',
@@ -60,122 +38,51 @@ class Emplist(QMainWindow, form_class):
             charset='utf8'
         )
         self.cur = self.conn.cursor()
-        self.load_data()
-        self.show()
-    
-    #테이블위젯 내에 모든 데이터 추출
-    def load_data(self):
-        query = "select dept_biz, dept_group, name_kor, position, emp_rank, work_pos, phone, mail from main_table"
+        query = "SELECT CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL FROM MAIN_TABLE"
         self.cur.execute(query)
-        data = self.cur.fetchall()
+        result = self.cur.fetchall()
+        for row, row_data in enumerate(result):
+            self.table.insertRow(row)
 
+            # 231202 첫열에 체크박스 삽입 및 중앙정렬 by 정현아
+            cell_widget = QWidget()
+            chk_bx = QCheckBox()
+            chk_bx.setCheckState(False) 
+            lay_out = QHBoxLayout(cell_widget)
+            lay_out.addWidget(chk_bx)
+            lay_out.setAlignment(Qt.AlignCenter)
+            lay_out.setContentsMargins(0,0,0,0)
+            cell_widget.setLayout(lay_out)
+            self.table.setCellWidget(row, 0, cell_widget)
 
-    def checkboxStateChanged(self):
-        # 체크박스 상태가 변경될 때 호출되는 함수
-        for row in range(self.rowCount()):
-            checkbox = self.cellWidget(row, 0)
+            for col, data in enumerate(row_data):
+                self.table.setItem(row,col+1,QTableWidgetItem(str(data)))     
+                if self.table.item(row,col+1) is not None:
+                    self.table.item(row,col+1).setTextAlignment(Qt.AlignCenter|Qt.AlignVCenter)           
 
-        
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)   
+        self.table.horizontalHeader().setSectionResizeMode(0,QHeaderView.ResizeToContents)
+        self.table.horizontalHeader().setSectionResizeMode(7,QHeaderView.ResizeToContents)
 
-                
-    def onHeaderClicked(self, logicalIndex):
-        if(logicalIndex == 0):
-            self.cnlFilter(logicalIndex)
-        for i in range(1,7):
-            if (logicalIndex == i):
-                if (self.flag[logicalIndex-1] == 0):
-                    self.filter(logicalIndex)
-                else: 
-                    self.flag[logicalIndex-1]-=1
-                    self.cnlFilter(logicalIndex)
-
-
-        # 이름 검색 필터
-        # layout = QVBoxLayout()
-        # layout.addWidget(self.table_widget)
-
-        # central_widget = QWidget()
-        # central_widget.setLayout(layout)
-        # self.setCentralWidget(central_widget)
-
-        # self.searchlineEdit = QLineEdit()
-        # self.searchlineEdit.setPlaceholderText('이름을 입력하세요...')
-        # self.searchlineEdit.textChanged.connect(self.filter_items)
-        # self.layout.addWidget(self.searchlineEdit)
-
-    # def filter_items(self):
-    #     search_text = self.search_input.text().lower()
-    #     self.list_widget.clear()
-
-    #     names = ['Alice', 'Bob', 'Charlie', 'David', 'Eva']  # 이름 목록을 원래의 목록으로 변경하세요.
-
-    #     for name in names:
-    #         if search_text in name.lower():
-    #             self.list_widget.addItem(name)        
-
-    # 231118 필터링 해제 by 정현아                
-    def cnlFilter(self,index):
-        if(index == 0):
-            for r in range(self.table.rowCount()):
-                self.table.setRowHidden(r,False)
-            for c in range(1,self.table.columnCount()):
-                self.table.setHorizontalHeaderItem(c, QTableWidgetItem(str(self.header[c-1]+'☐')))
-                
-        
-        else:
-            if(self.flag.count(1)>=1):
-                self.table.setHorizontalHeaderItem(index, QTableWidgetItem(str(self.header[index-1]+'☐')))
-                s1 = set(self.hRow[index-1])
-                s2 = set()
-                for i in range(0,6):
-                    if(self.flag[i] == 1 and i != index-1):
-                        s2 = set(self.hRow[i])
-                        s2 = s1 - (s2 - (s1 - (s2&s1)))
-                    for r in s2:
-                        self.table.setRowHidden(r,False) 
-            else:
-                for r in range(self.table.rowCount()):
-                    self.table.setRowHidden(r,False)
-                for c in range(1,self.table.columnCount()):
-                    self.table.setHorizontalHeaderItem(c, QTableWidgetItem(str(self.header[c-1]+'☐')))
-      
-                
-    #셀 클릭시     
-    def Cell_Click(self, row):
-        #data = self.table.item(row,i-1)
-        pass
-        
-    #231124 셀 더블클릭시 개인정보 페이지로 전환함수 by김태균    
-    def Cell_DoubleClick(self):
-        self.w = EmpInfo()
-        self.w .show()
-        self.hide()       
-        self.w.cnlBtn.clicked.connect(self.back)
-        self.w.closed.connect(self.show)
-        
-    def back(self):
-        self.w.hide()
-        self.show()
+        self.listRegBtn.clicked.connect(self.showRegsit)
 
     # 231122 페이지 전환 함수 by정현아
-    def showRegist(self):
+    def showRegsit(self):
         self.w = Regist()
         self.w .show()
         self.hide()
-        self.w.cnlBtn.clicked.connect(self.back)
+        self.w.regCnlBtn.clicked.connect(self.back)
+        self.w.closed.connect(self.show)
 
-        
     def back(self):
         self.w.hide()
         self.show()
-        
-        
 
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):
         self.closed.emit()
         super().closeEvent(e)
-   
+
 stylesheet = """
     QTableWidget {
         border-radius: 10px;
@@ -185,18 +92,15 @@ stylesheet = """
         padding-left:20px;          
         padding-right:20px;
     }
-
     QTableWidget::item {
         background-color: #ffffff;
         margin-top: 5px;    
         margin-bottom:5px;      
         border-radius: 9px;
     }
-
     QTableWidget::item:selected {
         color: black;
     }
-
     QHeaderView::section{
         Background-color:#c6c6c6;
         border-radius:5px;

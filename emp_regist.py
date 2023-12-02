@@ -62,7 +62,7 @@ class Regist(QMainWindow, form_class):
         self.biz_combo.activated[str].connect(self.changeGroup)
 
         self.conn = pymysql.connect(
-                host='192.168.2.20',
+                host='localhost',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -175,8 +175,8 @@ class Regist(QMainWindow, form_class):
             attrDict['결혼여부'] = self.marry_btn2.text()
         
         # 231130 만나이계산 및 성별 by 정현아
-        if attrDict['주민번호'] == '':
-            QMessageBox.warning(self, "사원등록실패", "주민번호가 입력되지 않았습니다. 주민번호 입력바랍니다.")
+        if attrDict['주민번호'] == '' or len(attrDict['주민번호']) != 13:
+            QMessageBox.warning(self, "사원등록실패", "주민번호 13자리가 입력되지 않았습니다. 주민번호 입력바랍니다.")
             return
         else:
             if reg_num[6] == '0' or reg_num[6] == '9' :
@@ -247,8 +247,11 @@ class Regist(QMainWindow, form_class):
                 if len(value) != 3 :
                     QMessageBox.warning(self, "사원등록실패", "{}이(가) 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
                     return
-
-            elif not (key == '신장' or key == '체중' or key == '그룹' or key == '직무' or key == 'age' or key == 'gender'):
+            elif key =='휴대폰번호':
+                if len(value) < 11 :
+                    QMessageBox.warning(self, "사원등록실패", "{}이(가) 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
+                    return
+            elif not (key == '신장' or key == '체중' or key == '그룹' or key == '직무' or key == 'age' or key == 'gender' or key == '휴대폰번호'):
                 if value == '':
                     QMessageBox.warning(self, "사원등록실패", "{}이(가) 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
                     return
@@ -300,9 +303,7 @@ class Regist(QMainWindow, form_class):
             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
         )
         """  
-        reply = QMessageBox.question(self, '저장 확인', '저장하시겠습니까??', 
-                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-
+        reply = QMessageBox.question(self, '저장 확인', '저장하시겠습니까??', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             try:
                 self.cur.execute(query, tuple(attrDict.values()))
@@ -367,8 +368,6 @@ class Regist(QMainWindow, form_class):
             max_file_size_mb = 1
             max_file_size_bytes = max_file_size_mb * 1024 * 1024
             
-            print(self.fname)
-
             size, self.path = self.getFileSize(self.fname)
             if size >= max_file_size_bytes:
                 QMessageBox.warning(self,'사진등록실패','사진 사이즈가 1MB를 초과하였습니다.')

@@ -695,11 +695,7 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: #ff5500;
-border-radius : 10px; 
-border : 2px solid #ff5500;
-color: white;
-</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>찾기</string>
@@ -721,11 +717,7 @@ color: white;
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: #ff5500;
-border-radius : 10px; 
-border : 2px solid #ff5500;
-color: white;
-</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>닫기</string>
@@ -938,11 +930,7 @@ color: white;
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: #ff5500;
-border-radius : 10px; 
-border : 2px solid #ff5500;
-color: white;
-</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>찾기</string>
@@ -964,11 +952,7 @@ color: white;
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: #ff5500;
-border-radius : 10px; 
-border : 2px solid #ff5500;
-color: white;
-</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string>닫기</string>

@@ -9,6 +9,7 @@ from PyQt5 import QtGui, uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from index import Index
+from add_img import AddImg
 from find import Find
 from change_pw import ChangPw
 
@@ -25,6 +26,7 @@ class Login(QMainWindow, form_class):
         self.emp_num = None
         self.result_pass = None
         self.img = None
+        self.pixmap = None
         
         self.setupUi(self)
         self.loginBtn.clicked.connect(self.loginfunction)
@@ -35,7 +37,7 @@ class Login(QMainWindow, form_class):
         
         
         self.conn = pymysql.connect(
-                host='192.168.2.20',
+                host='localhost',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -127,7 +129,8 @@ class Login(QMainWindow, form_class):
     def showMyInfo(self):
         query = """
         SELECT 
-        NAME_KOR, EMP_NUM, EMP_RANK, POSITION, PHONE, MAIL, CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_ENG, ADDRESS, WORK_POS, SALARY, DATE_JOIN, IFNULL(HEIGHT,''), IFNULL(WEIGHT,''), MILITARY, MARRY, LAST_EDU,ADDRESS_NUM 
+        NAME_KOR, EMP_NUM, EMP_RANK, POSITION, PHONE, MAIL, CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_ENG, 
+        ADDRESS, WORK_POS, SALARY, DATE_JOIN, IFNULL(HEIGHT,''), IFNULL(WEIGHT,''), MILITARY, MARRY, LAST_EDU,ADDRESS_NUM, PIC 
         FROM MAIN_TABLE 
         WHERE EMP_NUM = %s; 
         """
@@ -152,40 +155,63 @@ class Login(QMainWindow, form_class):
         self.w.w.marry.setText(result[15])
         self.w.w.lastedu.setText(result[16])
         self.w.w.addressnum.setText(str(result[17]))
-        
-        resize_pixmap = self.img.scaled(130,150)
+
+        data = result[18]
+        img = QPixmap()
+        img.loadFromData(data, 'PNG')
+
+        resize_pixmap = img.scaled(130,150)
         self.w.w.pic.setPixmap(resize_pixmap) 
         
         
     # 231201 개인정보수정화면 by 정현아 
     def showEdit(self):
-        self.w.w.w.regnum_lineEdit.setEchoMode(QLineEdit.Password)
+        self.w.w.w.addImgBtn.clicked.connect(self.showAddImg)
+        self.w.w.w.SearchAddress.setVisible(False)
+        self.w.w.w.regnum_lineEdit2.setEchoMode(QLineEdit.Password)
+
+        # 231201 입력 제한 by 정현아
+        self.w.w.w.regnum_lineEdit.setValidator(QIntValidator(1,100000,self))
+        self.w.w.w.regnum_lineEdit2.setValidator(QIntValidator(1,1000000,self))
+        self.w.w.w.phone_lineEdit2.setValidator(QIntValidator(1,1000,self))
+        self.w.w.w.phone_lineEdit3.setValidator(QIntValidator(1,1000,self))
+        self.w.w.w.addressnum_lineEdit.setValidator(QIntValidator(1,10000,self))
+        rep = QRegExp("[가-힣0-9\\s,()]{0,49}")
+        self.w.w.w.address_lineEdit.setValidator(QRegExpValidator(rep))
+        self.w.w.w.height_lineEdit.setValidator(QIntValidator(1,100,self))
+        self.w.w.w.weight_lineEdit.setValidator(QIntValidator(1,100,self))
+
+        # 231201 저장된 사원정보가져와 라벨 및 에디트에 세팅 by 정현아
         query = """
         SELECT 
-        NAME_KOR, NAME_ENG, EMP_NUM, DATE_JOIN, EMP_RANK, REG_NUM, MAIL, PHONE, CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, WORK_POS, 
-        POSITION, ADDRESS_NUM,ADDRESS, SALARY, IFNULL(HEIGHT,''), IFNULL(WEIGHT,''), IFNULL(MILITARY,''), IFNULL(MARRY,''), LAST_EDU 
-        FROM MAIN_TABLE 
+        NAME_KOR, NAME_ENG, EMP_NUM, DATE_JOIN, EMP_RANK, SUBSTRING(REG_NUM,1,6), SUBSTRING(REG_NUM,7,7), MAIL, SUBSTRING(PHONE,1,3), SUBSTRING(PHONE,4,4), 
+        SUBSTRING(PHONE,8,4), CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, WORK_POS, POSITION, ADDRESS_NUM, ADDRESS, SALARY, 
+        IFNULL(HEIGHT,''), IFNULL(WEIGHT,''), IFNULL(MILITARY,''), IFNULL(MARRY,''), LAST_EDU, PIC
+        FROM MAIN_TABLE
         WHERE EMP_NUM = %s; 
         """
         self.cur.execute(query,(self.emp_num))
-        result = self.cur.fetchone()
-        self.w.w.w.namekor.setText(result[0])
-        self.w.w.w.nameeng.setText(result[1])
-        self.w.w.w.empnum.setText(str(result[2]))
-        self.w.w.w.joindate.setText(str(result[3]))
-        self.w.w.w.emprank.setText(result[4])
-        self.w.w.w.regnum_lineEdit.setText(result[5])
-        self.w.w.w.mail_lineEdit.setText(result[6])
-        self.w.w.w.phone_lineEdit.setText(result[7])
-        self.w.w.w.dept.setText(result[8])
-        self.w.w.w.work_pos.setText(result[9])
-        self.w.w.w.position.setText(result[10])
-        self.w.w.w.addressnum_lineEdit.setText(str(result[11]))
-        self.w.w.w.address_lineEdit.setText(result[12])
-        self.w.w.w.salary.setText(result[13])
-        self.w.w.w.weight_lineEdit.setText(str(result[14]))
-        self.w.w.w.height_lineEdit.setText(str(result[15]))
-        mil = result[16]
+        self.result = self.cur.fetchone()
+        self.w.w.w.namekor.setText(self.result[0])
+        self.w.w.w.nameeng.setText(self.result[1])
+        self.w.w.w.empnum.setText(str(self.result[2]))
+        self.w.w.w.joindate.setText(str(self.result[3]))
+        self.w.w.w.emprank.setText(self.result[4])
+        self.w.w.w.regnum_lineEdit.setText(self.result[5])
+        self.w.w.w.regnum_lineEdit2.setText(self.result[6])
+        self.w.w.w.mail_lineEdit.setText(self.result[7])
+        self.w.w.w.phone_combo.setCurrentText(self.result[8])
+        self.w.w.w.phone_lineEdit2.setText(self.result[9])
+        self.w.w.w.phone_lineEdit3.setText(self.result[10])
+        self.w.w.w.dept.setText(self.result[11])
+        self.w.w.w.work_pos.setText(self.result[12])
+        self.w.w.w.position.setText(self.result[13])
+        self.w.w.w.addressnum_lineEdit.setText(str(self.result[14]))
+        self.w.w.w.address_lineEdit.setText(self.result[15])
+        self.w.w.w.salary.setText(self.result[16])
+        self.w.w.w.height_lineEdit.setText(str(self.result[17]))
+        self.w.w.w.weight_lineEdit.setText(str(self.result[18]))
+        mil = self.result[19]
         if mil == '군필':
             self.w.w.w.milBtn.setChecked(True)
         elif mil == '미필':
@@ -193,26 +219,162 @@ class Login(QMainWindow, form_class):
         else:
             self.w.w.w.milBtn3.setChecked(True)
         
-        marry = result[17]
-        if marry == '미혼':
-            self.w.w.w.maryyBtn2.setChecked(True)
-        else : 
+        marry = self.result[20]
+        if marry == '기혼':
             self.w.w.w.maryyBtn.setChecked(True)
-        
-        if result[17] == '고졸':
-            self.w.w.w.lastedu_combo.setCurrentIndex(0)
-        elif result[17] == '초대졸':
-            self.w.w.w.lastedu_combo.setCurrentIndex(1)
-        elif result[17] == '대졸':
-            self.w.w.w.lastedu_combo.setCurrentIndex(2)
-        elif result[17] == '대학원석사':
-            self.w.w.w.lastedu_combo.setCurrentIndex(3)
-        else:
-            self.w.w.w.lastedu_combo.setCurrentIndex(4)
+        else : 
+            self.w.w.w.maryyBtn2.setChecked(True)
             
+        self.w.w.w.lastedu_combo.setCurrentText(self.result[21])
         resize_pixmap = self.img.scaled(130,150)
         self.w.w.w.pic.setPixmap(resize_pixmap) 
+        self.w.w.w.saveBtn.clicked.connect(self.saveEdit)
+
+    def saveEdit(self):
+        attrDict ={
+            '주민번호': self.result[5] + self.result[6],  
+            '메일': self.result[7], 
+            '휴대폰번호': self.result[8] + self.result[9] + self.result[10],  
+            '우편번호':self.result[14],
+            '주소':self.result[15], 
+            '신장': self.result[17],  
+            '체중': self.result[18],             
+            '군필여부': self.result[19], 
+            '결혼여부': self.result[20],  
+            '최종학력': self.result[21],            
+            '사진': self.result[22]
+            }        
+        attrDict['주민번호'] = self.w.w.w.regnum_lineEdit.text() + self.w.w.w.regnum_lineEdit2.text()
+        attrDict['메일'] = self.w.w.w.mail_lineEdit.text()
+        attrDict['휴대폰번호'] = self.w.w.w.phone_combo.currentText() + self.w.w.w.phone_lineEdit2.text() + self.w.w.w.phone_lineEdit3.text()
+        if self.w.w.w.addressnum_lineEdit.text() == '':
+            QMessageBox.warning(self, "사원등록실패", "우편번호가 입력되지 않았습니다. 우편번호 입력바랍니다.")
+            return
+        else:
+            attrDict['우편번호'] = int(self.w.w.w.addressnum_lineEdit.text())
+        attrDict['주소'] = self.w.w.w.address_lineEdit.text()
+
+        height = self.w.w.w.height_lineEdit.text()
+        weight = self.w.w.w.weight_lineEdit.text()
+
+        if height == '': 
+            attrDict['신장'] = None
+        else:
+            attrDict['신장'] = int(height)
+
+        if weight == '': 
+            attrDict['체중'] = None
+        else:
+            attrDict['체중'] = int(weight)       
+
+
+        if self.w.w.w.milBtn.isChecked():
+            attrDict['군필여부'] = self.w.w.w.milBtn.text()
+        elif self.w.w.w.milBtn2.isChecked():
+            attrDict['군필여부'] = self.w.w.w.milBtn2.text()
+        else:
+            attrDict['군필여부'] = self.w.w.w.milBtn3.text()
+            
+        if self.w.w.w.maryyBtn.isChecked():
+            attrDict['결혼여부'] = self.w.w.w.maryyBtn.text()
+        else:
+            attrDict['결혼여부'] = self.w.w.w.maryyBtn2.text()    
+        attrDict['최종학력'] = self.w.w.w.lastedu_combo.currentText()
+
+        if self.pixmap is not None:
+            byte_array = QByteArray()
+            buffer = QBuffer(byte_array)
+            buffer.open(QIODevice.WriteOnly)
+            self.pixmap.toImage().save(buffer, 'PNG')
+            attrDict['사진'] = byte_array.data()    
         
+        for key, value in attrDict.items():
+            if key =='휴대폰번호':
+                if len(value) < 11 :
+                    QMessageBox.warning(self, "개인정보변경실패", "{}11자리가 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
+                    return
+            elif not (key == '신장' or key == '체중'):
+                if value == '':
+                    QMessageBox.warning(self, "개인정보변경실패", "{}이(가) 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
+                    return
+        
+        if attrDict['주민번호'] == '' or len(attrDict['주민번호']) != 13:
+            QMessageBox.warning(self, "개인정보변경실패", "주민번호 13자리가 입력되지 않았습니다. 주민번호 입력바랍니다.")
+            return
+        
+        if not re.match(r"^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", attrDict['메일']):
+            QMessageBox.warning(self,'개인정보변경실패','메일 형식이 틀립니다.메일 확인바랍니다.')
+            return
+        
+        if len(str(attrDict['우편번호'])) != 5:
+            QMessageBox.warning(self, "개인정보변경실패", "우편번호는 5자리를 입력하셔야 합니다.")
+            return
+
+        query = """
+        UPDATE MAIN_TABLE 
+        SET REG_NUM = %s, MAIL = %s, PHONE = %s, ADDRESS_NUM = %s, ADDRESS = %s, HEIGHT = %s, WEIGHT = %s, MILITARY = %s, MARRY = %s, LAST_EDU = %s, PIC = %s
+        WHERE EMP_NUM = %s; 
+        """
+        reply = QMessageBox.question(self, '저장 확인', '저장하시겠습니까??', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            try:
+                self.cur.execute(query,tuple(attrDict.values()) + (self.emp_num,))
+                self.conn.commit()
+                QMessageBox.information(self, "개인정보변경성공", "개인정보가 변경되었습니다.")
+                self.w.w.w.close()
+
+                self.showMyInfo()
+
+                data = attrDict['사진']
+                self.img = QPixmap()
+                self.img.loadFromData(data, 'PNG')
+                icon = QIcon(self.img)        
+                self.w.chgBtn.setIcon(icon)                
+
+            except Exception as e:
+                QMessageBox.warning(self, "개인정보변경실패", "Error: " + str(e))
+                return 
+
+    def showAddImg(self):
+        self.w1 = AddImg()
+        self.w1.show()
+        self.w1.searchbutton.clicked.connect(self.openImage)
+        self.w1.savebtn.clicked.connect(self.save_img)
+        self.w1.cnlBtn.clicked.connect(self.w1.close)
+    
+    # 231130 이미지 선택하고 다이알로그 텍스트 라인 에디트에 파일경로 세팅 by 정현아
+    def openImage(self):
+        self.path = None
+        self.fname = None
+        self.fname, _ = QFileDialog.getOpenFileName(self, '이미지 파일 찾기', 'C:/Program Files', '이미지 파일(*.jpg *.gif, *.png)')
+        if self.fname:
+            max_file_size_mb = 1
+            max_file_size_bytes = max_file_size_mb * 1024 * 1024
+            
+            size, self.path = self.getFileSize(self.fname)
+            if size >= max_file_size_bytes:
+                QMessageBox.warning(self,'사진등록실패','사진 사이즈가 1MB를 초과하였습니다.')
+                return
+            else:
+                self.w1.imgPath_textEdit.setText(self.path)
+                self.w1.hide()
+                self.w1.show()
+
+    def getFileSize(self, file_path):
+        return os.path.getsize(file_path), file_path
+    
+    # 231130 선택한 이미지 등록화면에 띄우기 by 정현아
+    def save_img(self):
+        if self.path is None :
+            QMessageBox.warning(self,'사진등록실패','선택된 사진이 없습니다.')
+            return
+        else: 
+                self.pixmap = QPixmap(self.fname)
+                width = 130
+                height = 150
+                resize_pixmap = self.pixmap.scaled(width,height)
+                self.w.w.w.pic.setPixmap(resize_pixmap)
+        self.w1.close()
         
     def back(self):
         self.w.close()

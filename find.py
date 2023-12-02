@@ -37,7 +37,7 @@ class Find(QMainWindow, form_class):
         self.tab.currentChanged.connect(self.useBtn)
 
         self.conn = pymysql.connect(
-            host='192.168.2.20',
+            host='localhost',
             user='dev',
             password='nori1234',
             db='dev',

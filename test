@@ -1,1 +1,3 @@
-print('\%')
+t1 = ('사과', '딸기')
+query = ",".join(t1)
+print('select '+query+' from fruits')

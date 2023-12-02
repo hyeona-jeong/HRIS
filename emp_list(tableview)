@@ -1,0 +1,133 @@
+import os
+import sys
+import pymysql
+import pandas as pd
+
+from PyQt5.QtWidgets import *
+from PyQt5 import uic
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from emp_regist import Regist
+from emp_info import EmpInfo
+
+def resource_path(relative_path):
+    base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
+class CenterAlignedDelegate(QStyledItemDelegate):
+    def initStyleOption(self, option, index):
+        super().initStyleOption(option, index)
+        option.displayAlignment = Qt.AlignCenter
+
+class TableModel(QAbstractTableModel):
+    def __init__(self, data, headers):
+        super(TableModel, self).__init__()
+        self._data = [list(row) for row in data]
+        self._headers = headers
+
+    def data(self, index, role):
+        if role == Qt.DisplayRole:
+            return self._data[index.row()][index.column()]
+
+    def rowCount(self, index):
+        return len(self._data)
+
+    def columnCount(self, index):
+        return len(self._data[0])
+
+    def headerData(self, section, orientation, role):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            return self._headers[section] if 0 <= section < len(self._headers) else None
+
+form = resource_path('emp_list(tableview).ui')
+form_class = uic.loadUiType(form)[0]
+
+class Emplist(QMainWindow, form_class):
+    closed = pyqtSignal()
+
+    def __init__(self):
+        super( ).__init__( )
+        self.setupUi(self)
+
+        self.emplist.setLayout(self.listLayout)
+        self.emplist.setStyleSheet(stylesheet)
+        header = ['부서','이름','직무','직급','직책','휴대폰번호','메일']
+
+        #MySql DB 연결 정보
+        self.conn = pymysql.connect(
+            host='localhost',
+            user='dev',
+            password='nori1234',
+            db='dev',
+            port=3306,
+            charset='utf8'
+        )
+        self.cur = self.conn.cursor()
+        query = "SELECT CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL FROM MAIN_TABLE"
+        self.cur.execute(query)
+        data = self.cur.fetchall()
+
+        self.model = TableModel(data, header)
+        self.table.setModel(self.model)
+
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeToContents)
+
+        delegate = CenterAlignedDelegate(self.table)
+        self.table.setItemDelegate(delegate)
+        
+
+    def back(self):
+        self.w.hide()
+        self.show()
+
+    # 231122 페이지 전환 함수 by정현아
+    def showRegist(self):
+        self.w = Regist()
+        self.w .show()
+        self.hide()
+        self.w.cnlBtn.clicked.connect(self.back)
+
+    def back(self):
+        self.w.hide()
+        self.show()
+        
+    # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
+    def closeEvent(self, e):
+        self.closed.emit()
+        super().closeEvent(e)
+   
+stylesheet = """
+    QTableView {
+        border-radius: 10px;
+        background-color: #eeeeee;
+        margin-top:20px;   
+        margin-bottom:20px;       
+        padding-left:20px;          
+        padding-right:20px;
+    }
+
+    QTableView::item {
+        background-color: #ffffff;
+        margin-top: 5px;    
+        margin-bottom:5px;      
+        border-radius: 9px;
+    }
+
+    QTableView::item:selected {
+        color: black;
+    }
+
+    QHeaderView::section{
+        Background-color:#c6c6c6;
+        border-radius:5px;
+        margin-top:25px; 
+        margin-bottom:5px;
+    }
+"""
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv) 
+    myWindow = Emplist() 
+    myWindow.show() 
+    app.exec_() 
