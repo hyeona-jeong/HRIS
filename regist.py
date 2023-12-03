@@ -1,5 +1,8 @@
 import os
 import sys
+import re
+import pymysql
+
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
@@ -17,12 +20,12 @@ form_class = uic.loadUiType(form)[0]
 class FamilyTab(QWidget):
     def __init__(self, parent=None):
         super(FamilyTab, self).__init__(parent)
-        self.fcnt = 0
+        self.cnt = 0
         self.initUI()
 
     def initUI(self):
         self.family = QScrollArea()
-        self.fcnt = 0
+        self.cnt = 0
         self.fwidget = QWidget()
         self.family.setWidget(self.fwidget)
         self.flay = QGridLayout(self.fwidget)
@@ -44,7 +47,7 @@ class FamilyTab(QWidget):
         self.fAdd_btn.clicked.connect(self.addFamilyMember)
 
     def addFamilyMember(self):
-        if(self.fcnt<=4):
+        if(self.cnt<=4):
             self.fName_lbl.append(QLabel("가족성명"))
             self.fName_le.append(QLineEdit(self))
             self.fYear_lbl.append(QLabel("생년월일"))
@@ -53,24 +56,24 @@ class FamilyTab(QWidget):
             self.fRel_cb.append(QComboBox())
             self.f_list = ['부','모','형제','배우자','자녀','조부','조모','외조부','외조모','빙부','빙모']
             for i in range(len(self.f_list)):
-                self.fRel_cb[self.fcnt].addItem(self.f_list[i])
+                self.fRel_cb[self.cnt].addItem(self.f_list[i])
             self.fLive_lbl.append(QLabel("동거여부"))
             self.fLive_cb.append(QComboBox())
-            self.fLive_cb[self.fcnt].addItem('Y')
-            self.fLive_cb[self.fcnt].addItem('N')
+            self.fLive_cb[self.cnt].addItem('Y')
+            self.fLive_cb[self.cnt].addItem('N')
             
             for i in range(len(self.familyWidget)):
                 if i == 0:
-                    self.flay.addWidget(self.familyWidget[i][self.fcnt],0 + 4 * self.fcnt,0)
+                    self.flay.addWidget(self.familyWidget[i][self.cnt],0 + 4 * self.cnt,0)
                 elif i % 2 == 0:
-                    self.flay.addWidget(self.familyWidget[i][self.fcnt],int(i/2) + 4 * self.fcnt,0)
+                    self.flay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,0)
                 elif i % 2 == 1:
-                    self.flay.addWidget(self.familyWidget[i][self.fcnt],int(i/2) + 4 * self.fcnt,1)
+                    self.flay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,1)
                     if i % 4 == 3:
-                        self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * self.fcnt,2)
+                        self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * self.cnt,2)
             
-            self.flay.setRowStretch((self.flay.rowCount()*(4-self.fcnt)),1)
-            self.fcnt+=1;
+            self.flay.setRowStretch((self.flay.rowCount()*(4-self.cnt)),1)
+            self.cnt+=1;
             
         else:
             QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
@@ -79,12 +82,12 @@ class FamilyTab(QWidget):
 class ContactTab(QWidget):
     def __init__(self, parent=None):
         super(ContactTab, self).__init__(parent)
-        self.ccnt = 0
+        self.cnt = 0
         self.initUI()
 
     def initUI(self):
         self.contact = QScrollArea()
-        self.ccnt = 0
+        self.cnt = 0
         self.cwidget = QWidget()
         self.contact.setWidget(self.cwidget)
         self.clay = QGridLayout(self.cwidget)
@@ -103,29 +106,29 @@ class ContactTab(QWidget):
         self.cAdd_btn.clicked.connect(self.addContact)
 
     def addContact(self):
-        if(self.ccnt<=1):
+        if(self.cnt<=1):
             self.cName_lbl.append(QLabel("성명"))
             self.cName_le.append(QLineEdit(self))
             self.cRel_lbl.append(QLabel("관계"))
             self.cRel_cb.append(QComboBox())
             self.c_list = ['부','모','형제','배우자','자녀','조부','조모','외조부','외조모','빙부','빙모']
             for i in range(len(self.c_list)):
-                self.cRel_cb[self.ccnt].addItem(self.c_list[i])
+                self.cRel_cb[self.cnt].addItem(self.c_list[i])
             self.cCont_lbl.append(QLabel("연락처"))
             self.cCont_le.append(QLineEdit(self))
             
             for i in range(len(self.contactWidget)):
                 if i == 0:
-                    self.clay.addWidget(self.contactWidget[i][self.ccnt],0 + 3 * self.ccnt,0)
+                    self.clay.addWidget(self.contactWidget[i][self.cnt],0 + 3 * self.cnt,0)
                 elif i % 2 == 0:
-                    self.clay.addWidget(self.contactWidget[i][self.ccnt],int(i/2) + 3 * self.ccnt,0)
+                    self.clay.addWidget(self.contactWidget[i][self.cnt],int(i/2) + 3 * self.cnt,0)
                 elif i % 2 == 1:
-                    self.clay.addWidget(self.contactWidget[i][self.ccnt],int(i/2) + 3 * self.ccnt,1)
+                    self.clay.addWidget(self.contactWidget[i][self.cnt],int(i/2) + 3 * self.cnt,1)
                     if i % 3 == 2:
-                        self.clay.addWidget(self.cAdd_btn,int(i/2) + 3 * self.ccnt,2)
+                        self.clay.addWidget(self.cAdd_btn,int(i/2) + 3 * self.cnt,2)
             
-            self.clay.setRowStretch((self.clay.rowCount()*(4-self.ccnt)),1)
-            self.ccnt+=1;
+            self.clay.setRowStretch((self.clay.rowCount()*(4-self.cnt)),1)
+            self.cnt+=1;
             
         else:
             QMessageBox.information(self,"경고","2번 이상 등록하실 수 없습니다.")
@@ -134,12 +137,12 @@ class ContactTab(QWidget):
 class SchoolTab(QWidget):
     def __init__(self, parent=None):
         super(SchoolTab, self).__init__(parent)
-        self.schcnt = 0
+        self.cnt = 0
         self.initUI()
 
     def initUI(self):
         self.school = QScrollArea()
-        self.schcnt = 0
+        self.cnt = 0
         self.schwidget = QWidget()
         self.school.setWidget(self.schwidget)
         self.schlay = QGridLayout(self.schwidget)
@@ -167,7 +170,7 @@ class SchoolTab(QWidget):
         self.schAdd_btn.clicked.connect(self.addSchoolInfo)
 
     def addSchoolInfo(self):
-        if(self.schcnt<=3):
+        if(self.cnt<=3):
             self.scheadmit_lbl.append(QLabel("입학일"))
             self.scheadmit_de.append(QDateEdit(self))
             self.schgrad_lbl.append(QLabel("졸업일"))
@@ -185,16 +188,16 @@ class SchoolTab(QWidget):
             
             for i in range(len(self.schWidget)):
                 if i == 0:
-                    self.schlay.addWidget(self.schWidget[i][self.schcnt],0 + 7 * self.schcnt,0)
+                    self.schlay.addWidget(self.schWidget[i][self.cnt],0 + 7 * self.cnt,0)
                 elif i % 2 == 0:
-                    self.schlay.addWidget(self.schWidget[i][self.schcnt],int(i/2) + 7 * self.schcnt,0)
+                    self.schlay.addWidget(self.schWidget[i][self.cnt],int(i/2) + 7 * self.cnt,0)
                 elif i % 2 == 1:
-                    self.schlay.addWidget(self.schWidget[i][self.schcnt],int(i/2) + 7 * self.schcnt,1)
+                    self.schlay.addWidget(self.schWidget[i][self.cnt],int(i/2) + 7 * self.cnt,1)
                     if i % 7 == 6:
-                        self.schlay.addWidget(self.schAdd_btn,int(i/2) + 7 * self.schcnt,2)
+                        self.schlay.addWidget(self.schAdd_btn,int(i/2) + 7 * self.cnt,2)
             
-            self.schlay.setRowStretch((self.schlay.rowCount()*(4-self.schcnt)),1)
-            self.schcnt+=1;
+            self.schlay.setRowStretch((self.schlay.rowCount()*(4-self.cnt)),1)
+            self.cnt+=1;
             
         else:
             QMessageBox.information(self,"경고","4번 이상 등록하실 수 없습니다.")
@@ -203,12 +206,12 @@ class SchoolTab(QWidget):
 class CertificationTab(QWidget):
     def __init__(self, parent=None):
         super(CertificationTab, self).__init__(parent)
-        self.certcnt = 0
+        self.cnt = 0
         self.initUI()
 
     def initUI(self):
         self.certificate = QScrollArea()
-        self.certcnt = 0
+        self.cnt = 0
         self.certwidget = QWidget()
         self.certificate.setWidget(self.certwidget)
         self.certlay = QGridLayout(self.certwidget)
@@ -225,7 +228,7 @@ class CertificationTab(QWidget):
         self.certAdd_btn.clicked.connect(self.addCertification)
 
     def addCertification(self):
-        if(self.certcnt<=9):
+        if(self.cnt<=9):
             self.certName_lbl.append(QLabel("자격증명"))
             self.certName_le.append(QLineEdit(self))
             self.certDate_lbl.append(QLabel("취득일"))
@@ -233,15 +236,15 @@ class CertificationTab(QWidget):
             
             for i in range(len(self.certwidget)):
                 if i == 0:
-                    self.certlay.addWidget(self.certwidget[i][self.certcnt],0 + 2 * self.certcnt,0)
+                    self.certlay.addWidget(self.certwidget[i][self.cnt],0 + 2 * self.cnt,0)
                 elif i % 2 == 0:
-                    self.certlay.addWidget(self.certwidget[i][self.certcnt],int(i/2) + 2 * self.certcnt,0)
+                    self.certlay.addWidget(self.certwidget[i][self.cnt],int(i/2) + 2 * self.cnt,0)
                 elif i % 2 == 1:
-                    self.certlay.addWidget(self.certwidget[i][self.certcnt],int(i/2) + 2 * self.certcnt,1)
-                    self.certlay.addWidget(self.certAdd_btn,int(i/2) + 2 * self.certcnt,2)
+                    self.certlay.addWidget(self.certwidget[i][self.cnt],int(i/2) + 2 * self.cnt,1)
+                    self.certlay.addWidget(self.certAdd_btn,int(i/2) + 2 * self.cnt,2)
             
-            self.certlay.setRowStretch((self.certlay.rowCount()*(4-self.certcnt)),1)
-            self.certcnt+=1;
+            self.certlay.setRowStretch((self.certlay.rowCount()*(4-self.cnt)),1)
+            self.cnt+=1;
             
         else:
             QMessageBox.information(self,"경고","10번 이상 등록하실 수 없습니다.")
@@ -250,12 +253,12 @@ class CertificationTab(QWidget):
 class CareerTab(QWidget):
     def __init__(self, parent=None):
         super(CareerTab, self).__init__(parent)
-        self.carcnt = 0
+        self.cnt = 0
         self.initUI()
 
     def initUI(self):
         self.career = QScrollArea()
-        self.carcnt = 0
+        self.cnt = 0
         self.carwidget = QWidget()
         self.career.setWidget(self.carwidget)
         self.carlay = QGridLayout(self.carwidget)
@@ -281,7 +284,7 @@ class CareerTab(QWidget):
         self.carAdd_btn.clicked.connect(self.addCareerInfo)
 
     def addCareerInfo(self):
-        if(self.carcnt<=9):
+        if(self.cnt<=9):
             self.company_lbl.append(QLabel("근무회사"))
             self.company_le.append(QLineEdit(self))
             self.dept_lbl.append(QLabel("근무부서"))
@@ -297,16 +300,16 @@ class CareerTab(QWidget):
 
             for i in range(len(self.carWidget)):
                 if i == 0:
-                    self.carlay.addWidget(self.carWidget[i][self.carcnt],0 + 6 * self.carcnt,0)
+                    self.carlay.addWidget(self.carWidget[i][self.cnt],0 + 6 * self.cnt,0)
                 elif i % 2 == 0:
-                    self.carlay.addWidget(self.carWidget[i][self.carcnt],int(i/2) + 6 * self.carcnt,0)
+                    self.carlay.addWidget(self.carWidget[i][self.cnt],int(i/2) + 6 * self.cnt,0)
                 elif i % 2 == 1:
-                    self.carlay.addWidget(self.carWidget[i][self.carcnt],int(i/2) + 6 * self.carcnt,1)
+                    self.carlay.addWidget(self.carWidget[i][self.cnt],int(i/2) + 6 * self.cnt,1)
                     if i % 6 == 5:
-                        self.carlay.addWidget(self.carAdd_btn,int(i/2) + 6 * self.carcnt,2)
+                        self.carlay.addWidget(self.carAdd_btn,int(i/2) + 6 * self.cnt,2)
             
-            self.carlay.setRowStretch((self.carlay.rowCount()*(4-self.carcnt)),1)
-            self.carcnt+=1;
+            self.carlay.setRowStretch((self.carlay.rowCount()*(4-self.cnt)),1)
+            self.cnt+=1;
             
         else:
             QMessageBox.information(self,"경고","10번 이상 등록하실 수 없습니다.")
@@ -314,12 +317,12 @@ class CareerTab(QWidget):
 class TechnicalTab(QWidget):
     def __init__(self, parent=None):
         super(TechnicalTab, self).__init__(parent)
-        self.techcnt = 0
+        self.cnt = 0
         self.initUI()
 
     def initUI(self):
         self.technical = QScrollArea()
-        self.techcnt = 0
+        self.cnt = 0
         self.techwidget = QWidget()
         self.technical.setWidget(self.techwidget)
         self.techlay = QGridLayout(self.techwidget)
@@ -338,29 +341,29 @@ class TechnicalTab(QWidget):
         self.techAdd_btn.clicked.connect(self.addTechMember)
 
     def addTechMember(self):
-        if(self.techcnt<=9):
+        if(self.cnt<=9):
             self.techDet_lbl.append(QLabel("기술사항"))
             self.techDet_le.append(QLineEdit(self))
             self.pro_lbl.append(QLabel("숙련도"))
             self.pro_cb.append(QComboBox())
-            self.pro_cb[self.techcnt].addItem('상')
-            self.pro_cb[self.techcnt].addItem('중')
-            self.pro_cb[self.techcnt].addItem('하')
+            self.pro_cb[self.cnt].addItem('상')
+            self.pro_cb[self.cnt].addItem('중')
+            self.pro_cb[self.cnt].addItem('하')
             self.note_lbl.append(QLabel("비고"))
             self.note_le.append(QLineEdit(self))
             
             for i in range(len(self.techWidget)):
                 if i == 0:
-                    self.techlay.addWidget(self.techWidget[i][self.techcnt],0 + 3 * self.techcnt,0)
+                    self.techlay.addWidget(self.techWidget[i][self.cnt],0 + 3 * self.cnt,0)
                 elif i % 2 == 0:
-                    self.techlay.addWidget(self.techWidget[i][self.techcnt],int(i/2) + 3 * self.techcnt,0)
+                    self.techlay.addWidget(self.techWidget[i][self.cnt],int(i/2) + 3 * self.cnt,0)
                 elif i % 2 == 1:
-                    self.techlay.addWidget(self.techWidget[i][self.techcnt],int(i/2) + 3 * self.techcnt,1)
+                    self.techlay.addWidget(self.techWidget[i][self.cnt],int(i/2) + 3 * self.cnt,1)
                     if i % 3 == 2:
-                        self.techlay.addWidget(self.techAdd_btn,int(i/2) + 3 * self.techcnt,2)
+                        self.techlay.addWidget(self.techAdd_btn,int(i/2) + 3 * self.cnt,2)
             
-            self.techlay.setRowStretch((self.techlay.rowCount()*(4-self.techcnt)),1)
-            self.techcnt+=1;
+            self.techlay.setRowStretch((self.techlay.rowCount()*(4-self.cnt)),1)
+            self.cnt+=1;
             
         else:
             QMessageBox.information(self,"경고","10번 이상 등록하실 수 없습니다.")
@@ -369,12 +372,12 @@ class TechnicalTab(QWidget):
 class RPTab(QWidget):
     def __init__(self, parent=None):
         super(RPTab, self).__init__(parent)
-        self.rpcnt = 0
+        self.cnt = 0
         self.initUI()
 
     def initUI(self):
         self.rp = QScrollArea()
-        self.rpcnt = 0
+        self.cnt = 0
         self.rpwidget = QWidget()
         self.rp.setWidget(self.rpwidget)
         self.rplay = QGridLayout(self.rpwidget)
@@ -396,7 +399,7 @@ class RPTab(QWidget):
         self.rpAdd_btn.clicked.connect(self.addRPMember)
 
     def addRPMember(self):
-        if(self.rpcnt<=19):
+        if(self.cnt<=19):
             self.rpName_lbl.append(QLabel("상벌명"))
             self.rpName_le.append(QLineEdit(self))
             self.rpScore_lbl.append(QLabel("점수"))
@@ -408,16 +411,16 @@ class RPTab(QWidget):
             
             for i in range(len(self.rpWidget)):
                 if i == 0:
-                    self.rplay.addWidget(self.rpWidget[i][self.rpcnt],0 + 4 * self.rpcnt,0)
+                    self.rplay.addWidget(self.rpWidget[i][self.cnt],0 + 4 * self.cnt,0)
                 elif i % 2 == 0:
-                    self.rplay.addWidget(self.rpWidget[i][self.rpcnt],int(i/2) + 4 * self.rpcnt,0)
+                    self.rplay.addWidget(self.rpWidget[i][self.cnt],int(i/2) + 4 * self.cnt,0)
                 elif i % 2 == 1:
-                    self.rplay.addWidget(self.rpWidget[i][self.rpcnt],int(i/2) + 4 * self.rpcnt,1)
+                    self.rplay.addWidget(self.rpWidget[i][self.cnt],int(i/2) + 4 * self.cnt,1)
                     if i % 4 == 3:
-                        self.rplay.addWidget(self.rpAdd_btn,int(i/2) + 4 * self.rpcnt,2)
+                        self.rplay.addWidget(self.rpAdd_btn,int(i/2) + 4 * self.cnt,2)
             
-            self.rplay.setRowStretch((self.rplay.rowCount()*(4-self.rpcnt)),1)
-            self.rpcnt+=1;
+            self.rplay.setRowStretch((self.rplay.rowCount()*(4-self.cnt)),1)
+            self.cnt+=1;
             
         else:
             QMessageBox.information(self,"경고","20번 이상 등록하실 수 없습니다.")
@@ -425,12 +428,12 @@ class RPTab(QWidget):
 class RSTab(QWidget):
     def __init__(self, parent=None):
         super(RSTab, self).__init__(parent)
-        self.rscnt = 0
+        self.cnt = 0
         self.initUI()
 
     def initUI(self):
         self.rs = QScrollArea()
-        self.rscnt = 0
+        self.cnt = 0
         self.rswidget = QWidget()
         self.rs.setWidget(self.rswidget)
         self.rslay = QGridLayout(self.rswidget)
@@ -449,7 +452,7 @@ class RSTab(QWidget):
         self.rsAdd_btn.clicked.connect(self.addRSMember)
 
     def addRSMember(self):
-        if(self.rscnt<=29):
+        if(self.cnt<=29):
             self.rsRANK_lbl.append(QLabel("상벌명"))
             self.rsRANK_le.append(QLineEdit(self))
             self.rsSal_lbl.append(QLabel("점수"))
@@ -459,31 +462,33 @@ class RSTab(QWidget):
             
             for i in range(len(self.rsWidget)):
                 if i == 0:
-                    self.rslay.addWidget(self.rsWidget[i][self.rscnt],0 + 4 * self.rscnt,0)
+                    self.rslay.addWidget(self.rsWidget[i][self.cnt],0 + 4 * self.cnt,0)
                 elif i % 2 == 0:
-                    self.rslay.addWidget(self.rsWidget[i][self.rscnt],int(i/2) + 4 * self.rscnt,0)
+                    self.rslay.addWidget(self.rsWidget[i][self.cnt],int(i/2) + 4 * self.cnt,0)
                 elif i % 2 == 1:
-                    self.rslay.addWidget(self.rsWidget[i][self.rscnt],int(i/2) + 4 * self.rscnt,1)
+                    self.rslay.addWidget(self.rsWidget[i][self.cnt],int(i/2) + 4 * self.cnt,1)
                     if i % 3 == 2:
-                        self.rslay.addWidget(self.rsAdd_btn,int(i/2) + 4 * self.rscnt,2)
+                        self.rslay.addWidget(self.rsAdd_btn,int(i/2) + 4 * self.cnt,2)
             
-            self.rslay.setRowStretch((self.rslay.rowCount()*(4-self.rscnt)),1)
-            self.rscnt+=1;
+            self.rslay.setRowStretch((self.rslay.rowCount()*(4-self.cnt)),1)
+            self.cnt+=1;
             
         else:
             QMessageBox.information(self,"경고","30번 이상 등록하실 수 없습니다.")
-
 
 class Regist(QMainWindow, form_class):
     closed = pyqtSignal()
 
     def __init__(self):
-        super().__init__()
+        super( ).__init__( )
         self.setupUi(self)
-        self.regist.setLayout(self.regLayout)
-        self.addImgBtn.clicked.connect(self.showAddImg)
-        self.tabWidget.setMovable(True)
 
+        self.path = None
+        self.fname = None
+        self.pixmap = None
+        self.regist.setLayout(self.regLayout)
+
+        # 231203 메인 탭 외의 정보 탭들 생성 by 정현아
         self.familyTab = FamilyTab(self)
         self.contactTab = ContactTab(self)
         self.schoolTab = SchoolTab(self)
@@ -494,24 +499,405 @@ class Regist(QMainWindow, form_class):
         self.rsTab = RSTab(self)
 
         self.tabWidget.addTab(self.familyTab.family, '가족관계')
-        self.tabWidget.addTab(self.contactTab.contact, '연락처')
+        self.tabWidget.addTab(self.contactTab.contact, '비상연락처')
         self.tabWidget.addTab(self.schoolTab.school, '학력')
         self.tabWidget.addTab(self.certificationTab.certificate, '자격증')
         self.tabWidget.addTab(self.careerTab.career, '경력')
         self.tabWidget.addTab(self.technicalTab.technical, '기술사항')
         self.tabWidget.addTab(self.rpTab.rp, '상벌')
-        self.tabWidget.addTab(self.rsTab.rs, '호봉')
+        self.tabWidget.addTab(self.rsTab.rs, '직급 및 호봉')
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.tabWidget)
+        
+        # 각 입력항목들 입력 제한
+        self.namekr_lineEdit.textChanged.connect(self.setValKor)
+        rep = QRegExp("[a-zA-Z\\s]{0,19}")
+        self.nameEng_lineEdit.setValidator(QRegExpValidator(rep))
+        self.regnum_lineEdit.setValidator(QIntValidator(1,100000,self))
+        self.regnum_lineEdit2.setValidator(QIntValidator(1,1000000,self))
+        # rep = QRegExp("[a-z0-9]+@[a-z]+.[a-z]+.[a-z]{,2}")
+        # self.email_lineEdit.setValidator(QRegExpValidator(rep))
+        rep = QRegExp("[가-힣0-9\\s,()]{0,49}")
+        self.addre_lineEdit.setValidator(QRegExpValidator(rep))
+        self.empNum_lineEdit.setValidator(QIntValidator(1,10000000,self))
+        self.phone_lineEdit2.setValidator(QIntValidator(1,1000,self))
+        self.phone_lineEdit3.setValidator(QIntValidator(1,1000,self))
+        self.addressNum_lineEdit.setValidator(QIntValidator(1,10000,self))
+        self.sal_lineEdit.setValidator(QIntValidator(1,10,self))
+        self.height_lineEdit.setValidator(QIntValidator(1,100,self))
+        self.weight_lineEdit.setValidator(QIntValidator(1,100,self))
+        self.lastEdu_combo.setCurrentIndex(1)
+        self.searchAddress.setVisible(False)  
+        self.dateEdit.setDate(QDate.currentDate())
+        
+        # 231201 사번에 맞춰 기본세팅된 입사일 데이트 에디트 변경 by 정현아
+        self.empNum_lineEdit.textEdited.connect(self.setJoinDate)
+        
+        self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄']
+        self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G']
+        self.MIS = ['전기운영 G','PLM G']
+        self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5']
+        self.SP = ['사업기획팀','기술전략팀']
+        self.group_combo.addItems(self.TSP)
+        self.biz_combo.activated[str].connect(self.changeGroup)
 
-        self.show()
+        self.conn = pymysql.connect(
+                host='localhost',
+                user='dev',
+                password='nori1234',
+                db='dev',
+                port=3306,
+                charset='utf8'
+        )
+        self.cur = self.conn.cursor()        
 
-    # 231123 페이지 전환 함수 by 정현아    
+        self.addImgBtn.clicked.connect(self.showAddImg)
+        self.saveBtn.clicked.connect(self.saveEmp)
+        
+    # 231130 한글성명입력제한 함수 by 정현아
+    def setValKor(self):
+        text = self.namekr_lineEdit.text()
+        if text == '':
+            return
+        elif not re.match("[가-힣]", text):
+            QMessageBox.warning(self,'입력오류','한글을 입력해주세요')
+            self.namekr_lineEdit.clear()
+            return
+        rep = QRegExp("[가-힣]{3,4}")
+        self.namekr_lineEdit.setValidator(QRegExpValidator(rep))
+    
+    # 231130 사업부별 그룹 콤보박스 생성
+    def changeGroup(self,biz):
+        self.group_combo.clear()
+        if biz == '경영지원실':
+            return
+        elif biz == 'TSP':
+            self.group_combo.addItems(self.TSP)
+        elif biz == 'FAB':
+            self.group_combo.addItems(self.FAB)
+        elif biz == 'MIS':
+            self.group_combo.addItems(self.MIS)
+        elif biz == 'TC':
+            self.group_combo.addItems(self.TC)
+        elif biz == '전략기획실':    
+            self.group_combo.addItems(self.SP) 
+    
+    # 231130 사원정보저장 함수 by 정현아
+    def saveEmp(self):
+        birthYear = 0
+        attrDict ={
+            '한글성명':'',  
+            '영문성명':'',             
+            '사번':'', 
+            '주민번호':'',
+            '사진':'',  
+            '메일':'', 
+            '휴대폰번호':'',  
+            '입사일':'',             
+            '사업부':'',  
+            '그룹':'',   
+            '직급':'',  
+            '직책':'',  
+            '직무':'',    
+            '우편번호':'',
+            '주소':'', 
+            '호봉':'',  
+            '신장': None,  
+            '체중': None,             
+            '군필여부':'', 
+            '결혼여부':'',  
+            '최종학력':'',            
+            'age':'',
+            'gender':'',  
+                    }
+        if self.pixmap is not None:
+            byte_array = QByteArray()
+            buffer = QBuffer(byte_array)
+            buffer.open(QIODevice.WriteOnly)
+            self.pixmap.toImage().save(buffer, 'PNG')
+            attrDict['사진'] = byte_array.data()
+            
+        if self.empNum_lineEdit.text() == '':
+            QMessageBox.warning(self, "사원등록실패", "사번이 입력되지 않았습니다.사번 입력바랍니다.")
+            return
+        else:
+            attrDict['사번'] = int(self.empNum_lineEdit.text())
+        attrDict['한글성명'] = self.namekr_lineEdit.text()
+        attrDict['영문성명'] = self.nameEng_lineEdit.text()
+        attrDict['주민번호'] = self.regnum_lineEdit.text() + self.regnum_lineEdit2.text()
+        reg_num = self.regnum_lineEdit.text() + self.regnum_lineEdit2.text()
+        attrDict['메일'] = self.email_lineEdit.text()
+        attrDict['휴대폰번호'] = self.phone_combo.currentText() + self.phone_lineEdit2.text() + self.phone_lineEdit3.text()
+        attrDict['주소'] = self.addre_lineEdit.text()
+        attrDict['사업부'] = self.biz_combo.currentText()
+        attrDict['그룹'] = self.group_combo.currentText()
+        attrDict['입사일'] = self.dateEdit.date().toString("yyyy-MM-dd")
+        attrDict['직급'] = self.rank_combo.currentText()
+        attrDict['직책'] = self.workPos_combo.currentText()
+        attrDict['직무'] = self.position_combo.currentText()
+        attrDict['호봉'] = self.sal_combo.currentText() + self.sal_lineEdit.text()
+        attrDict['최종학력'] = self.lastEdu_combo.currentText() 
+
+        if self.height_lineEdit.text() != '':
+            attrDict['신장'] = int(self.height_lineEdit.text())
+        if self.weight_lineEdit.text() != '':
+            attrDict['체중'] = int(self.weight_lineEdit.text())
+        
+        if self.military_btn.isChecked():
+            attrDict['군필여부'] = self.military_btn.text()
+        elif self.military_btn2.isChecked():
+            attrDict['군필여부'] = self.military_btn2.text()
+        else:
+            attrDict['군필여부'] = self.military_btn3.text()
+            
+        if self.marry_btn.isChecked():
+            attrDict['결혼여부'] = self.marry_btn.text()
+        elif self.marry_btn2.isChecked():
+            attrDict['결혼여부'] = self.marry_btn2.text()
+        
+        # 231130 만나이계산 및 성별 by 정현아
+        if attrDict['주민번호'] == '' or len(attrDict['주민번호']) != 13:
+            QMessageBox.warning(self, "사원등록실패", "주민번호 13자리가 입력되지 않았습니다. 주민번호 입력바랍니다.")
+            return
+        else:
+            if reg_num[6] == '0' or reg_num[6] == '9' :
+                QMessageBox.warning(self, "사원등록실패", "주민번호 2번째 첫자리는 1~8까지 입력가능합니다.")
+                return
+            elif reg_num[6] == '1' or reg_num[6] == '2' or reg_num[6] == '5' or reg_num[6] == '6':
+                birthYear = 1900 + int(reg_num[:2])
+            elif reg_num[6] == '3' or reg_num[6] == '4' or reg_num[6] == '7' or reg_num[6] == '8':
+                birthYear = 2000 + int(reg_num[:2])
+            
+
+            if int(reg_num[2:4])>12 or reg_num[2:4] =='00' or reg_num[4:6] == '00':
+                QMessageBox.warning(self, "사원등록실패", "주민번호 형식이 맞지 않습니다. 생년월일 확인바랍니다.")
+                return
+            elif reg_num[2:4] =='01' or  reg_num[2:4] =='03' or reg_num[2:4] =='05' or reg_num[2:4] == '07' or reg_num[2:4] == '08' or reg_num[2:4] == '10' or reg_num[2:4] == '12':
+                if int(reg_num[4:6]) > 31:
+                    QMessageBox.warning(self, "사원등록실패", "주민번호 형식이 맞지 않습니다. 생년월일 확인바랍니다.")
+                    return
+            elif reg_num[2:4] =='04' or reg_num[2:4] =='06' or reg_num[2:4] =='09' or reg_num[2:4] =='11':
+                if int(reg_num[4:6]) > 30:
+                    QMessageBox.warning(self, "사원등록실패", "주민번호 형식이 맞지 않습니다. 생년월일 확인바랍니다.")
+                    return
+            else:
+                if int(reg_num[4:6]) > 28:
+                    QMessageBox.warning(self, "사원등록실패", "주민번호 형식이 맞지 않습니다. 생년월일 확인바랍니다.")
+                    return
+            # 태어난 연월일시에서 현재 연월일시까지의 일수를 365로 나눔
+            age =  int(QDate(birthYear,int(reg_num[2:4]),int(reg_num[4:6])).daysTo(QDate.currentDate())/365)
+            if age < 19:
+                QMessageBox.warning(self, "사원등록실패", "나이가 만 19세보다 어립니다.주민번호 확인바랍니다.")
+                return
+            elif age > 80:
+                QMessageBox.warning(self, "사원등록실패", "나이가 만 80세보다 많습니다.주민번호 확인바랍니다.")
+                return
+            else:
+                attrDict['age'] = age
+
+            if int(reg_num[6]) % 2 == 1:
+                attrDict['gender'] = '남'
+            else : 
+                attrDict['gender'] = '여'
+
+        if not re.match(r"^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", attrDict['메일']):
+            QMessageBox.warning(self,'사원등록실패','메일 형식이 틀립니다.메일 확인바랍니다.')
+            return
+        
+        if len(str(attrDict['사번'])) < 8:
+            QMessageBox.warning(self,'사원등록실패','사번은 8자리를 입력하셔야 합니다.')
+            return
+        
+        if int(str(attrDict['사번'])[:2]) < 12 or int(str(attrDict['사번'])[:2]) > int(QDate.currentDate().year())-2000:
+            QMessageBox.warning(self,'사원등록실패','사번은 앞 2자리는 12보다 작거나 현재년도보다 클 수 없습니다.')
+            return
+        
+        if self.addressNum_lineEdit.text() == '':
+            QMessageBox.warning(self, "사원등록실패", "우편번호가 입력되지 않았습니다. 우편번호 입력바랍니다.")
+            return
+        else:
+            attrDict['우편번호'] = int(self.addressNum_lineEdit.text())        
+
+        if len(str(attrDict['우편번호'])) != 5:
+            QMessageBox.warning(self, "사원등록실패", "우편번호는 5자리를 입력하셔야 합니다.")
+            return
+        
+            
+        for key, value in attrDict.items():
+            if key == '호봉':
+                if len(value) != 3 :
+                    QMessageBox.warning(self, "사원등록실패", "{}이(가) 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
+                    return
+            elif key =='휴대폰번호':
+                if len(value) < 11 :
+                    QMessageBox.warning(self, "사원등록실패", "{}이(가) 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
+                    return
+            elif not (key == '신장' or key == '체중' or key == '그룹' or key == '직무' or key == 'age' or key == 'gender' or key == '휴대폰번호'):
+                if value == '':
+                    QMessageBox.warning(self, "사원등록실패", "{}이(가) 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
+                    return
+        t1 = (attrDict['사번'], attrDict['사번'], attrDict['주민번호'])
+        query = """
+        SELECT NULLIF(EMP_NUM, %s), REG_NUM FROM MAIN_TABLE WHERE EMP_NUM= %s OR REG_NUM = %s;
+        """
+        try:
+            self.cur.execute(query, t1)
+            result = self.cur.fetchone()
+            if result is not None :
+                if result[0] is None:
+                    QMessageBox.warning(self, "사원등록실패", "이미 등록된 사번입니다.")
+                    return
+                else : 
+                    QMessageBox.warning(self, "사원등록실패", "이미 등록된 주민번호입니다.")
+                    return
+        except Exception as e:
+            QMessageBox.warning(self, "사원등록실패", "Error: " + str(e))
+            return
+        
+        query = """
+        INSERT INTO MAIN_TABLE (
+            NAME_KOR,
+            NAME_ENG,
+            EMP_NUM,
+            REG_NUM,
+            PIC,
+            MAIL,
+            PHONE,
+            DATE_JOIN,
+            DEPT_BIZ,
+            DEPT_GROUP,
+            EMP_RANK,
+            WORK_POS,
+            POSITION,
+            ADDRESS_NUM,
+            ADDRESS,
+            SALARY,
+            HEIGHT,
+            WEIGHT,
+            MILITARY,
+            MARRY,
+            LAST_EDU,
+            AGE,
+            GENDER
+        )
+        VALUES (
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+        )
+        """  
+        reply = QMessageBox.question(self, '저장 확인', '저장하시겠습니까??', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            try:
+                self.cur.execute(query, tuple(attrDict.values()))
+                self.conn.commit()
+                self.saveFamily(attrDict['사번'])
+                QMessageBox.information(self, "사원등록성공", "사원정보가 등록되었습니다.")
+            
+                # 231201 등록된 내용 초기화 by 정현아
+                self.namekr_lineEdit.clear()
+                self.regnum_lineEdit.clear()
+                self.regnum_lineEdit2.clear()
+                self.nameEng_lineEdit.clear()
+                self.email_lineEdit.clear()
+                self.empNum_lineEdit.clear()
+                self.phone_lineEdit2.clear()
+                self.phone_lineEdit3.clear()
+                self.addressNum_lineEdit.clear()
+                self.addre_lineEdit.clear()
+                self.sal_lineEdit.clear()
+                self.height_lineEdit.clear()
+                self.weight_lineEdit.clear()
+                self.biz_combo.setCurrentIndex(0)
+                self.rank_combo.setCurrentIndex(0)
+                self.workPos_combo.setCurrentIndex(0)
+                self.position_combo.setCurrentIndex(0)
+                self.sal_combo.setCurrentIndex(0)
+                self.lastEdu_combo.setCurrentIndex(1)
+                self.dateEdit.setDate(QDate.currentDate())
+            
+                self.pixmap = QPixmap('C:/Users/정현아/.ssh/HRIS/unknown.png')
+                width = 130
+                height = 150
+                resize_pixmap = self.pixmap.scaled(width,height)
+                self.img_label.setPixmap(resize_pixmap)   
+                         
+            except Exception as e:
+                QMessageBox.warning(self, "사원등록실패", "Error: " + str(e))
+                return                        
+                
+
+    # 231201 사번에 맞춰 입사일 디폴트값 세팅 by 정현아
+    def setJoinDate(self):
+        year_str = "20"  + self.empNum_lineEdit.text()[:2]
+        year = int(year_str)
+        date = QDate(year, 1, 1)        
+        self.dateEdit.setDate(date)
+        
+    # 231123 이미지 등록화면 전환 및 버튼이벤트 등록 함수 by 정현아    
     def showAddImg(self):
         self.w = AddImg()
         self.w.show()
+        self.w.searchbutton.clicked.connect(self.openImage)
+        self.w.savebtn.clicked.connect(self.save_img)
         self.w.cnlBtn.clicked.connect(self.w.close)
+    
+    # 231130 이미지 선택하고 다이알로그 텍스트 라인 에디트에 파일경로 세팅 by 정현아
+    def openImage(self):
+        self.path = None
+        self.fname = None
+        self.fname, _ = QFileDialog.getOpenFileName(self, '이미지 파일 찾기', 'C:/Program Files', '이미지 파일(*.jpg *.gif, *.png)')
+        if self.fname:
+            max_file_size_mb = 1
+            max_file_size_bytes = max_file_size_mb * 1024 * 1024
+            
+            size, self.path = self.getFileSize(self.fname)
+            if size >= max_file_size_bytes:
+                QMessageBox.warning(self,'사진등록실패','사진 사이즈가 1MB를 초과하였습니다.')
+                return
+            else:
+                self.w.imgPath_textEdit.setText(self.path)
+                self.w.hide()
+                self.w.show()
+
+    def getFileSize(self, file_path):
+        return os.path.getsize(file_path), file_path
+    
+    # 231130 선택한 이미지 등록화면에 띄우기 by 정현아
+    def save_img(self):
+        if self.path is None :
+            QMessageBox.warning(self,'사진등록실패','선택된 사진이 없습니다.')
+            return
+        else: 
+                self.pixmap = QPixmap(self.fname)
+                width = 130
+                height = 150
+                resize_pixmap = self.pixmap.scaled(width,height)
+                self.img_label.setPixmap(resize_pixmap)
+        self.w.close()
+
+    def saveFamily(self, emp_num):
+        print(self.familyTab.cnt)
+        if self.familyTab.cnt == 1 :
+            if self.familyTab.fName_le.text() == '':
+                return
+            else:
+                fName = self.familyTab.fName_le[0].text()
+                fYear = self.familyTab.fYear_de[0].date().toString("yyyy-MM-dd")
+                age = int(self.familyTab.fYear_de[0].daysTo(QDate.currentDate())/365)
+                fRel = self.familyTab.fRel_cb[0].currentText()
+                fLive = self.familyTab.fLive_cb[0].currentText()
+                print(emp_num, fName, fYear, age, fRel, fLive)
+                query = "INSERT INTO FAMILY VALUES(%s, %s, %s, %s, %s, %s, %s)"
+                self.cur.execute(query, (emp_num, fName, fYear, age, fRel, fLive))
+                self.conn.commit()
+        else : 
+            pass
+        
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):
@@ -519,7 +905,7 @@ class Regist(QMainWindow, form_class):
         super().closeEvent(e)
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    myWindow = Regist()
-    myWindow.show()
-    app.exec_()
+    app = QApplication(sys.argv) 
+    myWindow = Regist() 
+    myWindow.show() 
+    app.exec_() 

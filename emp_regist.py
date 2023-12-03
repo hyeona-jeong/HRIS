@@ -499,13 +499,13 @@ class Regist(QMainWindow, form_class):
         self.rsTab = RSTab(self)
 
         self.tabWidget.addTab(self.familyTab.family, '가족관계')
-        self.tabWidget.addTab(self.contactTab.contact, '연락처')
+        self.tabWidget.addTab(self.contactTab.contact, '비상연락처')
         self.tabWidget.addTab(self.schoolTab.school, '학력')
         self.tabWidget.addTab(self.certificationTab.certificate, '자격증')
         self.tabWidget.addTab(self.careerTab.career, '경력')
         self.tabWidget.addTab(self.technicalTab.technical, '기술사항')
         self.tabWidget.addTab(self.rpTab.rp, '상벌')
-        self.tabWidget.addTab(self.rsTab.rs, '호봉')
+        self.tabWidget.addTab(self.rsTab.rs, '직급 및 호봉')
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.tabWidget)
