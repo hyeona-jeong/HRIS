@@ -443,18 +443,18 @@ class Login(QMainWindow, form_class):
             return
         
         if self.result[5] + self.result[6] != attrDict['주민번호'] or self.result[2] != attrDict['사번']:
-            t1 = (attrDict['사번'], attrDict['사번'], attrDict['주민번호'])
+            t1 = (self.result[2], attrDict['사번'], self.result[5] + self.result[6] ,attrDict['주민번호'])
             query = """
-            SELECT NULLIF(EMP_NUM, %s), REG_NUM FROM MAIN_TABLE WHERE EMP_NUM= %s OR REG_NUM = %s;
+            SELECT NULLIF(EMP_NUM, %s), NULLIF(REG_NUM , %s) FROM MAIN_TABLE WHERE EMP_NUM=%s OR  REG_NUM =%s;
             """
             try:
                 self.cur.execute(query, t1)
                 result = self.cur.fetchone()
                 if result is not None :
-                    if result[0] is None:
+                    if result[0] is not None:
                         QMessageBox.warning(self, "개인정보변경실패", "이미 등록된 사번입니다.")
                         return
-                    else : 
+                    elif result[1] is not None: 
                         QMessageBox.warning(self, "개인정보변경실패", "이미 등록된 주민번호입니다.")
                         return
             except Exception as e:
