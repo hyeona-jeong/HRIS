@@ -51,8 +51,6 @@ class Index(QMainWindow, form_class):
         self.tooledu.setMenu(menuEdu)
         self.empBtn.clicked.connect(self.showPage)
         self.eduBtn.clicked.connect(self.showPage)
-
-        print(self.auth)
         
     # 231126 버튼 별로 화면 페이지 구분하여 페이지 전환 by 정현아
     def showPage(self):

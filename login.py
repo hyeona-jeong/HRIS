@@ -19,7 +19,79 @@ def resource_path(relative_path):
 
 form = resource_path('login.ui')
 form_class = uic.loadUiType(form)[0]
+class FamilyTab(QWidget):
+    def __init__(self, parent=None):
+        super(FamilyTab, self).__init__(parent)
+        self.cnt = 0
+        self.initUI()
 
+    def initUI(self):
+        self.family = QScrollArea()
+        self.fwidget = QWidget()
+        self.family.setWidget(self.fwidget)
+        self.flay = QGridLayout(self.fwidget)
+        self.family.setWidgetResizable(True)
+
+        self.fName_lbl = []
+        self.fName_bind = []
+        self.fYear_lbl = []
+        self.fYear_bind = []
+        self.fRel_lbl = []
+        self.fRel_bind = []
+        self.fLive_lbl = []
+        self.fLive_bind = []
+        self.familyWidget = [self.fName_lbl, self.fName_bind, self.fYear_lbl, self.fYear_bind, self.fRel_lbl, 
+                             self.fRel_bind, self.fLive_lbl, self.fLive_bind]
+        self.addFamilyMember()
+
+    def addFamilyMember(self):
+        result = self.setData()
+        if result is None:
+            return
+        else :
+            self.cnt =len(result)
+        
+        #데이터 세팅
+        for i in range(self.cnt):
+            self.fName_lbl.append(QLabel("가족성명"))
+            self.fName_bind.append(QLabel(""))
+            self.fYear_lbl.append(QLabel("생년월일"))
+            self.fYear_bind.append(QLabel(""))
+            self.fRel_lbl.append(QLabel("관계"))
+            self.fRel_bind.append(QLabel(""))
+            self.fLive_lbl.append(QLabel("동거여부"))
+            self.fLive_bind.append(QLabel(""))
+            
+        for row, row_data in enumerate(result):
+            for col, data in enumerate(row_data):
+                self.familyWidget[1+2*col][row].setText(str(data))
+                print(1+2*col,row,data)
+
+        for j in range(self.cnt+1):
+            for i in range(len(self.familyWidget)):
+                if i == 0:
+                    self.flay.addWidget(self.familyWidget[i][j],0 + 4 * j,0)
+                elif i % 2 == 0:
+                    self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,0)
+                elif i % 2 == 1:
+                    self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,1)
+            
+    def setData(self):
+        conn = pymysql.connect(
+                host='localhost',
+                user='dev',
+                password='nori1234',
+                db='dev',
+                port=3306,
+                charset='utf8'
+        )
+        cur = conn.cursor()
+        query = "SELECT NAME_FAMILY, BIRTH, REL, LIVE FROM FAMILY WHERE %s;"
+        cur.execute(query)
+        result = cur.fetchall()
+        conn.close()
+        return result
+        
 class Login(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
@@ -175,6 +247,12 @@ class Login(QMainWindow, form_class):
 
         resize_pixmap = img.scaled(130,150)
         self.w.w.pic.setPixmap(resize_pixmap) 
+        
+        familyTab = FamilyTab(self)
+        self.w.w.familyTab = familyTab
+        self.w.w.tabWidget.addTab(self.w.w.familyTab.family, '가족관계')
+        self.w.w.layout = QVBoxLayout()
+        self.w.w.layout.addWidget(self.w.w.tabWidget)
         
         
     # 231201 개인정보수정화면 by 정현아 
