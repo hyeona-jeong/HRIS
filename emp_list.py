@@ -33,20 +33,20 @@ class FamilyTab(QWidget):
         self.family.setWidgetResizable(True)
 
         self.fName_lbl = []
-        self.fName_bind = []
+        self.fName_le = []
         self.fYear_lbl = []
-        self.fYear_bind = []
+        self.fYear_de = []
         self.fRel_lbl = []
-        self.fRel_bind = []
+        self.fRel_cb = []
         self.fLive_lbl = []
-        self.fLive_bind = []
-        self.familyWidget = [self.fName_lbl, self.fName_bind, self.fYear_lbl, self.fYear_bind, self.fRel_lbl, 
-                             self.fRel_bind, self.fLive_lbl, self.fLive_bind]
+        self.fLive_cb = []
+        self.familyWidget = [self.fName_lbl, self.fName_le, self.fYear_lbl, self.fYear_de, self.fRel_lbl, 
+                             self.fRel_cb, self.fLive_lbl, self.fLive_cb]
         self.addFamilyMember()
 
     def addFamilyMember(self):
         result = self.setData(self.emp_num)
-        if result is None:
+        if not result :
             return
         else :
             self.cnt =len(result)
@@ -54,13 +54,13 @@ class FamilyTab(QWidget):
         #데이터 세팅
         for i in range(self.cnt):
             self.fName_lbl.append(QLabel("성명:"))
-            self.fName_bind.append(QLabel(result[i][0]))
+            self.fName_le.append(QLabel(result[i][0]))
             self.fYear_lbl.append(QLabel("생년월일:"))
-            self.fYear_bind.append(QLabel(str(result[i][1])))
+            self.fYear_de.append(QLabel(str(result[i][1])))
             self.fRel_lbl.append(QLabel("관계:"))
-            self.fRel_bind.append(QLabel(result[i][2]))
+            self.fRel_cb.append(QLabel(result[i][2]))
             self.fLive_lbl.append(QLabel("동거여부:"))
-            self.fLive_bind.append(QLabel(result[i][3]))
+            self.fLive_cb.append(QLabel(result[i][3]))
 
         for j in range(self.cnt):
             for i in range(len(self.familyWidget)):
@@ -117,7 +117,7 @@ class ContactTab(QWidget):
 
     def addContact(self):
         result = self.setData(self.emp_num)
-        if result is None:
+        if not result :
             return
         else:
             self.cnt = len(result)
@@ -194,7 +194,7 @@ class SchoolTab(QWidget):
 
     def addSchoolInfo(self):
         result = self.setData(self.emp_num)
-        if result is None:
+        if not result :
             return
         else:
             self.cnt = len(result)
@@ -268,7 +268,7 @@ class CertificationTab(QWidget):
 
     def addCertification(self):
         result = self.setData(self.emp_num)
-        if result is None:
+        if not result :
             return
         else:
             self.cnt = len(result)
@@ -341,7 +341,7 @@ class CareerTab(QWidget):
 
     def addCareerInfo(self):
         result = self.setData(self.emp_num)
-        if result is None:
+        if not result :
             return
         else:
             self.cnt = len(result)
@@ -415,7 +415,7 @@ class TechnicalTab(QWidget):
 
     def addTechMember(self):
         result = self.setData(self.emp_num)
-        if result is None:
+        if result :
             return
         else:
             self.cnt = len(result)
@@ -487,7 +487,7 @@ class RPTab(QWidget):
 
     def addRPMember(self):
         result = self.setData(self.emp_num)
-        if result is None:
+        if result :
             return
         else:
             self.cnt = len(result)
@@ -560,7 +560,7 @@ class RSTab(QWidget):
 
     def addRSMember(self):
         result = self.setData(self.emp_num)
-        if result is None:
+        if result :
             return
         else:
             self.cnt = len(result)
@@ -672,6 +672,7 @@ class Emplist(QMainWindow, form_class):
         self.listRegBtn.clicked.connect(self.showRegsit)
 
         self.table.cellDoubleClicked.connect(self.showEmpInfo)
+        # self.table.horizontalHeader().sectionClicked.connect(self.onHeaderClicked)
 
     # 231202 테이블 세팅 함수 쿼리값 변경시 테이블위젯에 세팅된 테이블 값도 변경 by 정현아
     def setTables(self, query):
@@ -798,7 +799,6 @@ class Emplist(QMainWindow, form_class):
             self.w.cnlBtn.clicked.connect(self.back)
 
     def showInfo(self, emp):
-        
         familyTab = FamilyTab(emp)
         self.w.familyTab = familyTab
         self.w.tabWidget.addTab(self.w.familyTab.family, '가족관계')
