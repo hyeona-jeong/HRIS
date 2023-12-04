@@ -105,7 +105,6 @@ stylesheet = """
         padding-right: 3px;
     }
     QMenu{
-        background-color: #ff5500;
         color: #c6c6c6;
         font-size: 16px;
         font-family: Malgun Gothic;

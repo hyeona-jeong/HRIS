@@ -22,7 +22,8 @@ ui = [('login.ui', '.'),
        ('nori.png', '.'),
        ('nori.gif', '.'),
        ('unknown.png', '.'),
-       ('busi.png', '.')
+       ('busi.png', '.'),
+       ('windowicon.jpg', '.')  
 ]
 
 a = Analysis(

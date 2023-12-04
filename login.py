@@ -20,10 +20,11 @@ def resource_path(relative_path):
 form = resource_path('login.ui')
 form_class = uic.loadUiType(form)[0]
 class FamilyTab(QWidget):
-    def __init__(self, emp_num):
+    def __init__(self, emp_num, type):
         super(FamilyTab, self).__init__()
         self.cnt = 0
         self.emp_num = emp_num
+        self.type = type
         self.initUI()
 
     def initUI(self):
@@ -43,9 +44,15 @@ class FamilyTab(QWidget):
         self.fLive_cb = []
         self.familyWidget = [self.fName_lbl, self.fName_le, self.fYear_lbl, self.fYear_de, self.fRel_lbl, 
                              self.fRel_cb, self.fLive_lbl, self.fLive_cb]
-        self.addFamilyMember()
+        if self.type == 'info':
+            self.addFamilyMember()
+        else: 
+            self.fAdd_btn = QPushButton("추가")
+            self.editFamilyMember()
+            self.fAdd_btn.clicked.connect(self.editFamilyMember)
 
     def addFamilyMember(self):
+        print(self.type)
         result = self.setData(self.emp_num)
         if not result :
             return
@@ -75,6 +82,100 @@ class FamilyTab(QWidget):
         self.flay.setRowStretch(self.flay.rowCount(), 1)
         rightmost_column_index = len(self.familyWidget) - 1
         self.flay.setColumnStretch(rightmost_column_index, 1)
+
+    def editFamilyMember(self):
+        result = self.setData(self.emp_num)
+        if not result:
+            if(self.cnt<=4):
+                self.fName_lbl.append(QLabel("가족성명"))
+                self.fName_le.append(QLineEdit(self))
+                self.fYear_lbl.append(QLabel("생년월일"))
+                self.fYear_de.append(QDateEdit(self))
+                self.fRel_lbl.append(QLabel("관계"))
+                self.fRel_cb.append(QComboBox())
+                self.f_list = ['부','모','형제','배우자','자녀','조부','조모','외조부','외조모','빙부','빙모']
+                for i in range(len(self.f_list)):
+                    self.fRel_cb[self.cnt].addItem(self.f_list[i])
+                self.fLive_lbl.append(QLabel("동거여부"))
+                self.fLive_cb.append(QComboBox())
+                self.fLive_cb[self.cnt].addItem('Y')
+                self.fLive_cb[self.cnt].addItem('N')
+                
+                for i in range(len(self.familyWidget)):
+                    if i == 0:
+                        self.flay.addWidget(self.familyWidget[i][self.cnt],0 + 4 * self.cnt,0)
+                    elif i % 2 == 0:
+                        self.flay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,0)
+                    elif i % 2 == 1:
+                        self.flay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,1)
+                        if i % 4 == 3:
+                            self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * self.cnt,2)
+                
+                self.flay.setRowStretch(self.flay.rowCount(), 1)
+                self.cnt+=1;
+            else:
+                QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
+        else :
+            if(len(result) + self.cnt<=4):            
+            #데이터 세팅
+                for i in range(len(result)):
+                    self.fName_lbl.append(QLabel("성명:"))
+                    self.fName_le.append(QLineEdit(result[i][0]))
+                    self.fYear_lbl.append(QLabel("생년월일:"))
+                    self.fYear_de.append(QDateEdit(QDate.fromString(result[i][1].strftime("%Y-%m-%d"), "yyyy-MM-dd")))
+                    self.fRel_lbl.append(QLabel("관계:"))
+                    self.fRel_cb.append(QComboBox())
+                    self.f_list = ['부','모','형제','배우자','자녀','조부','조모','외조부','외조모','빙부','빙모']
+                    for j in range(len(self.f_list)):
+                        self.fRel_cb[i].addItem(self.f_list[j])
+                    self.fRel_cb[i].setCurrentText(result[i][2])
+                    self.fLive_lbl.append(QLabel("동거여부:"))
+                    self.fLive_cb.append(QComboBox())
+                    self.fLive_cb[i].addItems(['Y', 'N'])
+                    self.fLive_cb[i].setCurrentText(result[i][3])
+
+                for j in range(len(result)):
+                    for i in range(len(self.familyWidget)):
+                        if i == 0:
+                            self.flay.addWidget(self.familyWidget[i][j],0 + 4 * j,0)
+                        elif i % 2 == 0:
+                            self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,0)
+                        elif i % 2 == 1:
+                            self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,1)
+                            if i % 4 == 3:
+                                self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * j,2)
+
+                # self.fName_lbl.append(QLabel("가족성명"))
+                # self.fName_le.append(QLineEdit(self))
+                # self.fYear_lbl.append(QLabel("생년월일"))
+                # self.fYear_de.append(QDateEdit(self))
+                # self.fRel_lbl.append(QLabel("관계"))
+                # self.fRel_cb.append(QComboBox())
+                # self.f_list = ['부','모','형제','배우자','자녀','조부','조모','외조부','외조모','빙부','빙모']
+                # for i in range(len(self.f_list)):
+                #     self.fRel_cb[self.cnt].addItem(self.f_list[i])
+                # self.fLive_lbl.append(QLabel("동거여부"))
+                # self.fLive_cb.append(QComboBox())
+                # self.fLive_cb[self.cnt].addItem('Y')
+                # self.fLive_cb[self.cnt].addItem('N')
+                
+                # for i in range(len(self.familyWidget)):
+                #     if i == 0:
+                #         self.flay.addWidget(self.familyWidget[i][self.cnt],0 + 4 * self.cnt,0)
+                #         print(self.cnt+len(result))
+                #     elif i % 2 == 0:
+                #         self.flay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,0)
+                #         print(self.cnt+len(result))
+                #     elif i % 2 == 1:
+                #         self.flay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,1)
+                #         print(self.cnt+len(result))
+                #         if i % 4 == 3:
+                #             self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * self.cnt,2)
+                
+                self.flay.setRowStretch(self.flay.rowCount(), 1)
+                self.cnt+=1;
+            else:
+                QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
             
     def setData(self,emp_num):
         conn = pymysql.connect(
@@ -760,7 +861,7 @@ class Login(QMainWindow, form_class):
         resize_pixmap = img.scaled(130,150)
         self.w.w.pic.setPixmap(resize_pixmap) 
         
-        familyTab = FamilyTab(self.emp_num)
+        familyTab = FamilyTab(self.emp_num,'info')
         self.w.w.familyTab = familyTab
         self.w.w.tabWidget.addTab(self.w.w.familyTab.family, '가족관계')
 
@@ -798,6 +899,10 @@ class Login(QMainWindow, form_class):
         
     # 231201 개인정보수정화면 by 정현아 
     def showEdit(self):
+        familyTab = FamilyTab(self.emp_num,'edit')
+        self.w.w.w.familyTab = familyTab
+        self.w.w.w.tabWidget.addTab(self.w.w.w.familyTab.family, '가족관계')
+        
         query = """
         SELECT 
         NAME_KOR, NAME_ENG, EMP_NUM, DATE_JOIN, EMP_RANK, SUBSTRING(REG_NUM,1,6), SUBSTRING(REG_NUM,7,7), MAIL, SUBSTRING(PHONE,1,3), SUBSTRING(PHONE,4,4), 
