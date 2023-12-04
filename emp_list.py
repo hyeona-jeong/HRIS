@@ -18,6 +18,591 @@ def resource_path(relative_path):
 form = resource_path('emp_list.ui')
 form_class = uic.loadUiType(form)[0]
 
+class FamilyTab(QWidget):
+    def __init__(self, emp_num):
+        super(FamilyTab, self).__init__()
+        self.cnt = 0
+        self.emp_num = emp_num
+        self.initUI()
+
+    def initUI(self):
+        self.family = QScrollArea()
+        self.fwidget = QWidget()
+        self.family.setWidget(self.fwidget)
+        self.flay = QGridLayout(self.fwidget)
+        self.family.setWidgetResizable(True)
+
+        self.fName_lbl = []
+        self.fName_bind = []
+        self.fYear_lbl = []
+        self.fYear_bind = []
+        self.fRel_lbl = []
+        self.fRel_bind = []
+        self.fLive_lbl = []
+        self.fLive_bind = []
+        self.familyWidget = [self.fName_lbl, self.fName_bind, self.fYear_lbl, self.fYear_bind, self.fRel_lbl, 
+                             self.fRel_bind, self.fLive_lbl, self.fLive_bind]
+        self.addFamilyMember()
+
+    def addFamilyMember(self):
+        result = self.setData(self.emp_num)
+        if result is None:
+            return
+        else :
+            self.cnt =len(result)
+        
+        #데이터 세팅
+        for i in range(self.cnt):
+            self.fName_lbl.append(QLabel("성명:"))
+            self.fName_bind.append(QLabel(result[i][0]))
+            self.fYear_lbl.append(QLabel("생년월일:"))
+            self.fYear_bind.append(QLabel(str(result[i][1])))
+            self.fRel_lbl.append(QLabel("관계:"))
+            self.fRel_bind.append(QLabel(result[i][2]))
+            self.fLive_lbl.append(QLabel("동거여부:"))
+            self.fLive_bind.append(QLabel(result[i][3]))
+
+        for j in range(self.cnt):
+            for i in range(len(self.familyWidget)):
+                if i == 0:
+                    self.flay.addWidget(self.familyWidget[i][j],0 + 4 * j,0)
+                elif i % 2 == 0:
+                    self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,0)
+                elif i % 2 == 1:
+                    self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,1)
+        
+        self.flay.setRowStretch(self.flay.rowCount(), 1)
+        rightmost_column_index = len(self.familyWidget) - 1
+        self.flay.setColumnStretch(rightmost_column_index, 1)
+            
+    def setData(self,emp_num):
+        conn = pymysql.connect(
+                host='localhost',
+                user='dev',
+                password='nori1234',
+                db='dev',
+                port=3306,
+                charset='utf8'
+        )
+        cur = conn.cursor()
+        query = "SELECT NAME_FAMILY, BIRTH, REL, LIVE FROM FAMILY WHERE EMP_NUM = %s;"
+        cur.execute(query,(emp_num,))
+        result = cur.fetchall()
+        conn.close()
+        return result
+    
+class ContactTab(QWidget):
+    def __init__(self, emp_num):
+        super(ContactTab, self).__init__()
+        self.cnt = 0
+        self.emp_num = emp_num
+        self.initUI()
+
+    def initUI(self):
+        self.contact = QScrollArea()
+        self.cwidget = QWidget()
+        self.contact.setWidget(self.cwidget)
+        self.clay = QGridLayout(self.cwidget)
+        self.contact.setWidgetResizable(True)
+
+        self.cName_lbl = []
+        self.cName_le = []
+        self.cRel_lbl = []
+        self.cRel_cb = []
+        self.cCont_lbl = []
+        self.cCont_le = []
+        self.contactWidget = [self.cName_lbl, self.cName_le, self.cRel_lbl, self.cRel_cb, self.cCont_lbl, self.cCont_le]
+        
+        self.addContact()
+
+    def addContact(self):
+        result = self.setData(self.emp_num)
+        if result is None:
+            return
+        else:
+            self.cnt = len(result)
+
+        # 데이터 세팅
+        for i in range(self.cnt):
+            self.cName_lbl.append(QLabel("성명:"))
+            self.cName_le.append(QLabel(result[i][0]))
+            self.cRel_lbl.append(QLabel("관계:"))
+            self.cRel_cb.append(QLabel(result[i][1]))
+            self.cCont_lbl.append(QLabel("연락처:"))
+            self.cCont_le.append(QLabel(result[i][2]))
+
+        for j in range(self.cnt):
+            for i in range(len(self.contactWidget)):
+                if i % 2 == 0:
+                    self.clay.addWidget(self.contactWidget[i][j], int(i/2) + 3 * j, 0)
+                elif i % 2 == 1:
+                    self.clay.addWidget(self.contactWidget[i][j], int(i/2) + 3 * j, 1)
+
+        self.clay.setRowStretch(self.clay.rowCount(), 1)
+        rightmost_column_index = len(self.contactWidget) - 1
+        self.clay.setColumnStretch(rightmost_column_index, 1)
+            
+    def setData(self,emp_num):
+        conn = pymysql.connect(
+                host='localhost',
+                user='dev',
+                password='nori1234',
+                db='dev',
+                port=3306,
+                charset='utf8'
+        )
+        cur = conn.cursor()
+        query = "SELECT NAME, REL, PHONE FROM CONTACT WHERE EMP_NUM = %s;"
+        cur.execute(query,(emp_num,))
+        result = cur.fetchall()
+        conn.close()
+        return result
+    
+class SchoolTab(QWidget):
+    def __init__(self, emp_num):
+        super(SchoolTab, self).__init__()
+        self.cnt = 0
+        self.emp_num =emp_num
+        self.initUI()
+
+    def initUI(self):
+        self.school = QScrollArea()
+        self.cnt = 0
+        self.schwidget = QWidget()
+        self.school.setWidget(self.schwidget)
+        self.schlay = QGridLayout(self.schwidget)
+        self.school.setWidgetResizable(True)
+
+        self.scheadmit_lbl = []
+        self.scheadmit_de = []
+        self.schgrad_lbl = []
+        self.schgrad_de = []
+        self.schname_lbl = []
+        self.schname_le = []
+        self.schloc_lbl = []
+        self.schloc_le = []
+        self.schmajor_lbl = []
+        self.schmajor_le = []
+        self.schsubmajor_lbl = []
+        self.schsubmajor_le = []
+        self.comment_lbl = []
+        self.comment_le = []
+        self.schWidget = [self.scheadmit_lbl, self.scheadmit_de, self.schgrad_lbl, self.schgrad_de, self.schname_lbl, self.schname_le, self.schloc_lbl , self.schloc_le ,
+                          self.schmajor_lbl , self.schmajor_le , self.schsubmajor_lbl , self.schsubmajor_le , self.comment_lbl , self.comment_le ]
+
+        self.addSchoolInfo()
+
+    def addSchoolInfo(self):
+        result = self.setData(self.emp_num)
+        if result is None:
+            return
+        else:
+            self.cnt = len(result)
+
+        # 데이터 세팅
+        for i in range(self.cnt):
+            self.scheadmit_lbl.append(QLabel("입학일:"))
+            self.scheadmit_de.append(QLabel(str(result[i][0])))
+            self.schgrad_lbl.append(QLabel("졸업일:"))
+            self.schgrad_de.append(QLabel(str(result[i][1])))
+            self.schname_lbl.append(QLabel("학교명:"))
+            self.schname_le.append(QLabel(result[i][2]))
+            self.schloc_lbl.append(QLabel("소재지:"))
+            self.schloc_le.append(QLabel(result[i][3]))
+            self.schmajor_lbl.append(QLabel("전공:"))
+            self.schmajor_le.append(QLabel(result[i][4]))
+            self.schsubmajor_lbl.append(QLabel("복수전공:"))
+            self.schsubmajor_le.append(QLabel(result[i][5]))
+            self.comment_lbl.append(QLabel("특기사항:"))
+            self.comment_le.append(QLabel(result[i][6]))
+
+        for j in range(self.cnt):
+            for i in range(len(self.schWidget)):
+                if i % 2 == 0:
+                    self.schlay.addWidget(self.schWidget[i][j], int(i / 2) + 7 * j, 0)
+                elif i % 2 == 1:
+                    self.schlay.addWidget(self.schWidget[i][j], int(i / 2) + 7 * j, 1)
+
+        self.schlay.setRowStretch(self.schlay.rowCount(), 1)
+        rightmost_column_index = len(self.schWidget) - 1
+        self.schlay.setColumnStretch(rightmost_column_index, 1)
+    
+    def setData(self,emp_num):
+        conn = pymysql.connect(
+                host='localhost',
+                user='dev',
+                password='nori1234',
+                db='dev',
+                port=3306,
+                charset='utf8'
+        )
+        cur = conn.cursor()
+        query = "SELECT DATE_ADMITION, DATE_GRADUATE, NAME_SCHOOL, LOCATION, MAJOR, SUB_MAJOR, COMMENT FROM SCHOOL_EDUCATION WHERE EMP_NUM = %s;"
+        cur.execute(query,(emp_num,))
+        result = cur.fetchall()
+        conn.close()
+        return result
+    
+class CertificationTab(QWidget):
+    def __init__(self, emp_num):
+        super(CertificationTab, self).__init__()
+        self.cnt = 0
+        self.emp_num = emp_num
+        self.initUI()
+
+    def initUI(self):
+        self.certificate = QScrollArea()
+        self.cnt = 0
+        self.certwidget = QWidget()
+        self.certificate.setWidget(self.certwidget)
+        self.certlay = QGridLayout(self.certwidget)
+        self.certificate.setWidgetResizable(True)
+
+        self.certName_lbl = []
+        self.certName_le = []
+        self.certDate_lbl = []
+        self.certDate_de = []
+        self.certwidget = [self.certName_lbl, self.certName_le, self.certDate_lbl, self.certDate_de]
+        
+        self.addCertification()
+
+    def addCertification(self):
+        result = self.setData(self.emp_num)
+        if result is None:
+            return
+        else:
+            self.cnt = len(result)
+
+        for i in range(self.cnt):
+            self.certName_lbl.append(QLabel("자격증명:"))
+            self.certName_le.append(QLabel(result[i][0]))
+
+            self.certDate_lbl.append(QLabel("취득일:"))
+            self.certDate_de.append(QLabel(str(result[i][1])))
+
+        for j in range(self.cnt):
+            for i in range(len(self.certwidget)):
+                if i % 2 == 0:
+                    self.certlay.addWidget(self.certwidget[i][j], int(i/2) + 2 * j, 0)
+                elif i % 2 == 1:
+                    self.certlay.addWidget(self.certwidget[i][j], int(i/2) + 2 * j, 1)
+
+        self.certlay.setRowStretch(self.certlay.rowCount(), 1)
+        rightmost_column_index = len(self.certwidget) - 1
+        self.certlay.setColumnStretch(rightmost_column_index, 1)
+
+    def setData(self,emp_num):
+        conn = pymysql.connect(
+                host='localhost',
+                user='dev',
+                password='nori1234',
+                db='dev',
+                port=3306,
+                charset='utf8'
+        )
+        cur = conn.cursor()
+        query = "SELECT NAME_LICENSE, DATE_ACQUI FROM CERTIFICATE WHERE EMP_NUM = %s;"
+        cur.execute(query,(emp_num,))
+        result = cur.fetchall()
+        conn.close()
+        return result
+
+class CareerTab(QWidget):
+    def __init__(self, emp_num):
+        super(CareerTab, self).__init__()
+        self.cnt = 0
+        self.emp_num = emp_num
+        self.initUI()
+
+    def initUI(self):
+        self.career = QScrollArea()
+        self.cnt = 0
+        self.carwidget = QWidget()
+        self.career.setWidget(self.carwidget)
+        self.carlay = QGridLayout(self.carwidget)
+        self.career.setWidgetResizable(True)
+
+        self.company_lbl = []
+        self.company_le = []
+        self.dept_lbl = []
+        self.dept_le = []
+        self.datejoin_lbl = []
+        self.datejoin_de = []
+        self.dateleave_lbl = []
+        self.dateleave_de = []
+        self.finalrank_lbl = []
+        self.finalrank_le = []
+        self.workinfo_lbl = []
+        self.workinfo_le = []
+        self.carWidget = [self.company_lbl, self.company_le, self.dept_lbl, self.dept_le, self.datejoin_lbl, self.datejoin_de, self.dateleave_lbl , self.dateleave_de ,
+                          self.finalrank_lbl , self.finalrank_le , self.workinfo_lbl , self.workinfo_le ]
+
+        self.addCareerInfo()
+
+    def addCareerInfo(self):
+        result = self.setData(self.emp_num)
+        if result is None:
+            return
+        else:
+            self.cnt = len(result)
+
+        # 데이터 세팅
+        for i in range(self.cnt):
+            self.company_lbl.append(QLabel("근무회사:"))
+            self.company_le.append(QLabel(result[i][0]))
+            self.dept_lbl.append(QLabel("근무부서:"))
+            self.dept_le.append(QLabel(result[i][1]))
+            self.datejoin_lbl.append(QLabel("입사일:"))
+            self.datejoin_de.append(QLabel(str(result[i][2])))
+            self.dateleave_lbl.append(QLabel("퇴사일:"))
+            self.dateleave_de.append(QLabel(str(result[i][3])))
+            self.finalrank_lbl.append(QLabel("최종 직급:"))
+            self.finalrank_le.append(QLabel(result[i][4]))
+            self.workinfo_lbl.append(QLabel("근무 내용:"))
+            self.workinfo_le.append(QLabel(result[i][5]))
+
+        for j in range(self.cnt):
+            for i in range(len(self.carWidget)):
+                if i % 2 == 0:
+                    self.carlay.addWidget(self.carWidget[i][j], int(i/2) + 6 * j, 0)
+                elif i % 2 == 1:
+                    self.carlay.addWidget(self.carWidget[i][j], int(i/2) + 6 * j, 1)
+
+        self.carlay.setRowStretch(self.carlay.rowCount(), 1)
+        rightmost_column_index = len(self.carWidget) - 1
+        self.carlay.setColumnStretch(rightmost_column_index, 1)
+
+    def setData(self,emp_num):
+        conn = pymysql.connect(
+                host='localhost',
+                user='dev',
+                password='nori1234',
+                db='dev',
+                port=3306,
+                charset='utf8'
+        )
+        cur = conn.cursor()
+        query = "SELECT COMPANY, DEPARTMENT, DATE_JOIN, DATE_LEAVE, FINAL_RANK, WORK_INFO FROM CAREER WHERE EMP_NUM = %s;"
+        cur.execute(query,(emp_num,))
+        result = cur.fetchall()
+        conn.close()
+        return result
+    
+class TechnicalTab(QWidget):
+    def __init__(self, emp_num):
+        super(TechnicalTab, self).__init__()
+        self.cnt = 0
+        self.emp_num = emp_num
+        self.initUI()
+
+    def initUI(self):
+        self.technical = QScrollArea()
+        self.cnt = 0
+        self.techwidget = QWidget()
+        self.technical.setWidget(self.techwidget)
+        self.techlay = QGridLayout(self.techwidget)
+        self.technical.setWidgetResizable(True)
+
+        self.techDet_lbl = []
+        self.techDet_le = []
+        self.pro_lbl = []
+        self.pro_cb = []
+        self.note_lbl = []
+        self.note_le = []
+        self.techWidget = [self.techDet_lbl, self.techDet_le, self.pro_lbl, self.pro_cb, self.note_lbl, self.note_le]
+        
+        self.addTechMember()
+
+    def addTechMember(self):
+        result = self.setData(self.emp_num)
+        if result is None:
+            return
+        else:
+            self.cnt = len(result)
+
+        # 데이터 세팅
+        for i in range(self.cnt):
+            self.techDet_lbl.append(QLabel("기술사항:"))
+            self.techDet_le.append(QLabel(result[i][0]))
+            self.pro_lbl.append(QLabel("숙련도:"))
+            self.pro_cb.append(QLabel(result[i][1]))
+            self.note_lbl.append(QLabel("비고:"))
+            self.note_le.append(QLabel(result[i][2]))
+
+        for j in range(self.cnt):
+            for i in range(len(self.techWidget)):
+                if i % 2 == 0:
+                    self.techlay.addWidget(self.techWidget[i][j], int(i/2) + 3 * j, 0)
+                elif i % 2 == 1:
+                    self.techlay.addWidget(self.techWidget[i][j], int(i/2) + 3 * j, 1)
+
+        self.techlay.setRowStretch(self.techlay.rowCount(), 1)
+        rightmost_column_index = len(self.techWidget) - 1
+        self.techlay.setColumnStretch(rightmost_column_index, 1)
+        
+
+    def setData(self,emp_num):
+        conn = pymysql.connect(
+                host='localhost',
+                user='dev',
+                password='nori1234',
+                db='dev',
+                port=3306,
+                charset='utf8'
+        )
+        cur = conn.cursor()
+        query = "SELECT TEC_DETAIL, PROFICIENCY,NOTE FROM TECHNICAL WHERE EMP_NUM = %s;"
+        cur.execute(query,(emp_num,))
+        result = cur.fetchall()
+        conn.close()
+        return result
+    
+class RPTab(QWidget):
+    def __init__(self,emp_num):
+        super(RPTab, self).__init__()
+        self.emp_num = emp_num
+        self.cnt = 0
+        self.initUI()
+
+    def initUI(self):
+        self.rp = QScrollArea()
+        self.cnt = 0
+        self.rpwidget = QWidget()
+        self.rp.setWidget(self.rpwidget)
+        self.rplay = QGridLayout(self.rpwidget)
+        self.rp.setWidgetResizable(True)
+
+        self.rpName_lbl = []
+        self.rpName_le = []
+        self.rpScore_lbl = []
+        self.rpScore_le = []
+        self.rpDate_lbl = []
+        self.rpDate_de = []
+        self.rpNote_lbl = []
+        self.rpNote_le = []
+        self.rpWidget = [self.rpName_lbl, self.rpName_le, self.rpScore_lbl, self.rpScore_le, 
+                             self.rpDate_lbl, self.rpDate_de, self.rpNote_lbl, self.rpNote_le]
+        
+        self.addRPMember()
+
+    def addRPMember(self):
+        result = self.setData(self.emp_num)
+        if result is None:
+            return
+        else:
+            self.cnt = len(result)
+
+        # 데이터 세팅
+        for i in range(self.cnt):
+            self.rpName_lbl.append(QLabel("상벌명:"))
+            self.rpName_le.append(QLabel(result[i][0]))
+
+            self.rpScore_lbl.append(QLabel("점수:"))
+            self.rpScore_le.append(QLabel(str(result[i][1])))
+
+            self.rpDate_lbl.append(QLabel("일자:"))
+            self.rpDate_de.append(QLabel(str(result[i][2])))
+
+            self.rpNote_lbl.append(QLabel("상벌내용:"))
+            self.rpNote_le.append(QLabel(result[i][3]))
+
+        for j in range(self.cnt):
+            for i in range(len(self.rpWidget)):
+                if i % 2 == 0:
+                    self.rplay.addWidget(self.rpWidget[i][j], int(i/2) + 4 * j, 0)
+                elif i % 2 == 1:
+                    self.rplay.addWidget(self.rpWidget[i][j], int(i/2) + 4 * j, 1)
+
+        self.rplay.setRowStretch(self.rplay.rowCount(), 1)
+        rightmost_column_index = len(self.rpWidget) - 1
+        self.rplay.setColumnStretch(rightmost_column_index, 1)
+
+    def setData(self,emp_num):
+        conn = pymysql.connect(
+                host='localhost',
+                user='dev',
+                password='nori1234',
+                db='dev',
+                port=3306,
+                charset='utf8'
+        )
+        cur = conn.cursor()
+        query = "SELECT NAME_REW_PUNI, SCORE, DATE_REW_PUNI, NOTE PROFICIENCY,NOTE FROM R_P WHERE EMP_NUM = %s;"
+        cur.execute(query,(emp_num,))
+        result = cur.fetchall()
+        conn.close()
+        return result
+
+class RSTab(QWidget):
+    def __init__(self, emp_num):
+        super(RSTab, self).__init__()
+        self.cnt = 0
+        self.emp_num = emp_num
+        self.initUI()
+
+    def initUI(self):
+        self.rs = QScrollArea()
+        self.cnt = 0
+        self.rswidget = QWidget()
+        self.rs.setWidget(self.rswidget)
+        self.rslay = QGridLayout(self.rswidget)
+        self.rs.setWidgetResizable(True)
+
+        self.rsRANK_lbl = []
+        self.rsRANK_le = []
+        self.rsSal_lbl = []
+        self.rsSal_le = []
+        self.rsDate_lbl = []
+        self.rsDate_de = []
+        self.rsWidget = [self.rsRANK_lbl, self.rsRANK_le, self.rsSal_lbl, self.rsSal_le, self.rsDate_lbl, self.rsDate_de]
+        
+        self.addRSMember()
+
+    def addRSMember(self):
+        result = self.setData(self.emp_num)
+        if result is None:
+            return
+        else:
+            self.cnt = len(result)
+
+        # 데이터 세팅
+        for i in range(self.cnt):
+            self.rsRANK_lbl.append(QLabel("직급:"))
+            self.rsRANK_le.append(QLabel(result[i][0]))
+
+            self.rsSal_lbl.append(QLabel("호봉:"))
+            self.rsSal_le.append(QLabel(str(result[i][1])))
+
+            self.rsDate_lbl.append(QLabel("시작일:"))
+            self.rsDate_de.append(QLabel(str(result[i][2])))
+
+        for j in range(self.cnt):
+            for i in range(len(self.rsWidget)):
+                if i % 2 == 0:
+                    self.rslay.addWidget(self.rsWidget[i][j], int(i/2) + 3 * j, 0)
+                elif i % 2 == 1:
+                    self.rslay.addWidget(self.rsWidget[i][j], int(i/2) + 3 * j, 1)
+
+        self.rslay.setRowStretch(self.rslay.rowCount(), 1)
+        rightmost_column_index = len(self.rsWidget) - 1
+        self.rslay.setColumnStretch(rightmost_column_index, 1)
+
+    def setData(self,emp_num):
+        conn = pymysql.connect(
+                host='localhost',
+                user='dev',
+                password='nori1234',
+                db='dev',
+                port=3306,
+                charset='utf8'
+        )
+        cur = conn.cursor()
+        query = "SELECT EMP_RANK, SALARY, DATE_JOIN FROM R_S WHERE EMP_NUM = %s;"
+        cur.execute(query,(emp_num,))
+        result = cur.fetchall()
+        conn.close()
+        return result
+
 class Emplist(QMainWindow, form_class):
     closed = pyqtSignal()
     listToInfo = pyqtSignal()
@@ -213,6 +798,42 @@ class Emplist(QMainWindow, form_class):
             self.w.cnlBtn.clicked.connect(self.back)
 
     def showInfo(self, emp):
+        
+        familyTab = FamilyTab(emp)
+        self.w.familyTab = familyTab
+        self.w.tabWidget.addTab(self.w.familyTab.family, '가족관계')
+
+        contactTab = ContactTab(emp)
+        self.w.contactTab = contactTab
+        self.w.tabWidget.addTab(self.w.contactTab.contact, '비상연락처')
+
+        schoolTab = SchoolTab(emp)
+        self.w.schoolTab = schoolTab
+        self.w.tabWidget.addTab(self.w.schoolTab.school, '학력')
+
+        certificationTab = CertificationTab(emp)
+        self.w.certificationTab = certificationTab
+        self.w.tabWidget.addTab(self.w.certificationTab.certificate, '자격증')
+        
+        careerTab = CareerTab(emp)
+        self.w.careerTab = careerTab
+        self.w.tabWidget.addTab(self.w.careerTab.career, '경력')
+
+        technicalTab = TechnicalTab(emp)
+        self.w.technicalTab = technicalTab
+        self.w.tabWidget.addTab(self.w.technicalTab.technical, '기술사항')
+
+        rpTab = RPTab(emp)
+        self.w.rpTab = rpTab
+        self.w.tabWidget.addTab(self.w.rpTab.rp, '상벌')
+
+        rsTab = RSTab(emp)
+        self.w.rsTab = rsTab
+        self.w.tabWidget.addTab(self.w.rsTab.rs, '호봉')
+        
+        self.w.layout = QVBoxLayout()
+        self.w.layout.addWidget(self.w.tabWidget)
+
         query = """
         SELECT 
         NAME_KOR, EMP_NUM, EMP_RANK, POSITION, PHONE, MAIL, CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_ENG, 
