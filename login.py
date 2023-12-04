@@ -33,6 +33,7 @@ class Login(QMainWindow, form_class):
         self.MIS = ['전기운영 G','PLM G']
         self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5']
         self.SP = ['사업기획팀','기술전략팀']
+        self.BS = ['경영지원']
         
         self.setupUi(self)
         self.loginBtn.clicked.connect(self.loginfunction)
@@ -207,15 +208,10 @@ class Login(QMainWindow, form_class):
 
         if(self.result_pass[2] == 'regular'):
             self.w.w.w.namekor.setDisabled(True)
-            self.w.w.w.nameeng.setDisabled(True)
+
             self.w.w.w.empnum.setDisabled(True)
-            self.w.w.w.emprank.setDisabled(True)
-            self.w.w.w.dept.setDisabled(True)
-            self.w.w.w.dept_g.setDisabled(True)
-            self.w.w.w.work_pos.setDisabled(True)
-            self.w.w.w.position.setDisabled(True)
-            self.w.w.w.sal.setDisabled(True)
-            self.w.w.w.sal2.setDisabled(True)
+            self.w.w.w.regnum_lineEdit.setDisabled(True)
+            self.w.w.w.regnum_lineEdit2.setDisabled(True)
             self.w.w.w.joindate.setDisabled(True)
 
         # 231201 저장된 사원정보가져와 라벨 및 에디트에 세팅 by 정현아
@@ -267,7 +263,7 @@ class Login(QMainWindow, form_class):
     def changeGroup(self,biz):
         self.w.w.w.dept_g.clear()
         if biz == '경영지원실':
-            return
+            self.w.w.w.dept_g.addItems(self.BS)
         elif biz == 'TSP':
             self.w.w.w.dept_g.addItems(self.TSP)
             return

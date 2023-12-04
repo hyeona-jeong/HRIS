@@ -77,6 +77,30 @@ class FamilyTab(QWidget):
             
         else:
             QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
+            
+    def saveFamily(self, emp_num, cur, conn):
+        for i in range(self.cnt):
+            if self.fName_le[i].text() == '':
+                return
+            
+            fName = self.fName_le[i].text()
+            fYear = self.fYear_de[i].date().toString("yyyy-MM-dd")
+            birth = self.fYear_de[i].date()
+            age = int(birth.daysTo(QDate.currentDate())/365)
+            fRel = self.fRel_cb[i].currentText()
+            fLive = self.fLive_cb[i].currentText()
+            print(emp_num, fName, fYear, age, fRel, fLive)
+            
+            query = "INSERT INTO FAMILY VALUES(%s, %s, %s, %s, %s, %s)"
+            cur.execute(query, (emp_num, fName, fYear, age, fRel, fLive))
+            conn.commit()    
+            
+    def initFamily(self):
+        self.fName_le[0].clear()
+        self.fYear_de[0].setDate(QDate(2000, 1, 1))
+        self.fRel_cb[0].setCurrentIndex(0)
+        self.fLive_cb[0].setCurrentIndex(0)
+        cnt = 0
 
 # 연락처탭
 class ContactTab(QWidget):
@@ -126,12 +150,30 @@ class ContactTab(QWidget):
                     self.clay.addWidget(self.contactWidget[i][self.cnt],int(i/2) + 3 * self.cnt,1)
                     if i % 3 == 2:
                         self.clay.addWidget(self.cAdd_btn,int(i/2) + 3 * self.cnt,2)
+
+            for i in range(self.cnt+1):
+                self.cCont_le[i].setValidator(QIntValidator())
+                self.cCont_le[i].setMaxLength(11)
             
             self.clay.setRowStretch((self.clay.rowCount()*(4-self.cnt)),1)
             self.cnt+=1;
             
         else:
             QMessageBox.information(self,"경고","2번 이상 등록하실 수 없습니다.")
+            
+    def saveContact(self, emp_num, cur, conn):
+        for i in range(self.cnt):
+            if self.cName_le[i].text() == '':
+                return
+            
+            cName = self.cName_le[i].text()
+            cRel = self.cRel_cb[i].currentText()
+            cCont = self.cCont_le[i].text()
+            print(emp_num, cName, cRel, cCont)
+            
+            query = "INSERT INTO CONTACT VALUES(%s, %s, %s, %s)"
+            cur.execute(query, (emp_num, cName, cRel, cCont))
+            conn.commit()    
 
 # 학력 탭
 class SchoolTab(QWidget):
@@ -201,7 +243,24 @@ class SchoolTab(QWidget):
             
         else:
             QMessageBox.information(self,"경고","4번 이상 등록하실 수 없습니다.")
-
+            
+    def saveSchool(self, emp_num, cur, conn):
+        for i in range(self.cnt):
+            if self.schname_le[i].text() == '':
+                return
+            
+            schAdmitDate = self.scheadmit_de[i].date().toString("yyyy-MM-dd")
+            schGradDate = self.schgrad_de[i].date().toString("yyyy-MM-dd")
+            schName = self.schname_le[i].text()
+            schLoc = self.schloc_le[i].text()
+            schMajor = self.schmajor_le[i].text()
+            schSubMajor = self.schsubmajor_le[i].text()
+            schComment = self.comment_le[i].text()
+            
+            query = "INSERT INTO SCHOOL_EDUCATION VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
+            cur.execute(query, (emp_num, schAdmitDate, schGradDate, schName, schLoc, schMajor, schSubMajor, schComment))
+            conn.commit()
+        
 # 자격증 탭
 class CertificationTab(QWidget):
     def __init__(self, parent=None):
@@ -248,6 +307,17 @@ class CertificationTab(QWidget):
             
         else:
             QMessageBox.information(self,"경고","10번 이상 등록하실 수 없습니다.")
+            
+    def saveCertification(self, emp_num, cur, conn):
+        for i in range(self.cnt):
+            if self.certName_le[i].text() == '':
+                return
+            certName = self.certName_le[i].text()
+            certDate = self.certDate_de[i].date().toString("yyyy-MM-dd")
+                
+            query = "INSERT INTO CERTIFICATE VALUES (%s, %s, %s)"
+            cur.execute(query, (emp_num, certName, certDate))
+            conn.commit() 
 
 # 경력탭
 class CareerTab(QWidget):
@@ -288,7 +358,7 @@ class CareerTab(QWidget):
             self.company_lbl.append(QLabel("근무회사"))
             self.company_le.append(QLineEdit(self))
             self.dept_lbl.append(QLabel("근무부서"))
-            self.dept_le.append(QDateEdit(self))
+            self.dept_le.append(QLineEdit(self))
             self.datejoin_lbl.append(QLabel("입사일"))
             self.datejoin_de.append(QDateEdit(self))
             self.dateleave_lbl.append(QLabel("퇴사일"))
@@ -313,6 +383,26 @@ class CareerTab(QWidget):
             
         else:
             QMessageBox.information(self,"경고","10번 이상 등록하실 수 없습니다.")
+            
+    def saveCareer(self, emp_num, cur, conn):
+        for i in range(self.cnt):
+            if self.company_le[i].text() == '':
+                return
+            company = self.company_le[i].text()
+            dept = self.dept_le[i].text()
+            datejoin = self.datejoin_de[i].date().toString("yyyy-MM-dd")
+            dateleave = self.dateleave_de[i].date().toString("yyyy-MM-dd")
+            workdays = self.datejoin_de[i].date().daysTo(self.dateleave_de[i].date())
+            years, months = divmod(workdays, 365)
+            months = months/30.44/12
+            workperiod = round(years + months,1)
+            finalrank = self.finalrank_le[i].text()
+            workinfo = self.workinfo_le[i].text()
+
+            query = "INSERT INTO CAREER VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            cur.execute(query, (emp_num, company, dept, datejoin, dateleave, workperiod, finalrank, workinfo))
+            conn.commit()
+            
 # 기술사항탭
 class TechnicalTab(QWidget):
     def __init__(self, parent=None):
@@ -367,6 +457,18 @@ class TechnicalTab(QWidget):
             
         else:
             QMessageBox.information(self,"경고","10번 이상 등록하실 수 없습니다.")
+            
+    def saveTechnical(self, emp_num, cur, conn):
+        for i in range(self.cnt):
+            if self.techDet_le[i].text() == '':
+                return
+            techDet = self.techDet_le[i].text()
+            proficiency = self.pro_cb[i].currentText()
+            note = self.note_le[i].text()
+
+            query = "INSERT INTO TECHNICAL VALUES (%s, %s, %s, %s)"
+            cur.execute(query, (emp_num, techDet, proficiency, note))
+            conn.commit()
 
 # 231203 상벌탭 생성 by 정현아
 class RPTab(QWidget):
@@ -418,12 +520,29 @@ class RPTab(QWidget):
                     self.rplay.addWidget(self.rpWidget[i][self.cnt],int(i/2) + 4 * self.cnt,1)
                     if i % 4 == 3:
                         self.rplay.addWidget(self.rpAdd_btn,int(i/2) + 4 * self.cnt,2)
+                        
+            for i in range(self.cnt+1):
+                self.rpScore_le[i].setValidator(QIntValidator())
             
             self.rplay.setRowStretch((self.rplay.rowCount()*(4-self.cnt)),1)
             self.cnt+=1;
             
         else:
             QMessageBox.information(self,"경고","20번 이상 등록하실 수 없습니다.")
+            
+    def saveRP(self, emp_num, cur, conn):
+        for i in range(self.cnt):
+            if self.rpName_le[i].text() == '':
+                return
+            rpName = self.rpName_le[i].text()
+            rpScore = int(self.rpScore_le[i].text())
+            rpDate = self.rpDate_de[i].date().toString("yyyy-MM-dd")
+            rpNote = self.rpNote_le[i].text()
+
+        query = "INSERT INTO R_P VALUES (%s, %s, %s, %s, %s)"
+        cur.execute(query, (emp_num, rpName, rpScore, rpDate, rpNote))
+        conn.commit()
+        
 # 호봉 탭
 class RSTab(QWidget):
     def __init__(self, parent=None):
@@ -453,11 +572,11 @@ class RSTab(QWidget):
 
     def addRSMember(self):
         if(self.cnt<=29):
-            self.rsRANK_lbl.append(QLabel("상벌명"))
+            self.rsRANK_lbl.append(QLabel("직급"))
             self.rsRANK_le.append(QLineEdit(self))
-            self.rsSal_lbl.append(QLabel("점수"))
+            self.rsSal_lbl.append(QLabel("호봉"))
             self.rsSal_le.append(QLineEdit(self))
-            self.rsDate_lbl.append(QLabel("상벌일"))
+            self.rsDate_lbl.append(QLabel("시작일"))
             self.rsDate_de.append(QDateEdit(self))
             
             for i in range(len(self.rsWidget)):
@@ -475,6 +594,18 @@ class RSTab(QWidget):
             
         else:
             QMessageBox.information(self,"경고","30번 이상 등록하실 수 없습니다.")
+            
+    def saveRS(self, emp_num, cur, conn):
+        for i in range(self.cnt):
+            if self.rsRANK_le[i].text() == '':
+                return
+            rsRANK = self.rsRANK_le[i].text()
+            rsSal = self.rsSal_le[i].text()
+            rsDate = self.rsDate_de[i].date().toString("yyyy-MM-dd")
+
+            query = "INSERT INTO R_S VALUES (%s, %s, %s, %s)"
+            cur.execute(query, (emp_num, rsRANK, rsSal, rsDate))
+            conn.commit()
 
 class Regist(QMainWindow, form_class):
     closed = pyqtSignal()
@@ -533,12 +664,14 @@ class Regist(QMainWindow, form_class):
         
         # 231201 사번에 맞춰 기본세팅된 입사일 데이트 에디트 변경 by 정현아
         self.empNum_lineEdit.textEdited.connect(self.setJoinDate)
+        self.regnum_lineEdit2.textEdited.connect(self.setMilitary)
         
         self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄']
         self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G']
         self.MIS = ['전기운영 G','PLM G']
         self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5']
         self.SP = ['사업기획팀','기술전략팀']
+        self.BS = ['경영지원']
         self.group_combo.addItems(self.TSP)
         self.biz_combo.activated[str].connect(self.changeGroup)
 
@@ -571,7 +704,7 @@ class Regist(QMainWindow, form_class):
     def changeGroup(self,biz):
         self.group_combo.clear()
         if biz == '경영지원실':
-            return
+            self.group_combo.addItems(self.BS)
         elif biz == 'TSP':
             self.group_combo.addItems(self.TSP)
         elif biz == 'FAB':
@@ -790,7 +923,14 @@ class Regist(QMainWindow, form_class):
             try:
                 self.cur.execute(query, tuple(attrDict.values()))
                 self.conn.commit()
-                self.saveFamily(attrDict['사번'])
+                self.familyTab.saveFamily(attrDict['사번'],self.cur,self.conn)
+                self.contactTab.saveContact(attrDict['사번'],self.cur,self.conn)
+                self.schoolTab.saveSchool(attrDict['사번'],self.cur,self.conn)
+                self.certificationTab.saveCertification(attrDict['사번'],self.cur,self.conn)
+                self.careerTab.saveCareer(attrDict['사번'],self.cur,self.conn)
+                self.technicalTab.saveTechnical(attrDict['사번'],self.cur,self.conn)
+                self.rpTab.saveRP(attrDict['사번'],self.cur,self.conn)
+                self.rsTab.saveRS(attrDict['사번'],self.cur,self.conn)
                 QMessageBox.information(self, "사원등록성공", "사원정보가 등록되었습니다.")
             
                 # 231201 등록된 내용 초기화 by 정현아
@@ -814,6 +954,8 @@ class Regist(QMainWindow, form_class):
                 self.sal_combo.setCurrentIndex(0)
                 self.lastEdu_combo.setCurrentIndex(1)
                 self.dateEdit.setDate(QDate.currentDate())
+                
+                self.familyTab.initFamily()
             
                 self.pixmap = QPixmap('C:/Users/정현아/.ssh/HRIS/unknown.png')
                 width = 130
@@ -832,6 +974,15 @@ class Regist(QMainWindow, form_class):
         year = int(year_str)
         date = QDate(year, 1, 1)        
         self.dateEdit.setDate(date)
+        
+    def setMilitary(self):
+        if self.regnum_lineEdit2.text() == '':
+            return
+        gender = self.regnum_lineEdit2.text()[0]
+        if int(gender) % 2 == 0:
+            self.military_btn3.setChecked(True)
+        else:
+            self.military_btn.setChecked(True)
         
     # 231123 이미지 등록화면 전환 및 버튼이벤트 등록 함수 by 정현아    
     def showAddImg(self):
@@ -874,24 +1025,7 @@ class Regist(QMainWindow, form_class):
                 resize_pixmap = self.pixmap.scaled(width,height)
                 self.img_label.setPixmap(resize_pixmap)
         self.w.close()
-
-    def saveFamily(self, emp_num):
-        print(self.familyTab.cnt)
-        if self.familyTab.cnt == 1 :
-            if self.familyTab.fName_le.text() == '':
-                return
-            else:
-                fName = self.familyTab.fName_le[0].text()
-                fYear = self.familyTab.fYear_de[0].date().toString("yyyy-MM-dd")
-                age = int(self.familyTab.fYear_de[0].daysTo(QDate.currentDate())/365)
-                fRel = self.familyTab.fRel_cb[0].currentText()
-                fLive = self.familyTab.fLive_cb[0].currentText()
-                print(emp_num, fName, fYear, age, fRel, fLive)
-                query = "INSERT INTO FAMILY VALUES(%s, %s, %s, %s, %s, %s, %s)"
-                self.cur.execute(query, (emp_num, fName, fYear, age, fRel, fLive))
-                self.conn.commit()
-        else : 
-            pass
+            
         
     def center(self):
         qr = self.frameGeometry()

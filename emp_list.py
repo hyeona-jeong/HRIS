@@ -43,6 +43,7 @@ class Emplist(QMainWindow, form_class):
         self.MIS = ['전기운영 G','PLM G']
         self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5']
         self.SP = ['사업기획팀','기술전략팀']
+        self.BS = ['경영지원']
 
         self.table.setRowCount(0)
         header = ['','부서','이름','직무','직급','직책','휴대폰번호','메일']
@@ -328,7 +329,7 @@ class Emplist(QMainWindow, form_class):
     def changeGroup(self,biz):
         self.w.w.dept_g.clear()
         if biz == '경영지원실':
-            return
+            self.w.w.dept_g.addItems(self.BS)
         elif biz == 'TSP':
             self.w.w.dept_g.addItems(self.TSP)
             return
