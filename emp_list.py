@@ -82,7 +82,9 @@ class FamilyTab(QWidget):
         self.flay.setColumnStretch(rightmost_column_index, 1)
 
     def editFamilyMember(self):
+        # 기존에 등록한 데이터가 있는지 확인
         result = self.setData(self.emp_num)
+        # 231205 없을 경우 등록화면과 동일하게 동작 by 정현아
         if not result:
             if(self.cnt<=4):
                 self.fName_lbl.append(QLabel("가족성명"))
@@ -113,26 +115,42 @@ class FamilyTab(QWidget):
                 self.cnt+=1;
             else:
                 QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
+        # 231205 있을 경우 등록된 데이터를 각 에디터에 세팅 by 정현아
         else :
             if(len(result) + self.cnt<=4):            
-            #데이터 세팅
-                for i in range(len(result)):
-                    self.fName_lbl.append(QLabel("성명:"))
-                    self.fName_le.append(QLineEdit(result[i][0]))
-                    self.fYear_lbl.append(QLabel("생년월일:"))
-                    self.fYear_de.append(QDateEdit(QDate.fromString(result[i][1].strftime("%Y-%m-%d"), "yyyy-MM-dd")))
-                    self.fRel_lbl.append(QLabel("관계:"))
+                #데이터 세팅
+                if self.cnt == 0:
+                    for i in range(len(result)):
+                        self.fName_lbl.append(QLabel("성명:"))
+                        self.fName_le.append(QLineEdit(result[i][0]))
+                        self.fYear_lbl.append(QLabel("생년월일:"))
+                        self.fYear_de.append(QDateEdit(QDate.fromString(result[i][1].strftime("%Y-%m-%d"), "yyyy-MM-dd")))
+                        self.fRel_lbl.append(QLabel("관계:"))
+                        self.fRel_cb.append(QComboBox())
+                        self.f_list = ['부','모','형제','배우자','자녀','조부','조모','외조부','외조모','빙부','빙모']
+                        for j in range(len(self.f_list)):
+                            self.fRel_cb[i].addItem(self.f_list[j])
+                        self.fRel_cb[i].setCurrentText(result[i][2])
+                        self.fLive_lbl.append(QLabel("동거여부:"))
+                        self.fLive_cb.append(QComboBox())
+                        self.fLive_cb[i].addItems(['Y', 'N'])
+                        self.fLive_cb[i].setCurrentText(result[i][3])
+                elif self.cnt != 0:
+                    self.fName_lbl.append(QLabel("가족성명"))
+                    self.fName_le.append(QLineEdit())
+                    self.fYear_lbl.append(QLabel("생년월일"))
+                    self.fYear_de.append(QDateEdit())
+                    self.fRel_lbl.append(QLabel("관계"))
                     self.fRel_cb.append(QComboBox())
                     self.f_list = ['부','모','형제','배우자','자녀','조부','조모','외조부','외조모','빙부','빙모']
-                    for j in range(len(self.f_list)):
-                        self.fRel_cb[i].addItem(self.f_list[j])
-                    self.fRel_cb[i].setCurrentText(result[i][2])
-                    self.fLive_lbl.append(QLabel("동거여부:"))
+                    for i in range(len(self.f_list)):
+                        self.fRel_cb[self.cnt+len(result)-1].addItem(self.f_list[i])
+                    self.fLive_lbl.append(QLabel("동거여부"))
                     self.fLive_cb.append(QComboBox())
-                    self.fLive_cb[i].addItems(['Y', 'N'])
-                    self.fLive_cb[i].setCurrentText(result[i][3])
-
-                for j in range(len(result)):
+                    self.fLive_cb[self.cnt+len(result)-1].addItem('Y')
+                    self.fLive_cb[self.cnt+len(result)-1].addItem('N')
+                    
+                for j in range(len(result)+self.cnt):
                     for i in range(len(self.familyWidget)):
                         if i == 0:
                             self.flay.addWidget(self.familyWidget[i][j],0 + 4 * j,0)
@@ -142,36 +160,9 @@ class FamilyTab(QWidget):
                             self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,1)
                             if i % 4 == 3:
                                 self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * j,2)
-
-                # self.fName_lbl.append(QLabel("가족성명"))
-                # self.fName_le.append(QLineEdit(self))
-                # self.fYear_lbl.append(QLabel("생년월일"))
-                # self.fYear_de.append(QDateEdit(self))
-                # self.fRel_lbl.append(QLabel("관계"))
-                # self.fRel_cb.append(QComboBox())
-                # self.f_list = ['부','모','형제','배우자','자녀','조부','조모','외조부','외조모','빙부','빙모']
-                # for i in range(len(self.f_list)):
-                #     self.fRel_cb[self.cnt].addItem(self.f_list[i])
-                # self.fLive_lbl.append(QLabel("동거여부"))
-                # self.fLive_cb.append(QComboBox())
-                # self.fLive_cb[self.cnt].addItem('Y')
-                # self.fLive_cb[self.cnt].addItem('N')
-                
-                # for i in range(len(self.familyWidget)):
-                #     if i == 0:
-                #         self.flay.addWidget(self.familyWidget[i][self.cnt],0 + 4 * self.cnt,0)
-                #         print(self.cnt+len(result))
-                #     elif i % 2 == 0:
-                #         self.flay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,0)
-                #         print(self.cnt+len(result))
-                #     elif i % 2 == 1:
-                #         self.flay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,1)
-                #         print(self.cnt+len(result))
-                #         if i % 4 == 3:
-                #             self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * self.cnt,2)
                 
                 self.flay.setRowStretch(self.flay.rowCount(), 1)
-                self.cnt+=1;
+                self.cnt+=1
             else:
                 QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
             
@@ -190,6 +181,40 @@ class FamilyTab(QWidget):
         result = cur.fetchall()
         conn.close()
         return result
+    
+    # 231205 변경된 데이터 저장, 기존에 등록된 정보가 있을 경우 UPDATE, 없으면 INSERT
+    def saveFamily(self, emp_num, cur, conn):
+        result = self.setData(self.emp_num)
+        row = len(result)
+        if result:
+            for i in range(row):
+                if self.fName_le[i].text() == '':
+                    return
+                fName = self.fName_le[i].text()
+                fYear = self.fYear_de[i].date().toString("yyyy-MM-dd")
+                birth = self.fYear_de[i].date()
+                age = int(birth.daysTo(QDate.currentDate())/365)
+                fRel = self.fRel_cb[i].currentText()
+                fLive = self.fLive_cb[i].currentText()
+                
+                query = "UPDATE FAMILY SET NAME_FAMILY = %s, BIRTH = %s, AGE = %s, REL = %s, LIVE = %s WHERE EMP_NUM = %s AND NAME_FAMILY = %s;"
+                cur.execute(query, (fName, fYear, age, fRel, fLive, emp_num, fName,))
+                conn.commit()  
+            self.cnt -=1
+            
+        for i in range(self.cnt):
+            if self.fName_le[i+row].text() == '':
+                return
+            fName = self.fName_le[i+row].text()
+            fYear = self.fYear_de[i+row].date().toString("yyyy-MM-dd")
+            birth = self.fYear_de[i+row].date()
+            age = int(birth.daysTo(QDate.currentDate())/365)
+            fRel = self.fRel_cb[i+row].currentText()
+            fLive = self.fLive_cb[i+row].currentText()
+            
+            query = "INSERT INTO FAMILY VALUES(%s, %s, %s, %s, %s, %s)"
+            cur.execute(query, (emp_num, fName, fYear, age, fRel, fLive))
+            conn.commit()  
     
 class ContactTab(QWidget):
     def __init__(self, emp_num):
@@ -1260,6 +1285,7 @@ class Emplist(QMainWindow, form_class):
             try:
                 self.cur.execute(query,tuple(attrDict.values()) + (self.emp_num,))
                 self.conn.commit()
+                self.w.w.familyTab.saveFamily(self.emp_num,self.cur,self.conn)
                 QMessageBox.information(self, "개인정보변경성공", "개인정보가 변경되었습니다.")
                 self.w.w.close()
 

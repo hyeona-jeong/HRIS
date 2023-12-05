@@ -73,7 +73,7 @@ class FamilyTab(QWidget):
                         self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * self.cnt,2)
             
             self.flay.setRowStretch((self.flay.rowCount()*(4-self.cnt)),1)
-            self.cnt+=1;
+            self.cnt+=1
             
         else:
             QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
@@ -158,7 +158,7 @@ class ContactTab(QWidget):
                 self.cCont_le[i].setMaxLength(11)
                 
             self.clay.setRowStretch((self.clay.rowCount()*(4-self.cnt)),1)
-            self.cnt+=1;
+            self.cnt+=1
             
         else:
             QMessageBox.information(self,"경고","2번 이상 등록하실 수 없습니다.")

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1261</width>
+    <width>1265</width>
     <height>929</height>
    </rect>
   </property>
@@ -522,7 +522,7 @@ color white;</string>
         </spacer>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,0">
+        <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_9" stretch="0,7,0,2">
            <property name="spacing">
@@ -1456,7 +1456,7 @@ color white;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1261</width>
+     <width>1265</width>
      <height>26</height>
     </rect>
    </property>
