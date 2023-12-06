@@ -2,11 +2,13 @@ import os
 import sys
 import re
 import pymysql
+import requests
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from bs4 import BeautifulSoup
 from add_img import AddImg
 
 def resource_path(relative_path):
@@ -713,7 +715,6 @@ class Regist(QMainWindow, form_class):
         self.height_lineEdit.setValidator(QIntValidator(1,100,self))
         self.weight_lineEdit.setValidator(QIntValidator(1,100,self))
         self.lastEdu_combo.setCurrentIndex(1)
-        self.searchAddress.setVisible(False)  
         self.dateEdit.setDate(QDate.currentDate())
         
         # 231201 사번에 맞춰 기본세팅된 입사일 데이트 에디트 변경 by 정현아
@@ -742,6 +743,8 @@ class Regist(QMainWindow, form_class):
 
         self.addImgBtn.clicked.connect(self.showAddImg)
         self.saveBtn.clicked.connect(self.saveEmp)
+        self.searchAddress.clicked.connect(self.searchPost)  
+
         
     # 231130 한글성명입력제한 함수 by 정현아
     def setValKor(self):
@@ -1090,6 +1093,68 @@ class Regist(QMainWindow, form_class):
                 resize_pixmap = self.pixmap.scaled(width,height)
                 self.img_label.setPixmap(resize_pixmap)
         self.w.close()
+
+    def searchPost(self):
+        self.w = QDialog(self)
+        searchPost = uic.loadUi(resource_path('search_post.ui'),self.w)
+        QLineEdit
+        self.w.address_lineEdit.returnPressed.connect(self.findAddress)
+        self.w.searchBtn.clicked.connect(self.findAddress)
+        if self.w.exec_() == QDialog.Accepted:
+            pass
+
+    def findAddress(self):
+        post_num = []
+        post_address = []
+        self.w.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        # 231206 라인에디트로 주소 입력받음 by 정현아
+        address = self.w.address_lineEdit.text()
+        # 도로명 주소로 검색하고 도로명 주소 결과가 없으면 지번 주소로 다시 검색 by 정현아
+        url = 'http://openapi.epost.go.kr/postal/retrieveNewAdressAreaCdService/retrieveNewAdressAreaCdService/getNewAddressListAreaCd'
+        params = {
+            'serviceKey': '7kEsxVN9P4SCOTTBAmWPvKJQDrhW4i08XbJe98mkPpthjKeB6bQjiDMSEJuNHVroSg3sx8OUYLaeSIe1J1tSsw==',
+            'searchSe': 'road',
+            'srchwrd': '',
+            'countPerPage': '50',
+            'currentPage': '1'
+        }
+        params['srchwrd'] = address
+
+        response = requests.get(url, params=params).text.encode('utf-8')
+        xmlobj = BeautifulSoup(response, 'lxml-xml')
+
+        post = xmlobj.find_all('zipNo')
+        post2 = xmlobj.find_all('lnmAdres')
+        row = len(post)
+
+        if(row != 0):
+            self.w.table.setRowCount(row)
+            for p in post:
+                post_num.append(p.getText())
+            for p in post2 :
+                post_address.append(p.getText())
+            for r in range(row):
+                self.w.table.setItem(r, 0, QTableWidgetItem(str(post_num[r])))
+                self.w.table.setItem(r, 1, QTableWidgetItem(str(post_address[r])))
+        else:
+            params['searchSe'] = 'dong'
+            response = requests.get(url, params=params).text.encode('utf-8')
+            xmlobj = BeautifulSoup(response, 'lxml-xml')
+
+            post = xmlobj.find_all('zipNo')
+            post2 = xmlobj.find_all('lnmAdres')
+            row = len(post)
+
+            if(row != 0):
+                self.w.table.setRowCount(row)
+                for p in post:
+                    post_num.append(p.getText())
+                for p in post2 :
+                    post_address.append(p.getText())
+                for r in range(row):
+                    self.w.table.setItem(r, 0, QTableWidgetItem(str(post_num[r])))
+                    self.w.table.setItem(r, 1, QTableWidgetItem(str(post_address[r])))
+
         
     def center(self):
         qr = self.frameGeometry()

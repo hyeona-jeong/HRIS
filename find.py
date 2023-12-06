@@ -201,11 +201,6 @@ class Find(QMainWindow, form_class):
 
             QMessageBox.information(self, "Find Succeed", "{}로 메일이 전송되었습니다.".format(mail))
             self.fsubmitBtn_2.setDisabled(True)        
-        
-
-
-
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
