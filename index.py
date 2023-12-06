@@ -10,6 +10,8 @@ from emp_list import Emplist
 from emp_info import EmpInfo
 from emp_regist import Regist
 from edu_list import EduList
+from sign_up import SignUp
+
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -40,12 +42,13 @@ class Index(QMainWindow, form_class):
         self.menuHr.addAction('사원정보검색',self.showPage)
         self.menuHr.addAction('개인정보조회/편집',self.showPage)
         self.menuHr.addAction('사원정보등록',self.showPage)
+        self.menuHr.addAction('사원ID등록',self.showIDRegist)
 
         self.menuHr.setStyleSheet(stylesheet)
         self.toolhr.setMenu(self.menuHr)
 
         menuEdu = QMenu()
-        menuEdu.addAction('교육이수정보 조회/편집',self.showPage)
+        menuEdu.addAction('교육이수정보 조회',self.showPage)
         menuEdu.setStyleSheet(stylesheet)
 
         self.tooledu.setMenu(menuEdu)
@@ -76,7 +79,11 @@ class Index(QMainWindow, form_class):
         self.hide()
         self.w.cnlBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)            
-        
+    
+    def showIDRegist(self):
+        self.w = SignUp()
+        self.w.show()    
+    
     def sendLogin(self):
         self.showedEdit.emit()
 
@@ -87,8 +94,6 @@ class Index(QMainWindow, form_class):
     def closeEvent(self, e):
         self.closed.emit()
         super().closeEvent(e)
-        
-        
         
     # 231126 마우스가 버튼위에 위치하면 자동으로 메뉴가 보이게 하는 함수 by정현아 
     # def eventFilter(self, object, event):

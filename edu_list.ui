@@ -754,7 +754,7 @@ colorL white;</string>
 </string>
              </property>
              <property name="text">
-              <string>이수정보입력</string>
+              <string>정보입력</string>
              </property>
             </widget>
            </item>
@@ -1500,7 +1500,7 @@ background-color:white;</string>
               <string notr="true"/>
              </property>
              <property name="text">
-              <string>변경내용저장</string>
+              <string>저장</string>
              </property>
             </widget>
            </item>

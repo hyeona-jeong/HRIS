@@ -118,7 +118,7 @@ class FamilyTab(QWidget):
                 QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
         # 231205 있을 경우 등록된 데이터를 각 에디터에 세팅 by 정현아
         else :
-            if(len(result) + self.cnt<=4):            
+            if(len(result) + self.cnt<=5):            
                 #데이터 세팅
                 if self.cnt == 0:
                     for i in range(len(result)):
@@ -479,7 +479,6 @@ class SchoolTab(QWidget):
  
     def editSchool(self):
         result = self.setData(self.emp_num)
-        print(not result)
         if not result:
             if self.cnt <= 3:
                 self.scheadmit_lbl.append(QLabel("입학일"))
@@ -892,7 +891,6 @@ class CareerTab(QWidget):
                 
         else:
             if len(result) + self.cnt <= 9:
-                print(self.cnt, len(result) + self.cnt)
                 # 데이터 세팅
                 if self.cnt == 0:
                     for i in range(len(result)):
@@ -1537,7 +1535,7 @@ class RSTab(QWidget):
                 rsSal = self.rsSal_le[i].text()
                 rsDate = self.rsDate_de[i].date().toString("yyyy-MM-dd")
             
-                query = "UPDATE R_S SET EMP_RANK, SALARY, DATE_JOIN = %s WHERE EMP_NUM = %s AND EMP_RANK = %s;"
+                query = "UPDATE R_S SET EMP_RANK = %s, SALARY = %s, DATE_JOIN = %s WHERE EMP_NUM = %s AND EMP_RANK = %s;"
                 cur.execute(query, (rsRANK, rsSal, rsDate, emp_num, rsRANK))
                 conn.commit()  
             self.cnt -=1
@@ -1632,11 +1630,12 @@ class Login(QMainWindow, form_class):
 
         # 231202 권한제어 권한이 레귤러이면 사원정보등록화면 및 리스트 화면에서 삭제 버튼 비활성화 by 정현아
         for action in self.w.menuHr.actions():
-            if action.text() == '사원정보등록':
+            if action.text() == '사원정보등록' or action.text() == '사원ID등록':
                 regist_action = action
-                break
+                if self.result_pass[2] == 'regular' :
+                    regist_action.setVisible(False)
+                
         if self.result_pass[2] == 'regular' :
-            regist_action.setVisible(False)
             self.w.showedList.connect(self.controlEmpListBtn)
             self.w.listToInfo.connect(self.controlEmpListBtn)
 
@@ -2095,6 +2094,8 @@ class Login(QMainWindow, form_class):
 
             except Exception as e:
                 QMessageBox.warning(self, "개인정보변경실패", "Error: " + str(e))
+                print("Query:", query)
+                print("Values:", tuple(attrDict.values()) + (self.emp_num,))
                 return 
 
     def showAddImg(self):

@@ -1433,12 +1433,12 @@ color white;</string>
              </item>
              <item>
               <property name="text">
-               <string>경영지원실</string>
+               <string>경영지원</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>전략기획실</string>
+               <string>전략기획</string>
               </property>
              </item>
             </widget>
