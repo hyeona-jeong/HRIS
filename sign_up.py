@@ -23,9 +23,7 @@ form_class = uic.loadUiType(form)[0]
 class SignUp(QMainWindow, form_class):
     def __init__(self):
         super( ).__init__( )
-        self.setupUi(self)
-        self.signup.setLayout(self.signlayout)
-        
+        self.setupUi(self)        
         self.id = ''
 
         self.name_lineEdit.setFocus()
@@ -96,6 +94,7 @@ class SignUp(QMainWindow, form_class):
                         else:
                             mail = sinkYN[1]
                             query ='SELECT ID FROM LOGIN_DATA WHERE EMP_NUM = ' + emp_num +';'
+                            print(emp_num)
                             self.cur.execute(query)
                             emptyYN = self.cur.fetchone()
                             if emptyYN:
@@ -108,7 +107,6 @@ class SignUp(QMainWindow, form_class):
                                     query ='INSERT INTO LOGIN_DATA(ID,PASSWD,EMP_NUM,AUTHORITY) VALUES(%s,%s,%s,%s);'
                                     self.cur.execute(query, (self.id, passwd, int(emp_num), auth))
                                     self.conn.commit()
-                                    self.conn.close()
                                     QMessageBox.information(self,'Sign up Succeed','등록완료되었습니다.')
                                 except Exception as e:
                                     QMessageBox.warning(self, 'Id Check Failed',str(e))
@@ -117,18 +115,18 @@ class SignUp(QMainWindow, form_class):
                                 
                                 self.initSignUp()  
                                 # 231206 등록된 메일로 ID, 임시 비밀번호 전송
-                                smtp = smtplib.SMTP('smtp.gmail.com',587)
-                                smtp.ehlo()
-                                smtp.starttls()
-                                smtp.login('wjdgusk310@gmail.com','fmvs mwrf ydyp ifkw')
+                                # smtp = smtplib.SMTP('smtp.gmail.com',587)
+                                # smtp.ehlo()
+                                # smtp.starttls()
+                                # smtp.login('wjdgusk310@gmail.com','fmvs mwrf ydyp ifkw')
 
-                                msg = EmailMessage()
-                                msg['Subject'] = 'NoriSystem ID, 비밀번호입니다.'
-                                msg.set_content('ID: ' + self.id +'\n비밀번호: ' + passwd + '입니다.')
+                                # msg = EmailMessage()
+                                # msg['Subject'] = 'NoriSystem ID, 비밀번호입니다.'
+                                # msg.set_content('ID: ' + self.id +'\n비밀번호: ' + passwd + '입니다.')
 
-                                msg['From']='wjdgusk310@gmail.com'
-                                msg['To']=mail
-                                smtp.send_message(msg)        
+                                # msg['From']='wjdgusk310@gmail.com'
+                                # msg['To']=mail
+                                # smtp.send_message(msg)        
                                      
                                                  
         
@@ -144,7 +142,7 @@ class SignUp(QMainWindow, form_class):
                 query = 'SELECT ID FROM LOGIN_DATA WHERE ID = \'' + self.id + '\';'
                 self.cur.execute(query)
                 emptyYN = self.cur.fetchone()
-                if emptyYN is not None:
+                if emptyYN :
                     QMessageBox.warning(self,'Id Check Failed','이미 존재하는 ID입니다.\n다른 ID를 사용하시기 바랍니다.')
                     self.chkBtn.setChecked(False)
                     return
@@ -152,7 +150,7 @@ class SignUp(QMainWindow, form_class):
                     QMessageBox.information(self,'Id Check Succeed','사용가능한 ID입니다.')
                     self.chkBtn.setChecked(True)
         except Exception as e:
-            QMessageBox.warning(self,str(e))
+            QMessageBox.warning(self,'Id Check Failed',str(e))
             print(str(e))
 
     def initSignUp(self):

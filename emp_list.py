@@ -1627,7 +1627,6 @@ class Emplist(QMainWindow, form_class):
         self.listRegBtn.clicked.connect(self.showRegsit)
 
         self.table.cellDoubleClicked.connect(self.showEmpInfo)
-        # self.table.horizontalHeader().sectionClicked.connect(self.onHeaderClicked)
 
     # 231202 테이블 세팅 함수 쿼리값 변경시 테이블위젯에 세팅된 테이블 값도 변경 by 정현아
     def setTables(self, query):
@@ -1648,6 +1647,7 @@ class Emplist(QMainWindow, form_class):
                 item = QTableWidgetItem(str(data))
                 item.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                 self.table.setItem(row, col + 1, item)
+        self.table.sortByColumn(1,Qt.AscendingOrder)
         self.table.setSortingEnabled(True)
         self.table.blockSignals(False)
 
@@ -1740,6 +1740,7 @@ class Emplist(QMainWindow, form_class):
             self.searchBiz(self.biz)
         self.table.blockSignals(False)
         
+    # 핸드폰 정보를 읽어와 사원 정보를 추출하여 개인정보 조회화면과 연결 by 정현아
     def showEmpInfo(self, row, col):
         phone = self.table.item(row, 6).text()
         query = "SELECT EMP_NUM FROM MAIN_TABLE WHERE PHONE = %s;"
@@ -1753,7 +1754,8 @@ class Emplist(QMainWindow, form_class):
             self.showInfo(self.emp_num)
             self.w.showedEdit.connect(self.showEdit)
             self.w.cnlBtn.clicked.connect(self.back)
-
+            
+    # 개인정보조회 화면 출력 by 정현아
     def showInfo(self, emp):
         familyTab = FamilyTab(emp,'info')
         self.w.familyTab = familyTab
@@ -1826,6 +1828,7 @@ class Emplist(QMainWindow, form_class):
         resize_pixmap = img.scaled(130,150)
         self.w.pic.setPixmap(resize_pixmap) 
 
+    # 개인정보편집화면으로 이동
     def showEdit(self):
         familyTab = FamilyTab(self.emp_num,'edit')
         self.w.w.familyTab = familyTab
@@ -1875,7 +1878,6 @@ class Emplist(QMainWindow, form_class):
 
         self.w.w.dept.activated[str].connect(self.changeGroup)
         self.w.w.addImgBtn.clicked.connect(self.showAddImg)
-        self.w.w.SearchAddress.setVisible(False)
         self.w.w.regnum_lineEdit2.setEchoMode(QLineEdit.Password)
 
         # 231201 입력 제한 by 정현아
@@ -1938,6 +1940,7 @@ class Emplist(QMainWindow, form_class):
         self.w.w.dept_g.setCurrentText(self.result[23])
         self.w.w.sal2.setText(self.result[24])
     
+    # 사업부 선택시 그룹명 동적으로 세팅
     def changeGroup(self,biz):
         self.w.w.dept_g.clear()
         if biz == '경영지원실':
@@ -1958,6 +1961,7 @@ class Emplist(QMainWindow, form_class):
             self.w.w.dept_g.addItems(self.SP) 
             return        
 
+    # 개인정보편집에서 수정한 내용 DB에 저장
     def saveEdit(self):
         date_str = self.result[3].strftime("%Y-%m-%d")
         date = QDate.fromString(date_str, "yyyy-MM-dd")
@@ -2157,6 +2161,7 @@ class Emplist(QMainWindow, form_class):
                 QMessageBox.warning(self, "개인정보변경실패", "Error: " + str(e))
                 return 
 
+    # 이미지 저장 팝업창 생성
     def showAddImg(self):
         self.w1 = AddImg()
         self.w1.show()
@@ -2182,6 +2187,7 @@ class Emplist(QMainWindow, form_class):
                 self.w1.hide()
                 self.w1.show()
 
+    # 이미지 파일 사이즈 확인
     def getFileSize(self, file_path):
         return os.path.getsize(file_path), file_path
     
@@ -2209,12 +2215,6 @@ class Emplist(QMainWindow, form_class):
     def back(self):
         self.w.hide()
         self.show()
-
-    def center(self):
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
 
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):

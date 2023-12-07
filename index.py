@@ -29,29 +29,49 @@ class Index(QMainWindow, form_class):
     listToInfo = pyqtSignal()
 
     def __init__(self):
-        super( ).__init__()
+        super().__init__()
         self.setupUi(self)
         self.auth = None
         self.w = None
-        
+
         self.index.setLayout(self.indexlayout)
         self.index.setStyleSheet(stylesheet)
 
-        # 231125 툴버튼에 메뉴 추가 
+        # 메뉴바 생성
+        self.menuBar = QMenuBar()
+        font = QFont("Malgun Gothic", 16)
+        font.setBold(True)
+        self.menuBar.setFont(font)
+        self.menuBar.setStyleSheet("QMenu { spacing: 40px; }")
+        self.hbox.insertWidget(0, self.menuBar)
+
+        # 231125 메뉴바에 액션 추가
+        self.toolhr = self.menuBar.addAction('인사')
+        self.tooledu = self.menuBar.addAction('교육')
+        self.toolrc = self.menuBar.addAction('총무')
+        self.toolbm = self.menuBar.addAction('사업계획')
+        
+        
+        # 231125 메뉴바에 메뉴 추가 
         self.menuHr = QMenu()
         self.menuHr.addAction('사원정보검색',self.showPage)
         self.menuHr.addAction('개인정보조회/편집',self.showPage)
         self.menuHr.addAction('사원정보등록',self.showPage)
         self.menuHr.addAction('사원ID등록',self.showIDRegist)
-
-        self.menuHr.setStyleSheet(stylesheet)
         self.toolhr.setMenu(self.menuHr)
+        self.menuHr.setStyleSheet(stylesheet)
 
         menuEdu = QMenu()
         menuEdu.addAction('교육이수정보 조회',self.showPage)
         menuEdu.setStyleSheet(stylesheet)
 
         self.tooledu.setMenu(menuEdu)
+        self.empBtn.clicked.connect(self.showPage)
+        self.eduBtn.clicked.connect(self.showPage)
+
+        # 스타일 시트 설정
+        self.menuBar.setStyleSheet(stylesheet)
+
         self.empBtn.clicked.connect(self.showPage)
         self.eduBtn.clicked.connect(self.showPage)
         
@@ -72,10 +92,9 @@ class Index(QMainWindow, form_class):
             self.w = Regist()
             self.showedRegist.emit()
             
-        elif sender == '교육' or sender == '교육이수정보 조회/편집':
+        elif sender == '교육' or sender == '교육이수정보 조회':
             self.w = EduList()
         self.w.show()
-        self.w.center()
         self.hide()
         self.w.cnlBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)            
@@ -105,10 +124,21 @@ class Index(QMainWindow, form_class):
     #     return False
 
 stylesheet = """
-    QPushButton::menu-indicator { 
-        image: none;
-        padding-right: 3px;
+    QMenuBar {
+        color: #161616;
+        border: None;
     }
+    
+    QMenuBar::item {
+        padding-left: 25px;
+        padding-right: 25px;
+        padding-bottom: 20px;
+    }
+
+    QMenuBar::item::selected {
+        border-bottom: 3px solid ;
+    }
+    
     QMenu{
         color: #c6c6c6;
         font-size: 16px;

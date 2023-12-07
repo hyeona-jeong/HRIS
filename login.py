@@ -1796,7 +1796,6 @@ class Login(QMainWindow, form_class):
 
         self.w.w.w.dept.activated[str].connect(self.changeGroup)
         self.w.w.w.addImgBtn.clicked.connect(self.showAddImg)
-        self.w.w.w.SearchAddress.setVisible(False)
         self.w.w.w.regnum_lineEdit2.setEchoMode(QLineEdit.Password)
 
         # 231201 입력 제한 by 정현아
