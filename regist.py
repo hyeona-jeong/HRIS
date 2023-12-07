@@ -1573,7 +1573,9 @@ class Emplist(QMainWindow, form_class):
         self.path = None
         self.fname = None
         self.pixmap = None
+        self.main_result = None
         self.gBtn = []
+        self.current_page = 1
         self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄']
         self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G']
         self.MIS = ['전기운영 G','PLM G']
@@ -1606,6 +1608,7 @@ class Emplist(QMainWindow, form_class):
         self.cur = self.conn.cursor()
         self.main_query = "SELECT CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL FROM MAIN_TABLE"
         self.setTables(self.main_query)
+        self.table.sortByColumn(1,Qt.AscendingOrder)
 
         # 231202 사원전체 수 라벨에 세팅 by 정현아
         countQuery = "SELECT COUNT(*) FROM MAIN_TABLE;"
@@ -1618,44 +1621,11 @@ class Emplist(QMainWindow, form_class):
         self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeToContents)
 
-        # 리스트 페이징을 위한 버튼 그룹 생성
-        # btnGroup = QButtonGroup(self)
-        # pageBtn1 = QToolButton()
-        # pageBtn1.setText('1')
-        # pageBtn1.setCheckable(True)
-        # btnGroup.addButton(pageBtn1)
-        
-        # pageBtn2 = QToolButton()
-        # pageBtn2.setText('2')
-        # pageBtn2.setCheckable(True)
-        # btnGroup.addButton(pageBtn2)
-        
-        # pageBtn3 = QToolButton()
-        # pageBtn3.setText('3')
-        # pageBtn3.setCheckable(True)
-        # btnGroup.addButton(pageBtn3)
-        
-        # pageBtn4 = QToolButton()
-        # pageBtn4.setText('4')
-        # pageBtn4.setCheckable(True)
-        # btnGroup.addButton(pageBtn4)
-        
-        # pageBtn5 = QToolButton()
-        # pageBtn5.setText('5')
-        # pageBtn5.setCheckable(True)
-        # btnGroup.addButton(pageBtn5)
-        
-        # btnGroup.setExclusive(True)
-        
-        # self.gbox.insertWidget(1,pageBtn1)
-        # self.gbox.insertWidget(2,pageBtn2)
-        # self.gbox.insertWidget(3,pageBtn3)
-        # self.gbox.insertWidget(4,pageBtn4)
-        # self.gbox.insertWidget(5,pageBtn5)
-        
-        # 231207 현재 선택 중인 버튼을 확인하기 위해 스타일 설정 by 정현아
-        # btnGroup.buttonClicked.connect(self.setChecked)
-                
+        self.setPagingBtn()
+        self.gBtn[0].setChecked(True)   
+        self.gBtn[0].setStyleSheet(
+                    "QToolButton { border: None; color : black; font-weight: bold; }"
+                )     
         # 콤보박스 및 버튼 클릭 이벤트 by 정현아
         self.bizCombo.activated[str].connect(self.searchBiz)
         self.namelineEdit.returnPressed.connect(self.searchEmp)
@@ -1666,6 +1636,25 @@ class Emplist(QMainWindow, form_class):
         self.listRegBtn.clicked.connect(self.showRegsit)
 
         self.table.cellDoubleClicked.connect(self.showEmpInfo)
+    
+    def setPagingBtn(self):
+        j = 1
+        self.btnGroup = QButtonGroup(self)
+        page = math.ceil(len(self.main_result)/15)
+        if page <=5:
+            for i in range(page):
+                self.gBtn.append(QToolButton())
+        else :
+            for i in range(5):
+                self.gBtn.append(QToolButton())
+        for btn in self.gBtn:
+            btn.setCheckable(True)
+            btn.setText(str(j))
+            self.btnGroup.addButton(btn)
+            self.gbox.insertWidget(j,btn)
+            j+=1
+        self.btnGroup.setExclusive(True)
+        self.btnGroup.buttonClicked.connect(self.setChecked)
         
     # 231207 버튼 클릭시 스타일을 다르게 줘서 구분하기 위한 함수 by 정현아
     def setChecked(self, btn):
@@ -1678,38 +1667,36 @@ class Emplist(QMainWindow, form_class):
                 button.setStyleSheet(
                     "QToolButton { border: None; color: #5a5a5a; }"
                 )
+        self.current_page = int(btn.text())
+        self.setTables(self.main_query)
 
     # 231202 테이블 세팅 함수 쿼리값 변경시 테이블위젯에 세팅된 테이블 값도 변경 by 정현아
     def setTables(self, query):
+        current_sorting_column = self.table.horizontalHeader().sortIndicatorSection()
+        current_sorting_order = self.table.horizontalHeader().sortIndicatorOrder()
         self.table.blockSignals(True)
-        
-        btnGroup = QButtonGroup(self)
-        self.table.setRowCount(0)
+        self.table.clearContents()
+        page_row = 15
+        self.table.setRowCount(page_row)
         self.cur.execute(query)
-        result = self.cur.fetchall()
-        page = math.ceil(len(result)/15)
-        if page <=5:
-            for i in range(page):
-                self.gBtn.append(QToolButton())
-        else :
-            for i in range(5):
-                self.gBtn.append(QToolButton())
-                
-                
+        self.main_result = self.cur.fetchall()
         self.table.setSortingEnabled(False)
-        for row, row_data in enumerate(result):
-            self.table.insertRow(row)
-
+        for row, row_data in enumerate(self.main_result):
+            if row < 15 * (self.current_page-1) :
+                continue
+            if row == 15 * self.current_page :
+                break;
             chk_bx = QTableWidgetItem()
             chk_bx.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
             chk_bx.setCheckState(Qt.Unchecked)
-            self.table.setItem(row, 0, chk_bx)
-
+            # 첫 열 체크박스 세팅
+            self.table.setItem(row % 15, 0, chk_bx)
             for col, data in enumerate(row_data):
                 item = QTableWidgetItem(str(data))
                 item.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                self.table.setItem(row, col + 1, item)
-        self.table.sortByColumn(1,Qt.AscendingOrder)
+                self.table.setItem(row % 15, col + 1, item)
+                print(row, item.text())
+        self.table.sortByColumn(current_sorting_column, current_sorting_order)
         self.table.setSortingEnabled(True)
         self.table.blockSignals(False)
 

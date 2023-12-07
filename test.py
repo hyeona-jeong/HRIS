@@ -1,5 +1,5 @@
 import math
-i = 3
+i = 0
 j = 4
-print(type(math.ceil(i/j)))
+print(i%j)
 
