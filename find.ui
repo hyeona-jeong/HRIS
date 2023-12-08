@@ -453,7 +453,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>ID/PW찾기</string>
+   <string/>
   </property>
   <property name="windowIcon">
    <iconset>

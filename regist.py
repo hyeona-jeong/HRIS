@@ -113,7 +113,7 @@ class FamilyTab(QWidget):
                             self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * self.cnt,2)
                 
                 self.flay.setRowStretch(self.flay.rowCount(), 1)
-                self.cnt+=1;
+                self.cnt+=1
             else:
                 QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
         # 231205 있을 경우 등록된 데이터를 각 에디터에 세팅 by 정현아
@@ -891,7 +891,6 @@ class CareerTab(QWidget):
                 
         else:
             if len(result) + self.cnt <= 9:
-                print(self.cnt, len(result) + self.cnt)
                 # 데이터 세팅
                 if self.cnt == 0:
                     for i in range(len(result)):
@@ -1573,7 +1572,6 @@ class Emplist(QMainWindow, form_class):
         self.path = None
         self.fname = None
         self.pixmap = None
-        self.main_result = None
         self.gBtn = []
         self.current_page = 1
         self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄']
@@ -1609,6 +1607,10 @@ class Emplist(QMainWindow, form_class):
         self.main_query = "SELECT CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL FROM MAIN_TABLE"
         self.setTables(self.main_query)
         self.table.sortByColumn(1,Qt.AscendingOrder)
+        self.gBtn[0].setChecked(True)
+        self.gBtn[0].setStyleSheet(
+                    "QToolButton { border: None; color : black; font-weight: bold; }"
+                )
 
         # 231202 사원전체 수 라벨에 세팅 by 정현아
         countQuery = "SELECT COUNT(*) FROM MAIN_TABLE;"
@@ -1620,12 +1622,7 @@ class Emplist(QMainWindow, form_class):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)   
         self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeToContents)
-
-        self.setPagingBtn()
-        self.gBtn[0].setChecked(True)   
-        self.gBtn[0].setStyleSheet(
-                    "QToolButton { border: None; color : black; font-weight: bold; }"
-                )     
+   
         # 콤보박스 및 버튼 클릭 이벤트 by 정현아
         self.bizCombo.activated[str].connect(self.searchBiz)
         self.namelineEdit.returnPressed.connect(self.searchEmp)
@@ -1637,28 +1634,42 @@ class Emplist(QMainWindow, form_class):
 
         self.table.cellDoubleClicked.connect(self.showEmpInfo)
     
-    def setPagingBtn(self):
+    # 페이지 버튼 생성 함수 by 정현아
+    def setPagingBtn(self, row, query):
         j = 1
+        # 기존 버튼 비우기
+        self.gBtn.clear()  
+        while self.gbox.count():
+            item = self.gbox.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()        
         self.btnGroup = QButtonGroup(self)
-        page = math.ceil(len(self.main_result)/15)
+        # 페이지 수 세팅
+        page = math.ceil(row/15)
+        # 페이지 수만큼 버튼생성
         if page <=5:
             for i in range(page):
                 self.gBtn.append(QToolButton())
-        else :
+        else:
             for i in range(5):
                 self.gBtn.append(QToolButton())
         for btn in self.gBtn:
             btn.setCheckable(True)
             btn.setText(str(j))
             self.btnGroup.addButton(btn)
-            self.gbox.insertWidget(j,btn)
+            self.gbox.addWidget(btn,0,j)
             j+=1
         self.btnGroup.setExclusive(True)
-        self.btnGroup.buttonClicked.connect(self.setChecked)
-        
-    # 231207 버튼 클릭시 스타일을 다르게 줘서 구분하기 위한 함수 by 정현아
-    def setChecked(self, btn):
-        for button in btn.group().buttons():
+        self.gBtn[0].setChecked(True) 
+        # 231208 버튼의 인덱스 값과 query 값을 전달하여 페이지 세팅 by 정현아
+        self.btnGroup.buttonClicked[int].connect(lambda button_id: self.setCheckedBtn(button_id, query))
+            
+    # 231207 버튼 클릭시 이벤트 by 정현아
+    def setCheckedBtn(self, button_id, query):
+        btn = self.btnGroup.button(button_id)
+        # 버튼 클릭시 스타일을 다르게 줘서 구분
+        for button in self.btnGroup.buttons():
             if button is btn and btn.isChecked():
                 button.setStyleSheet(
                     "QToolButton { border: None; color : black; font-weight: bold; }"
@@ -1667,25 +1678,35 @@ class Emplist(QMainWindow, form_class):
                 button.setStyleSheet(
                     "QToolButton { border: None; color: #5a5a5a; }"
                 )
+        # 현재 페이지 세팅
         self.current_page = int(btn.text())
-        self.setTables(self.main_query)
+        self.setTables(query)
 
     # 231202 테이블 세팅 함수 쿼리값 변경시 테이블위젯에 세팅된 테이블 값도 변경 by 정현아
     def setTables(self, query):
+        # 테이블 정렬 상태 확인 후 쿼리를 정렬하는 쿼리로 변경함
         current_sorting_column = self.table.horizontalHeader().sortIndicatorSection()
         current_sorting_order = self.table.horizontalHeader().sortIndicatorOrder()
+        if current_sorting_column == 8:
+            current_sorting_column = 1
+        order_direction = "ASC" if current_sorting_order == 0 else "DESC"
+        sort_query = f"{query} ORDER BY {current_sorting_column} {order_direction}"
         self.table.blockSignals(True)
+        # 테이블 내의 아이템을 모두 삭제
         self.table.clearContents()
         page_row = 15
         self.table.setRowCount(page_row)
-        self.cur.execute(query)
-        self.main_result = self.cur.fetchall()
+        self.cur.execute(sort_query)
+        result = self.cur.fetchall()
+        # 버튼 페이지 세팅
+        self.setPagingBtn(len(result), query)
         self.table.setSortingEnabled(False)
-        for row, row_data in enumerate(self.main_result):
+        # 테이블 내에 아이템 세팅 페이지당 row수 15개로 제한
+        for row, row_data in enumerate(result):
             if row < 15 * (self.current_page-1) :
                 continue
             if row == 15 * self.current_page :
-                break;
+                break
             chk_bx = QTableWidgetItem()
             chk_bx.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
             chk_bx.setCheckState(Qt.Unchecked)
@@ -1695,7 +1716,6 @@ class Emplist(QMainWindow, form_class):
                 item = QTableWidgetItem(str(data))
                 item.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                 self.table.setItem(row % 15, col + 1, item)
-                print(row, item.text())
         self.table.sortByColumn(current_sorting_column, current_sorting_order)
         self.table.setSortingEnabled(True)
         self.table.blockSignals(False)
@@ -1750,7 +1770,7 @@ class Emplist(QMainWindow, form_class):
                 query = """SELECT 
                 CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL 
                 FROM MAIN_TABLE 
-                WHERE DEPT_BIZ = '""" + biz +"';"
+                WHERE DEPT_BIZ = '""" + biz +"'"
                 self.setTables(query)
                 countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE DEPT_BIZ = '" + biz +"';"
                 self.cur.execute(countQuery)
@@ -1769,9 +1789,9 @@ class Emplist(QMainWindow, form_class):
                 query = """SELECT 
                 CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL 
                 FROM MAIN_TABLE 
-                WHERE NAME_KOR LIKE '%""" + self.name +"%';"
+                WHERE NAME_KOR LIKE '%""" + self.name +"%'"
                 self.setTables(query)
-                countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE NAME_KOR LIKE '%""" + self.name +"%';"
+                countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE NAME_KOR LIKE '%""" + self.name +"%'"
                 self.cur.execute(countQuery)
                 count = self.cur.fetchone()[0]
                 self.countLabel.setText("총 "+ str(count) + "건")
@@ -1779,9 +1799,9 @@ class Emplist(QMainWindow, form_class):
                 query = """SELECT 
                 CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL 
                 FROM MAIN_TABLE 
-                WHERE NAME_KOR LIKE '%""" + self.name +"%' AND DEPT_BIZ = '" + self.biz + "';"
+                WHERE NAME_KOR LIKE '%""" + self.name +"%' AND DEPT_BIZ = '" + self.biz + "'"
                 self.setTables(query)
-                countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE NAME_KOR LIKE '%""" + self.name +"%' AND DEPT_BIZ = '" + self.biz + "';"
+                countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE NAME_KOR LIKE '%""" + self.name +"%' AND DEPT_BIZ = '" + self.biz + "'"
                 self.cur.execute(countQuery)
                 count = self.cur.fetchone()[0]
                 self.countLabel.setText("총 "+ str(count) + "건")

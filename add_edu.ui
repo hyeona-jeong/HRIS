@@ -453,7 +453,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>교육이수정보추가</string>
+   <string/>
   </property>
   <widget class="QTableWidget" name="addT">
    <property name="geometry">

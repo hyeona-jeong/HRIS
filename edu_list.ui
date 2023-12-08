@@ -465,7 +465,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>교육이수정보 조회/편집</string>
+   <string/>
   </property>
   <widget class="QWidget" name="eduList">
    <widget class="QWidget" name="verticalLayoutWidget_2">

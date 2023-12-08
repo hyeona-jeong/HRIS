@@ -453,7 +453,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>Login</string>
+   <string/>
   </property>
   <property name="windowIcon">
    <iconset>

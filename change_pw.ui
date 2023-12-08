@@ -453,7 +453,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>패스워드 변경</string>
+   <string/>
   </property>
   <property name="windowIcon">
    <iconset>

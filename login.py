@@ -1561,12 +1561,12 @@ class Login(QMainWindow, form_class):
         self.result_pass = None
         self.img = None
         self.pixmap = None
-        self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄']
-        self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G']
-        self.MIS = ['전기운영 G','PLM G']
-        self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5']
-        self.SP = ['사업기획팀','기술전략팀']
-        self.BS = ['경영지원']
+        self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄','']
+        self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G','']
+        self.MIS = ['전기운영 G','PLM G','']
+        self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5','']
+        self.SP = ['사업기획팀','기술전략팀','']
+        self.BS = ['경영지원','']
         
         self.setupUi(self)
         self.loginBtn.clicked.connect(self.loginfunction)

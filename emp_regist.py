@@ -726,12 +726,12 @@ class Regist(QMainWindow, form_class):
         # 231204 주민번호 뒷자리에 맞춰서 여자일 경우 무관 세팅 by 정현아
         self.regnum_lineEdit2.textEdited.connect(self.setMilitary)
         
-        self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄']
-        self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G']
-        self.MIS = ['전기운영 G','PLM G']
-        self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5']
-        self.SP = ['사업기획팀','기술전략팀']
-        self.BS = ['경영지원']
+        self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄','']
+        self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G','']
+        self.MIS = ['전기운영 G','PLM G','']
+        self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5','']
+        self.SP = ['사업기획팀','기술전략팀','']
+        self.BS = ['경영지원','']
         self.group_combo.addItems(self.TSP)
         self.biz_combo.activated[str].connect(self.changeGroup)
 

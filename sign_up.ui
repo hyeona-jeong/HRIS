@@ -465,7 +465,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>사용자ID등록</string>
+   <string/>
   </property>
   <widget class="QWidget" name="signup">
    <layout class="QVBoxLayout" name="verticalLayout">

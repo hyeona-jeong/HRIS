@@ -453,7 +453,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>개인정보편집</string>
+   <string/>
   </property>
   <property name="windowIcon">
    <iconset>
