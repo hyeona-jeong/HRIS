@@ -596,7 +596,7 @@ color white;</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;사업부 필터&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;사업부 필터(TSP,MIS,TC,FAB,경영지원,전략기획)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <item>
            <property name="text">
@@ -673,6 +673,9 @@ color white;</string>
             <width>171</width>
             <height>35</height>
            </size>
+          </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;사원 이름 검색&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -1023,6 +1026,9 @@ background-color:white;</string>
         </item>
         <item>
          <widget class="QPushButton" name="listRegBtn">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;신규 사원정보 등록&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
            <string>등록</string>
           </property>
@@ -1030,6 +1036,9 @@ background-color:white;</string>
         </item>
         <item>
          <widget class="QPushButton" name="listDelBtn">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;체크박스 선택후 삭제 클릭시 선택된 사원 정보 삭제&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="text">
            <string>삭제</string>
           </property>

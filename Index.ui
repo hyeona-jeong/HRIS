@@ -707,6 +707,9 @@ color: #4c4c4c;
          <property name="cursor">
           <cursorShape>OpenHandCursor</cursorShape>
          </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt; font-weight:400;&quot;&gt;사원정보검색으로 이동&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="styleSheet">
           <string notr="true">QToolButton {
 background-color: white;
@@ -765,6 +768,9 @@ border-radius: 20px;
          </property>
          <property name="cursor">
           <cursorShape>OpenHandCursor</cursorShape>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="styleSheet">
           <string notr="true">QToolButton {

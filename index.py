@@ -132,7 +132,11 @@ stylesheet = """
     QMenuBar::item {
         padding-left: 25px;
         padding-right: 25px;
-        padding-bottom: 20px;
+        padding-bottom: 10px;
+        padding-top: 10px;
+        margin-right: 5px;
+        border: 1px solid black;
+        border-radius: 10px;
     }
 
     QMenuBar::item::selected {
