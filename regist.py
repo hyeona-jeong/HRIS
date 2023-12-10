@@ -1698,20 +1698,7 @@ class Emplist(QMainWindow, form_class):
         if btn.text().isdigit():
             self.current_page = int(btn.text())
         # 231209 제일 앞으로 버튼 클릭시 1페이지로, 제일 뒤로 버튼 클릭시 맨 뒷 페이지로 이동 by 정현아
-        elif btn.text() =='<<':
-            self.current_page = 1
-            for i in range(5):
-                self.gBtn[i].setText(str(i + 1))
-            self.gBtn[0].setStyleSheet(
-                    "QToolButton { border: None; color : black; font-weight: bold; }"
-                )
-        elif btn.text() =='>>':
-            self.current_page = page
-            for i in range(5):
-                self.gBtn[i].setText(str(page -4 + i))
-            self.gBtn[4].setStyleSheet(
-                    "QToolButton { border: None; color : black; font-weight: bold; }"
-                )            
+      
 
         if len(self.gBtn) >= 5:
             if self.current_page > self.prev_page:
@@ -1752,6 +1739,20 @@ class Emplist(QMainWindow, form_class):
                     for button in self.gBtn:
                         self.gbox.addWidget(button,0,j)
                         j+=1
+                elif btn.text() =='<<':
+                    self.current_page = 1
+                    for i in range(5):
+                        self.gBtn[i].setText(str(i + 1))
+                    self.gBtn[0].setStyleSheet(
+                            "QToolButton { border: None; color : black; font-weight: bold; }"
+                        )
+                elif btn.text() =='>>':
+                    self.current_page = page
+                    for i in range(5):
+                        self.gBtn[i].setText(str(page -4 + i))
+                    self.gBtn[4].setStyleSheet(
+                            "QToolButton { border: None; color : black; font-weight: bold; }"
+                        )      
 
         self.ignore_paging_btn = True
         self.setTables(query)
