@@ -500,9 +500,9 @@ class TechnicalTab(QWidget):
             proficiency = self.pro_cb[i].currentText()
             note = self.note_le[i].text()
 
-        query = "INSERT INTO TECHNICAL VALUES (%s, %s, %s, %s)"
-        cur.execute(query, (emp_num, techDet, proficiency, note))
-        conn.commit()
+            query = "INSERT INTO TECHNICAL VALUES (%s, %s, %s, %s)"
+            cur.execute(query, (emp_num, techDet, proficiency, note))
+            conn.commit()
         
     def initTechnical(self):
         self.techDet_le[0].clear()
@@ -579,9 +579,9 @@ class RPTab(QWidget):
             rpDate = self.rpDate_de[i].date().toString("yyyy-MM-dd")
             rpNote = self.rpNote_le[i].text()
 
-        query = "INSERT INTO R_P VALUES (%s, %s, %s, %s, %s)"
-        cur.execute(query, (emp_num, rpName, rpScore, rpDate, rpNote))
-        conn.commit()
+            query = "INSERT INTO R_P VALUES (%s, %s, %s, %s, %s)"
+            cur.execute(query, (emp_num, rpName, rpScore, rpDate, rpNote))
+            conn.commit()
         
     def initRP(self):
         self.rpName_le[0].clear()

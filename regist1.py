@@ -1574,7 +1574,6 @@ class Emplist(QMainWindow, form_class):
         self.pixmap = None
         self.gBtn = []
         self.current_page = 1
-        self.prev_page = None
         self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄']
         self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G']
         self.MIS = ['전기운영 G','PLM G']
@@ -1670,19 +1669,43 @@ class Emplist(QMainWindow, form_class):
         self.btnGroup.addButton(prev_btn)
         self.btnGroup.addButton(end_btn)
         self.gbox.addWidget(prev_btn,0,0)
-        self.gbox.addWidget(end_btn,0,j+2)
+        self.gbox.addWidget(end_btn,0,j+1)
         self.btnGroup.setExclusive(True)
         # 231208 버튼의 인덱스 값과 query 값을 전달하여 페이지 세팅 by 정현아
         self.btnGroup.buttonClicked[int].connect(lambda button_id: self.setCheckedBtn(button_id, query, page))
             
     # 231207 버튼 클릭시 이벤트 by 정현아
     def setCheckedBtn(self, button_id, query, page):
-        j = 1
         btn = self.btnGroup.button(button_id)
-        btn.setChecked(True)
+        btn_num = btn.text()
+        # 현재 페이지 세팅
+        if btn_num.isdigit():
+            self.current_page = int(btn_num)
+        # 231209 제일 앞으로 버튼 클릭시 1페이지로, 제일 뒤로 버튼 클릭시 맨 뒷 페이지로 이동 by 정현아
+        elif btn_num =='<<':
+            self.current_page = 1
+        elif btn_num =='>>':
+            self.current_page = page
+        if len(self.gBtn) >= 5:
+            for i in range(len(self.gBtn)):
+                if btn_num == '1':
+                    self.gBtn[i].setText(str(i + 1))
+                elif btn_num == '2':
+                    self.gBtn[i].setText(str(i + 1))
+                elif btn_num == str(page - 1):
+                    self.gBtn[i].setText(str(page - 4 + i))
+                elif btn_num == str(page):
+                    self.gBtn[i].setText(str(page - 4 + i))
+                else:
+                    self.gBtn[i].setText(str(int(btn_num) - 2 + i))
+            for gbutton in self.gBtn:
+                if gbutton.text() == str(self.current_page):
+                    gbutton.setChecked(True)
+                break
 
         for button in self.btnGroup.buttons():
-            if button is btn and btn.isChecked():
+            if button.isChecked():
+                print(button.text())
                 button.setStyleSheet(
                     "QToolButton { border: None; color : black; font-weight: bold; }"
                 )
@@ -1690,61 +1713,6 @@ class Emplist(QMainWindow, form_class):
                 button.setStyleSheet(
                     "QToolButton { border: None; color: #5a5a5a; }"
                 )
-        # 이전 페이지 저장
-        if self.prev_page != self.current_page:
-            self.prev_page = self.current_page 
-
-        # 현재 페이지 세팅
-        if btn.text().isdigit():
-            self.current_page = int(btn.text())
-        # 231209 제일 앞으로 버튼 클릭시 1페이지로, 제일 뒤로 버튼 클릭시 맨 뒷 페이지로 이동 by 정현아
-        elif btn.text() =='<<':
-            self.current_page = 1
-        elif btn.text() =='>>':
-            self.current_page = page
-
-        print(f"Button Text: {btn.text()}, Current Page: {self.current_page}, Previous Page: {self.prev_page}")
-
-        if len(self.gBtn) >= 5:
-            if self.current_page > self.prev_page:
-                if not(btn.text() == '1' or btn.text() == '2' or btn.text() == '3' or btn.text() == str(page-1) or btn.text() == str(page) or btn.text() == "<<" or btn.text() == ">>"):
-                    self.btnGroup.removeButton(self.gBtn[0])
-                    item = self.gBtn.pop(0)
-                    item.setText(str(int(btn.text())+2))
-                    self.gBtn.append(item)
-                    self.btnGroup.addButton(self.gBtn[4])
-                    for button in self.gBtn:
-                        self.gbox.addWidget(button,0,j)
-                        j+=1
-                elif btn.text() == str(page-1) and self.current_page - self.prev_page > 1 :
-                    self.btnGroup.removeButton(self.gBtn[0])
-                    item = self.gBtn.pop(0)
-                    item.setText(str(int(btn.text())+1))
-                    self.gBtn.append(item)
-                    self.btnGroup.addButton(self.gBtn[4])
-                    for button in self.gBtn:
-                        self.gbox.addWidget(button,0,j)
-                        j+=1
-            else:
-                if not(btn.text() == '1' or btn.text() == '2' or btn.text() == str(page-2) or btn.text() == str(page-1) or btn.text() == str(page) or btn.text() == "<<" or btn.text() == ">>"):
-                    self.btnGroup.removeButton(self.gBtn[4])
-                    item = self.gBtn.pop(4)
-                    item.setText(str(int(btn.text())-2))
-                    self.gBtn.insert(0,item)
-                    self.btnGroup.addButton(self.gBtn[0])
-                    for button in self.gBtn:
-                        self.gbox.addWidget(button,0,j)
-                        j+=1
-                elif btn.text() == '2' and self.prev_page - self.current_page > 1 :
-                    self.btnGroup.removeButton(self.gBtn[4])
-                    item = self.gBtn.pop(4)
-                    item.setText(str(int(btn.text())-1))
-                    self.gBtn.insert(0,item)
-                    self.btnGroup.addButton(self.gBtn[0])
-                    for button in self.gBtn:
-                        self.gbox.addWidget(button,0,j)
-                        j+=1
-
         self.ignore_paging_btn = True
         self.setTables(query)
 
