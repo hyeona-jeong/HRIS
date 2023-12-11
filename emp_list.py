@@ -2,6 +2,7 @@ import os
 import sys
 import pymysql
 import re
+import math
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -112,7 +113,7 @@ class FamilyTab(QWidget):
                             self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * self.cnt,2)
                 
                 self.flay.setRowStretch(self.flay.rowCount(), 1)
-                self.cnt+=1;
+                self.cnt+=1
             else:
                 QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
         # 231205 있을 경우 등록된 데이터를 각 에디터에 세팅 by 정현아
@@ -890,7 +891,6 @@ class CareerTab(QWidget):
                 
         else:
             if len(result) + self.cnt <= 9:
-                print(self.cnt, len(result) + self.cnt)
                 # 데이터 세팅
                 if self.cnt == 0:
                     for i in range(len(result)):
@@ -1560,7 +1560,6 @@ class Emplist(QMainWindow, form_class):
     def __init__(self):
         super( ).__init__( )
         self.setupUi(self)
-        self.empList.setLayout(self.listLayout)
         self.setStyleSheet(stylesheet)
 
         # 231202 체크박스 체크된 ROWW저장 리스트, 사업부검색 콤보박스, 이름검색 라인에딧초기화 by 정현아
@@ -1573,17 +1572,21 @@ class Emplist(QMainWindow, form_class):
         self.path = None
         self.fname = None
         self.pixmap = None
-        self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄','']
-        self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G','']
-        self.MIS = ['전기운영 G','PLM G','']
-        self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5','']
-        self.SP = ['사업기획팀','기술전략팀','']
-        self.BS = ['경영지원','']
+        self.gBtn = []
+        self.current_page = 1
+        self.prev_page = None
+        self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄']
+        self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G']
+        self.MIS = ['전기운영 G','PLM G']
+        self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5']
+        self.SP = ['사업기획팀','기술전략팀']
+        self.BS = ['경영지원']
+        self.ignore_paging_btn = False
 
         self.table.setRowCount(0)
-        header = ['','부서','이름','직무','직급','직책','휴대폰번호','메일']
-        self.table.setColumnCount(len(header))
-        self.table.setHorizontalHeaderLabels(header)
+        self.header = ['','부서','이름','직무','직급','직책','휴대폰번호','메일']
+        self.table.setColumnCount(len(self.header))
+        self.table.setHorizontalHeaderLabels(self.header)
 
         chk_bx_header = QTableWidgetItem()
         chk_bx_header.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
@@ -1605,6 +1608,11 @@ class Emplist(QMainWindow, form_class):
         self.cur = self.conn.cursor()
         self.main_query = "SELECT CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL FROM MAIN_TABLE"
         self.setTables(self.main_query)
+        self.table.sortByColumn(1,Qt.AscendingOrder)
+        self.gBtn[0].setChecked(True)
+        self.gBtn[0].setStyleSheet(
+                    "QToolButton { border: None; color : black; font-weight: bold; }"
+                )
 
         # 231202 사원전체 수 라벨에 세팅 by 정현아
         countQuery = "SELECT COUNT(*) FROM MAIN_TABLE;"
@@ -1616,7 +1624,7 @@ class Emplist(QMainWindow, form_class):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)   
         self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeToContents)
-
+   
         # 콤보박스 및 버튼 클릭 이벤트 by 정현아
         self.bizCombo.activated[str].connect(self.searchBiz)
         self.namelineEdit.returnPressed.connect(self.searchEmp)
@@ -1625,32 +1633,200 @@ class Emplist(QMainWindow, form_class):
         self.table.itemChanged.connect(self.delChk)
         self.listDelBtn.clicked.connect(self.delChkList)
         self.listRegBtn.clicked.connect(self.showRegsit)
-
         self.table.cellDoubleClicked.connect(self.showEmpInfo)
+        self.table.horizontalHeader().sectionClicked.connect(self.chgHeader)
+    
+    # 페이지 버튼 생성 함수 by 정현아
+    def setPagingBtn(self, row, query):
+        j = 1
+        # 기존 버튼 비우기
+        self.gBtn.clear()  
+        while self.gbox.count():
+            item = self.gbox.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()        
+        self.btnGroup = QButtonGroup(self)
+        # 페이지 수 세팅
+        page = math.ceil(row/15)
+        # 페이지 수가 5이하일 경우 페이지 수만큼 버튼생성, 5이상일 경우 5개 생성
+        if page <=5:
+            for i in range(page):
+                self.gBtn.append(QToolButton())
+        else:
+            for i in range(5):
+                self.gBtn.append(QToolButton())
+        for btn in self.gBtn:
+            btn.setCheckable(True)
+            btn.setText(str(j))
+            self.btnGroup.addButton(btn)
+            self.gbox.addWidget(btn,0,j)
+            j+=1
+        prev_btn = QToolButton(self)
+        prev_btn.setText("<<")
+        end_btn = QToolButton(self)
+        end_btn.setText(">>")
+        # 231209 제일 앞으로 버튼과 제일 뒤로 버튼 생성
+        self.btnGroup.addButton(prev_btn)
+        self.btnGroup.addButton(end_btn)
+        self.gbox.addWidget(prev_btn,0,0)
+        self.gbox.addWidget(end_btn,0,j+2)
+        self.btnGroup.setExclusive(True)
+        # 231208 버튼의 인덱스 값과 query 값을 전달하여 페이지 세팅 by 정현아
+        self.btnGroup.buttonClicked[int].connect(lambda button_id: self.setCheckedBtn(button_id, query, page))
+            
+    # 231207 버튼 클릭시 이벤트 by 정현아
+    def setCheckedBtn(self, button_id, query, page):
+        j = 1
+        btn = self.btnGroup.button(button_id)
+        btn.setChecked(True)
+
+        for button in self.btnGroup.buttons():
+            if button is btn and btn.isChecked():
+                button.setStyleSheet(
+                    "QToolButton { border: None; color : black; font-weight: bold; }"
+                )
+            else:
+                button.setStyleSheet(
+                    "QToolButton { border: None; color: #5a5a5a; }"
+                )
+        # 이전 페이지 저장
+        if self.prev_page != self.current_page:
+            self.prev_page = self.current_page 
+
+        # 현재 페이지 세팅
+        if btn.text().isdigit():
+            self.current_page = int(btn.text())
+        
+        print(self.prev_page, self.current_page)
+      
+        # 231210 페이지 수가 5보다 클 때 by 정현아
+        if len(self.gBtn) >= 5:
+            # 231209 1>2>3 오름차순으로 페이지 이동 by 정현아
+            if self.current_page > self.prev_page:
+                if not(btn.text() == '1' or btn.text() == '2' or btn.text() == '3' or btn.text() == str(page-1) or btn.text() == str(page) or btn.text() == "<<" or btn.text() == ">>"):
+                    self.btnGroup.removeButton(self.gBtn[0])
+                    item = self.gBtn.pop(0)
+                    item.setText(str(int(btn.text())+2))
+                    self.gBtn.append(item)
+                    self.btnGroup.addButton(self.gBtn[4])
+                    for button in self.gBtn:
+                        self.gbox.addWidget(button,0,j)
+                        j+=1
+                elif btn.text() == str(page-1) and self.current_page - self.prev_page > 1 :
+                    self.btnGroup.removeButton(self.gBtn[0])
+                    item = self.gBtn.pop(0)
+                    item.setText(str(int(btn.text())+1))
+                    self.gBtn.append(item)
+                    self.btnGroup.addButton(self.gBtn[4])
+                    for button in self.gBtn:
+                        self.gbox.addWidget(button,0,j)
+                        j+=1
+            # 231209 3>2>1 내림차순으로 페이지 이동 by 정현아
+            else:
+                if not(btn.text() == '1' or btn.text() == '2' or btn.text() == str(page-2) or btn.text() == str(page-1) or btn.text() == str(page) or btn.text() == "<<" or btn.text() == ">>"):
+                    self.btnGroup.removeButton(self.gBtn[4])
+                    item = self.gBtn.pop(4)
+                    item.setText(str(int(btn.text())-2))
+                    self.gBtn.insert(0,item)
+                    self.btnGroup.addButton(self.gBtn[0])
+                    for button in self.gBtn:
+                        self.gbox.addWidget(button,0,j)
+                        j+=1
+                elif btn.text() == '2' and self.prev_page - self.current_page > 1 :
+                    self.btnGroup.removeButton(self.gBtn[4])
+                    item = self.gBtn.pop(4)
+                    item.setText(str(int(btn.text())-1))
+                    self.gBtn.insert(0,item)
+                    self.btnGroup.addButton(self.gBtn[0])
+                    for button in self.gBtn:
+                        self.gbox.addWidget(button,0,j)
+                        j+=1
+                elif btn.text() =='<<':
+                    self.current_page = 1
+                    for i in range(5):
+                        self.gBtn[i].setText(str(i + 1))
+                    self.gBtn[0].setStyleSheet(
+                            "QToolButton { border: None; color : black; font-weight: bold; }"
+                        )
+                elif btn.text() =='>>':
+                    self.current_page = page
+                    for i in range(5):
+                        self.gBtn[i].setText(str(page -4 + i))
+                    self.gBtn[4].setStyleSheet(
+                            "QToolButton { border: None; color : black; font-weight: bold; }"
+                        )   
+        # 231210 페이지 수가 5보다 작을때 때 by 정현아
+        else:
+            if btn.text() =='<<':
+                    self.current_page = 1
+                    self.gBtn[0].setStyleSheet(
+                            "QToolButton { border: None; color : black; font-weight: bold; }"
+                        )
+            elif btn.text() =='>>':
+                self.current_page = page
+                self.gBtn[page-1].setStyleSheet(
+                        "QToolButton { border: None; color : black; font-weight: bold; }"
+                    )   
+                   
+
+        self.ignore_paging_btn = True
+        self.setTables(query)
 
     # 231202 테이블 세팅 함수 쿼리값 변경시 테이블위젯에 세팅된 테이블 값도 변경 by 정현아
     def setTables(self, query):
+        # 테이블 정렬 상태 확인 후 쿼리를 정렬하는 쿼리로 변경함
+        current_sorting_column = self.table.horizontalHeader().sortIndicatorSection()
+        current_sorting_order = self.table.horizontalHeader().sortIndicatorOrder()
+        if current_sorting_column == 8:
+            current_sorting_column = 1
+        order_direction = "ASC" if current_sorting_order == 0 else "DESC"
+        sort_query = f"{query} ORDER BY {current_sorting_column} {order_direction}"
         self.table.blockSignals(True)
-        self.table.setRowCount(0)
-        self.cur.execute(query)
+        # 테이블 내의 아이템을 모두 삭제
+        self.table.clearContents()
+        page_row = 15
+        self.table.setRowCount(page_row)
+        self.cur.execute(sort_query)
         result = self.cur.fetchall()
+        # 231209 버튼 페이지 세팅, setCheckedBtn에서 호출시 페이징 버튼 생성 함수는 호출하지 않음 by 정현아
+        if not self.ignore_paging_btn:
+            self.setPagingBtn(len(result), query)
+            self.current_page = 1
+        self.ignore_paging_btn = False
         self.table.setSortingEnabled(False)
+        # 테이블 내에 아이템 세팅 페이지당 row수 15개로 제한
         for row, row_data in enumerate(result):
-            self.table.insertRow(row)
-
+            if row < 15 * (self.current_page-1) :
+                continue
+            if row == 15 * self.current_page :
+                break
             chk_bx = QTableWidgetItem()
             chk_bx.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
             chk_bx.setCheckState(Qt.Unchecked)
-            self.table.setItem(row, 0, chk_bx)
-
+            # 첫 열 체크박스 세팅
+            self.table.setItem(row % 15, 0, chk_bx)
             for col, data in enumerate(row_data):
                 item = QTableWidgetItem(str(data))
                 item.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                self.table.setItem(row, col + 1, item)
-        self.table.sortByColumn(1,Qt.AscendingOrder)
+                self.table.setItem(row % 15, col + 1, item)
+        self.table.sortByColumn(current_sorting_column, current_sorting_order)
         self.table.setSortingEnabled(True)
         self.table.blockSignals(False)
 
+    # 231209 정렬할 때마다 헤더 옆에 화살표 특수문자를 붙여서 보여줌 by 정현아
+    def chgHeader(self,index):
+        current_sorting_column = self.table.horizontalHeader().sortIndicatorSection()
+        current_sorting_order = self.table.horizontalHeader().sortIndicatorOrder()
+        if index != 0 and current_sorting_order==0:
+            self.table.setHorizontalHeaderItem(index, QTableWidgetItem(self.header[index]+'▲'))
+        elif index != 0 and current_sorting_order==1:
+            self.table.setHorizontalHeaderItem(index, QTableWidgetItem(self.header[index]+'▼'))
+        for i in range(len(self.header)):
+            if i == index:
+                continue
+            self.table.setHorizontalHeaderItem(i, QTableWidgetItem(self.header[i]))
+            
     # 231202 체크된 로우 확인 및 저장, 해당 이벤트는 테이블 아이템이 변화될 때마다 호출되므로 다른 테이블 변경 이벤트는 시그널 블록처리 by 정현아
     def delChk(self, item):
         if item.column() == 0 and item.checkState() == Qt.Checked:
@@ -1701,7 +1877,7 @@ class Emplist(QMainWindow, form_class):
                 query = """SELECT 
                 CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL 
                 FROM MAIN_TABLE 
-                WHERE DEPT_BIZ = '""" + biz +"';"
+                WHERE DEPT_BIZ = '""" + biz +"'"
                 self.setTables(query)
                 countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE DEPT_BIZ = '" + biz +"';"
                 self.cur.execute(countQuery)
@@ -1720,9 +1896,9 @@ class Emplist(QMainWindow, form_class):
                 query = """SELECT 
                 CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL 
                 FROM MAIN_TABLE 
-                WHERE NAME_KOR LIKE '%""" + self.name +"%';"
+                WHERE NAME_KOR LIKE '%""" + self.name +"%'"
                 self.setTables(query)
-                countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE NAME_KOR LIKE '%""" + self.name +"%';"
+                countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE NAME_KOR LIKE '%""" + self.name +"%'"
                 self.cur.execute(countQuery)
                 count = self.cur.fetchone()[0]
                 self.countLabel.setText("총 "+ str(count) + "건")
@@ -1730,9 +1906,9 @@ class Emplist(QMainWindow, form_class):
                 query = """SELECT 
                 CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL 
                 FROM MAIN_TABLE 
-                WHERE NAME_KOR LIKE '%""" + self.name +"%' AND DEPT_BIZ = '" + self.biz + "';"
+                WHERE NAME_KOR LIKE '%""" + self.name +"%' AND DEPT_BIZ = '" + self.biz + "'"
                 self.setTables(query)
-                countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE NAME_KOR LIKE '%""" + self.name +"%' AND DEPT_BIZ = '" + self.biz + "';"
+                countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE NAME_KOR LIKE '%""" + self.name +"%' AND DEPT_BIZ = '" + self.biz + "'"
                 self.cur.execute(countQuery)
                 count = self.cur.fetchone()[0]
                 self.countLabel.setText("총 "+ str(count) + "건")
@@ -2245,6 +2421,11 @@ stylesheet = """
         margin-top:25px; 
         margin-bottom:5px;
     }
+    QToolButton{
+        border: None;
+        color: #868686; 
+    }
+
 """
 
 if __name__ == '__main__':

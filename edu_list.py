@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from add_edu import dialogClass
+from add_edu import DialogClass
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -29,6 +29,10 @@ class EduList(QMainWindow, form_class):
         self.name = ''
         self.text = ''
         self.flag = 0
+        self.gBtn = []
+        self.current_page = 1
+        self.prev_page = None
+        
         self.eduList.setLayout(self.eduListLayout)
 
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
@@ -53,12 +57,12 @@ class EduList(QMainWindow, form_class):
         )
         self.cur = self.conn.cursor()
         
-        query = """
+        self.main_query = """
         SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
         FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
         WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;
         """
-        self.cur.execute(query)
+        self.cur.execute(self.main_query)
         self.result = self.cur.fetchall()
         # 231128 table 세팅 by 정현아
         self.table.setRowCount(0)
@@ -92,13 +96,8 @@ class EduList(QMainWindow, form_class):
         self.biz = biz 
         if self.name == '' :
             if self.biz == '전체':
-                query = """
-                SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
-                FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
-                WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;
-                """
-                self.cur.execute(query)
-                self.result = self.cur.fetchall()
+                self.cur.execute(self.main_query)
+                result = self.cur.fetchall()
             else:
                 query = """
                 SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
@@ -106,7 +105,7 @@ class EduList(QMainWindow, form_class):
                 WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = \'""" + biz +'\';'
                 self.cur.execute(query)
                 result = self.cur.fetchall()
-                self.setTableItem(result)
+            self.setTableItem(result)
         else : 
             self.searchEmp()
         self.table.blockSignals(False)
@@ -115,30 +114,26 @@ class EduList(QMainWindow, form_class):
     def searchEmp(self):
         self.table.blockSignals(True)
         self.name = self.namelineEdit.text()
-        if self.name == '' : 
-            query = """
-            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
-            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
-            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;
-            """
-            self.cur.execute(query)
-        elif self.biz == '전체':
-            query = """
-            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
-            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
-            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND NAME_KOR LIKE %s;
-            """
-            self.cur.execute(query,(self.name+'%'))
+        if self.name != '' : 
+            if self.biz == '전체':
+                query = """
+                SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+                FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
+                WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND NAME_KOR LIKE %s;
+                """
+                self.cur.execute(query,('%'+self.name+'%'))
 
-        elif self.biz != '전체':
-            query = """
-            SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
-            FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
-            WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = %s AND NAME_KOR LIKE %s;
-            """
-            self.cur.execute(query,(self.biz,self.name+'%'))
-        result = self.cur.fetchall()
-        self.setTableItem(result)
+            elif self.biz != '전체':
+                query = """
+                SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+                FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
+                WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = %s AND NAME_KOR LIKE %s;
+                """
+                self.cur.execute(query,(self.biz,'%'+self.name+'%'))
+            result = self.cur.fetchall()
+            self.setTableItem(result)
+        else:
+            self.searchBiz(self.biz)
         self.table.blockSignals(False)
         
     
@@ -200,20 +195,14 @@ class EduList(QMainWindow, form_class):
     # 231118 필터링 해제 by 정현아                
     def cnlFilter(self):
         self.table.setHorizontalHeaderItem(7, QTableWidgetItem('이수여부☐'))   
-        query = """
-        SELECT @rownum:=@rownum+1, MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
-        FROM MAIN_TABLE,E_C, (SELECT @rownum:=0) TMP
-        WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM;
-        """  
-        self.cur.execute(query)
+        self.cur.execute(self.main_query)
         result = self.cur.fetchall()
         self.setTableItem(result)
         self.text = ''
 
-
     # 231120 입력 팝업창 생성 by 정현아
     def addEdu(self):
-        self.w = dialogClass()
+        self.w = DialogClass()
         self.w.show()
         self.w.cnlBtn.clicked.connect(self.w.close)
 
@@ -235,7 +224,7 @@ class EduList(QMainWindow, form_class):
                     row[6].value
                 ])
 
-            self.w = dialogClass()
+            self.w = DialogClass()
             self.w.addT.setRowCount(len(data)-1)
             for r in range(1,len(data)):
                 for c in range(0,7):
@@ -251,12 +240,9 @@ class EduList(QMainWindow, form_class):
         chList.append(item.text())
         item.setBackground(QColor(255,255,127))
         self.chLists.append(chList)
-        print(chList)
-        print("------------------------------")
     
     # 231129 버튼 클릭시 변경한 셀값 업데이트
     def updateCell(self):
-        print(self.chLists)
         if not self.chLists:
             QMessageBox.warning(self,"Update Item Failed","변경된 정보가 없습니다.") 
             return
@@ -287,12 +273,6 @@ class EduList(QMainWindow, form_class):
                     self.conn.commit()
             self.chList = []
             QMessageBox.information(self,"Update Item Succeed","업데이트 되었습니다.") 
-            if self.biz != '전체': 
-                self.searchBiz()
-            if self.name != '' :
-                self.searchEmp()
-            if self.flag == 1:
-                self.filter()
 
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):

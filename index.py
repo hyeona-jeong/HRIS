@@ -126,23 +126,16 @@ class Index(QMainWindow, form_class):
 stylesheet = """
     QMenuBar {
         color: #161616;
-        border: None;
     }
-    
     QMenuBar::item {
-        padding-left: 25px;
-        padding-right: 25px;
-        padding-bottom: 10px;
-        padding-top: 10px;
+        padding-left: 20px;
+        padding-right: 20px;
         margin-right: 5px;
-        border: 1px solid black;
-        border-radius: 10px;
+        margin-left: 5px;
     }
-
     QMenuBar::item::selected {
         border-bottom: 3px solid ;
     }
-    
     QMenu{
         color: #c6c6c6;
         font-size: 16px;

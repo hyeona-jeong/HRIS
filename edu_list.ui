@@ -474,7 +474,7 @@
       <x>0</x>
       <y>-10</y>
       <width>1251</width>
-      <height>871</height>
+      <height>878</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="eduListLayout">
@@ -1199,7 +1199,7 @@ background-color:white;</string>
            </row>
            <column>
             <property name="text">
-             <string>구분</string>
+             <string/>
             </property>
            </column>
            <column>
@@ -1463,6 +1463,9 @@ background-color:white;</string>
             </property>
            </item>
           </widget>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="gbox"/>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_5">

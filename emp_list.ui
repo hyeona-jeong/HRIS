@@ -471,7 +471,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string/>
+   <string>사원정보검색</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -596,7 +596,7 @@ color white;</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;사업부 필터(TSP,MIS,TC,FAB,경영지원,전략기획)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;사업부 필터(TSP, MIS, FAB, TC, 경영지원, 전략기획)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <item>
            <property name="text">
@@ -675,7 +675,7 @@ color white;</string>
            </size>
           </property>
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;사원 이름 검색&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;사원 이름검색&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -1007,6 +1007,36 @@ background-color:white;</string>
        </widget>
       </item>
       <item>
+       <layout class="QGridLayout" name="gbox">
+        <item row="0" column="0">
+         <spacer name="horizontalSpacer_7">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="1">
+         <spacer name="horizontalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <property name="spacing">
          <number>6</number>
@@ -1027,7 +1057,7 @@ background-color:white;</string>
         <item>
          <widget class="QPushButton" name="listRegBtn">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;신규 사원정보 등록&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;신규 사원정보등록&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
            <string>등록</string>
@@ -1037,7 +1067,7 @@ background-color:white;</string>
         <item>
          <widget class="QPushButton" name="listDelBtn">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;체크박스 선택후 삭제 클릭시 선택된 사원 정보 삭제&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;체크박스 선택 후 삭제를 클릭하면 선택된 사원정보가 삭제&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
            <string>삭제</string>

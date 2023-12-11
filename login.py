@@ -1575,7 +1575,6 @@ class Login(QMainWindow, form_class):
 
         self.findBtn.clicked.connect(self.showFind)
         
-        
         self.conn = pymysql.connect(
                 host='localhost',
                 user='dev',

@@ -14,7 +14,7 @@ def resource_path(relative_path):
 form = resource_path('add_edu.ui')
 form_class = uic.loadUiType(form)[0]
 
-class dialogClass(QDialog, form_class):
+class DialogClass(QDialog, form_class):
     def __init__(self):
         super( ).__init__( )
         self.setupUi(self)
@@ -29,52 +29,85 @@ class dialogClass(QDialog, form_class):
                 charset='utf8'
         )
         self.cur = self.conn.cursor()
-        
-        # 231129 변경된 정보를 저장하기 위한 리스트
-        self.chLists = []
-        
-        # self.addT.itemChanged.connect(self.chCell)
-        # self.saveBtn.clicked.connect(self.updateCell)
-        
-    # 231129 셀 업데이트마다 정보저장 by 정현아
-    # def chCell(self, item):
-    #     chList = []
-    #     chList.append(item.row())
-    #     chList.append(item.column())
-    #     chList.append(item.text())
-    #     self.chLists.append(chList)
-        
-    #     if item.column() == 0:
-    #         emp_num = item.text()
-    #         query = 'SELECT EMP_NUM, DEPT_BIZ, DEPT_GROUP, NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM =%s;'
-    #         self.cur.execute(query,(emp_num))
-    #         result = self.cur.fetchone()
-    #         if(result is not None):
-    #             for col, data in enumerate(result):
-    #                 self.addT.setItem(item.row(),col,QTableWidgetItem(str(data)))
+        self.addT.setStyleSheet(stylesheet)
+        self.saveBtn.clicked.connect(self.saveData)
+
+    # 231211 테이블에 입력된 정보 리스트에 저장 by 정현아
+    def saveData(self):
+        rows = self.addT.rowCount()
+        cols = self.addT.columnCount()
+
+        for row in range(rows):
+            data = []
+            for col in range(cols):
+                item = self.addT.item(row, col)
+                if item is None:
+                    if col == 0:
+                        return
+                    else : 
+                        QMessageBox.warning(self, "입력실패", "모든 내용을 입력해주셔야합니다.")
+                        return
+                else:
+                    if col == 0:
+                        if not(item.text().isdigit()):
+                            QMessageBox.warning(self, "입력실패", "숫자를 입력해주셔야합니다.")
+                            return
+                        else: 
+                            query = "SELECT * FROM MAIN_TABLE WHERE EMP_NUM = %s"
+                            self.cur.execute(query,(int(item.text())))
+                            result = self.cur.fetchone()
+                            if not result :
+                                QMessageBox.warning(self, "입력실패", f"{row+1}행 {col+1}열의 {item.text()} 존재하는 사번이 없습니다.")
+                                return
+                            else:
+                                data.append(int(item.text()))
+                    elif col == 3:
+                        if not(item.text() == 'Y' or item.text() == 'N' or item.text() == 'y' or item.text() == 'n') :
+                            QMessageBox.warning(self, "입력실패", f"{row+1}행 {col+1}열의 교육이수 여부값이 잘못 입력됐습니다. \n Y 또는 N을 입력해주세요.")
+                            return
+                        elif item.text() == 'y' or item.text() == 'n':
+                            data.append(item.text().upper())
+                        else: 
+                            data.append(item.text())
+                    else:
+                            data.append(item.text())
+            self.saveToDatabase(data, row)
+
+    # 231211 테이블에 입력된 정보 DB에 INSERT by 정현아
+    def saveToDatabase(self, data,row):
+        try:
+            query = "SELECT * FROM E_C WHERE EMP_NUM = %s AND NAME_EDU = %s AND EDU_INSTI = %s"
+            self.cur.execute(query, (int(data[0]), data[1], data[2]))
+            result = self.cur.fetchone()
+            if result :
+                QMessageBox.warning(self, "입력실패", f"{row+1}행에 이미 등록된 정보가 있습니다.")
+                return
+            query = "INSERT INTO E_C  VALUES (%s, %s, %s, %s)"
+            self.cur.execute(query, tuple(data))
+            self.conn.commit()
+            QMessageBox.information(self, "입력 성공", "저장되었습니다.")
             
-    # # 231129 셀 변경내용 DB Insert by 정현아
-    # def updateCell(self):
-    #     if not self.chLists:
-    #        QMessageBox.warning(self,"Update Item Failed","변경된 정보가 없습니다.") 
-    #        return
+        except Exception as e:
+            QMessageBox.warning(self, "입력실패", f"{e}")
+            print(e)
+            return
+        self.initTable()
     
-    #     else:
-    #         r = 0
-    #         c = 0
-    #         cont = ''
-    #         for chList in self.chLists:
-    #             r = chList[0]
-    #             c = chList[1]
-    #             cont = chList[2]
-    #         for row in r:
-    #             for col in self.addT.columnCount():
-    #                 if self.addT.item(row,col) == '':
-    #                     QMessageBox.warning(self,"Add Information Failed","모든 정보를 입력해주셔야 합니다.")
-            
+    # 231211 INSERT 후 테이블 초기화 by 정현아
+    def initTable(self):
+        for row in range(10):
+            for col in range(self.addT.columnCount()):
+                item = QTableWidgetItem("")
+                self.addT.setItem(row, col, item)        
+
+stylesheet = """
+    QHeaderView::section{
+        Background-color:#c6c6c6;
+    }
+"""
                     
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
-    myWindow = dialogClass( ) 
+    myWindow = DialogClass( ) 
     myWindow.show( ) 
     app.exec_( ) 

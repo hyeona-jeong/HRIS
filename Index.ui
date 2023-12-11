@@ -475,7 +475,7 @@
       <height>852</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="indexlayout" stretch="0,0,0,0,0">
+    <layout class="QVBoxLayout" name="indexlayout" stretch="0,0,0,0,0,0">
      <item alignment="Qt::AlignRight">
       <widget class="QLabel" name="label">
        <property name="minimumSize">
@@ -526,7 +526,7 @@
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>16</height>
+             <height>4</height>
             </size>
            </property>
           </spacer>
@@ -578,7 +578,7 @@ border-radius:20px
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>27</height>
+             <height>4</height>
             </size>
            </property>
           </spacer>
@@ -598,7 +598,7 @@ border-radius:20px
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>22</height>
+             <height>10</height>
             </size>
            </property>
           </spacer>
@@ -639,7 +639,7 @@ color: #4c4c4c;
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>33</height>
+             <height>10</height>
             </size>
            </property>
           </spacer>
@@ -663,6 +663,30 @@ color: #4c4c4c;
         </spacer>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="QLabel" name="underline">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>1</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>1</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel{
+	border: 3px solid black;
+}</string>
+       </property>
+       <property name="text">
+        <string>바보</string>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer name="verticalSpacer_3">
@@ -830,16 +854,11 @@ border-radius: 20px;
          </property>
          <property name="styleSheet">
           <string notr="true">QToolButton {
-background-color: white;
+background-color: #c6c6c6;
 border: 4px solid ;
 border-radius: 20px;
 }
-
-QToolButton:hover {
-background-color: rgba(255, 85, 0, 50);
-border: 4px solid;
-border-radius: 20px;
-}</string>
+</string>
          </property>
          <property name="text">
           <string>채용</string>
@@ -886,16 +905,11 @@ border-radius: 20px;
          </property>
          <property name="styleSheet">
           <string notr="true">QToolButton {
-background-color: white;
+background-color: #c6c6c6;
 border: 4px solid ;
 border-radius: 20px;
 }
-
-QToolButton:hover {
-background-color: rgba(255, 85, 0, 50);
-border: 4px solid;
-border-radius: 20px;
-}</string>
+</string>
          </property>
          <property name="text">
           <string>사업관리</string>
