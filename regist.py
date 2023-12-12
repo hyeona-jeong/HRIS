@@ -35,8 +35,6 @@ class EduList(QMainWindow, form_class):
         self.prev_page = None
         self.ignore_paging_btn = False
         
-        self.eduList.setLayout(self.eduListLayout)
-
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)  
 

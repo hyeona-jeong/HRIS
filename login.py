@@ -2040,23 +2040,26 @@ class Login(QMainWindow, form_class):
             QMessageBox.warning(self, "개인정보변경실패", "우편번호는 5자리를 입력하셔야 합니다.")
             return
         
-        if self.result[5] + self.result[6] != attrDict['주민번호'] or self.result[2] != attrDict['사번']:
-            t1 = (self.result[2], attrDict['사번'], self.result[5] + self.result[6] ,attrDict['주민번호'])
+        if self.result[5] + self.result[6] != attrDict['주민번호'] or self.result[2] != attrDict['사번'] or self.result[8] + self.result[9] + self.result[10] != attrDict['휴대폰번호']:
+            t1 = (attrDict['사번'], attrDict['주민번호'], attrDict['사번'], attrDict['주민번호'], attrDict['휴대폰번호'])
             query = """
-            SELECT NULLIF(EMP_NUM, %s), NULLIF(REG_NUM , %s) FROM MAIN_TABLE WHERE EMP_NUM=%s OR  REG_NUM =%s;
+            SELECT NULLIF(EMP_NUM, %s), NULLIF(REG_NUM, %s), PHONE FROM MAIN_TABLE WHERE EMP_NUM= %s OR REG_NUM = %s OR PHONE = %s;
             """
             try:
                 self.cur.execute(query, t1)
                 result = self.cur.fetchone()
-                if result is not None :
+                if result :
                     if result[0] is not None:
                         QMessageBox.warning(self, "개인정보변경실패", "이미 등록된 사번입니다.")
                         return
                     elif result[1] is not None: 
                         QMessageBox.warning(self, "개인정보변경실패", "이미 등록된 주민번호입니다.")
                         return
+                    else: 
+                        QMessageBox.warning(self, "개인정보변경실패", "이미 등록된 휴대폰번호입니다.")
+                        return
             except Exception as e:
-                QMessageBox.warning(self, "사원등록실패", "Error: " + str(e))
+                QMessageBox.warning(self, "개인정보변경실패", "Error: " + str(e))
                 return        
 
         query = """
@@ -2066,7 +2069,7 @@ class Login(QMainWindow, form_class):
         DEPT_BIZ = %s, WORK_POS = %s, DEPT_GROUP = %s, POSITION = %s, SALARY =%s, AGE = %s, GENDER = %s
         WHERE EMP_NUM = %s; 
         """
-        reply = QMessageBox.question(self, '변경 확인', '변경하시겠습니까??', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        reply = QMessageBox.question(self, '변경 확인', '변경하시겠습니까??', QMessageBox.Yes | QMessageBox.No)
         if reply == QMessageBox.Yes:
             try:
                 self.cur.execute(query,tuple(attrDict.values()) + (self.emp_num,))

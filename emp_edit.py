@@ -25,7 +25,6 @@ class Edit(QMainWindow, form_class):
         super( ).__init__( )
         self.setupUi(self)
         #그룹박스내에 생성창 리스트
-        self.regist.setLayout(self.regLayout)
         
         # 231206 우편번호는 찾기를 통해서만 입력가능 by 정현아
         self.addressnum_lineEdit.setReadOnly(True) 

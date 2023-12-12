@@ -672,7 +672,6 @@ class Regist(QMainWindow, form_class):
         self.pixmap = None
         self.post_num = ''
         self.post_address = ''
-        self.regist.setLayout(self.regLayout)
 
         # 231203 메인 탭 외의 정보 탭들 생성 by 정현아
         self.familyTab = FamilyTab(self)
@@ -932,9 +931,9 @@ class Regist(QMainWindow, form_class):
                 if value == '':
                     QMessageBox.warning(self, "사원등록실패", "{}이(가) 입력되지 않았습니다. {} 입력바랍니다.".format(key, key))
                     return
-        t1 = (attrDict['사번'], attrDict['사번'], attrDict['주민번호'])
+        t1 = (attrDict['사번'],attrDict['주민번호'], attrDict['사번'], attrDict['주민번호'], attrDict['휴대폰번호'])
         query = """
-        SELECT NULLIF(EMP_NUM, %s), REG_NUM FROM MAIN_TABLE WHERE EMP_NUM= %s OR REG_NUM = %s;
+        SELECT NULLIF(EMP_NUM, %s), NULLIF(REG_NUM, %s), PHONE FROM MAIN_TABLE WHERE EMP_NUM= %s OR REG_NUM = %s OR PHONE = %s;
         """
         try:
             self.cur.execute(query, t1)
@@ -943,8 +942,11 @@ class Regist(QMainWindow, form_class):
                 if result[0] is None:
                     QMessageBox.warning(self, "사원등록실패", "이미 등록된 사번입니다.")
                     return
-                else : 
+                elif result[1] is None : 
                     QMessageBox.warning(self, "사원등록실패", "이미 등록된 주민번호입니다.")
+                    return
+                else: 
+                    QMessageBox.warning(self, "사원등록실패", "이미 등록된 휴대폰 번호입니다.")
                     return
         except Exception as e:
             QMessageBox.warning(self, "사원등록실패", "Error: " + str(e))
@@ -1082,6 +1084,7 @@ class Regist(QMainWindow, form_class):
                 self.w.hide()
                 self.w.show()
 
+    # 파일경로 및 사이즈 확인 by 정현아
     def getFileSize(self, file_path):
         return os.path.getsize(file_path), file_path
     

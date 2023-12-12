@@ -1575,12 +1575,12 @@ class Emplist(QMainWindow, form_class):
         self.gBtn = []
         self.current_page = 1
         self.prev_page = None
-        self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄']
-        self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G']
-        self.MIS = ['전기운영 G','PLM G']
-        self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5']
-        self.SP = ['사업기획팀','기술전략팀']
-        self.BS = ['경영지원']
+        self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄','']
+        self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G','']
+        self.MIS = ['전기운영 G','PLM G','']
+        self.TC = ['TC/TPSS개발파트','화성 TC2.5','SAS TC2.5','']
+        self.SP = ['사업기획팀','기술전략팀','']
+        self.BS = ['경영지원','']
         self.ignore_paging_btn = False
 
         self.table.setRowCount(0)
@@ -1635,6 +1635,7 @@ class Emplist(QMainWindow, form_class):
         self.listRegBtn.clicked.connect(self.showRegsit)
         self.table.cellDoubleClicked.connect(self.showEmpInfo)
         self.table.horizontalHeader().sectionClicked.connect(self.chgHeader)
+        self.table.horizontalHeader().setSortIndicatorShown(False)
     
     # 페이지 버튼 생성 함수 by 정현아
     def setPagingBtn(self, row, query):
@@ -1697,13 +1698,12 @@ class Emplist(QMainWindow, form_class):
         # 현재 페이지 세팅
         if btn.text().isdigit():
             self.current_page = int(btn.text())
-        
-        print(self.prev_page, self.current_page)
-      
+              
         # 231210 페이지 수가 5보다 클 때 by 정현아
         if len(self.gBtn) >= 5:
             # 231209 1>2>3 오름차순으로 페이지 이동 by 정현아
             if self.current_page > self.prev_page:
+                # 그리드 레이아웃에서 제일 앞에 있는 버튼 제거 후 다시 제일 뒤에 배치
                 if not(btn.text() == '1' or btn.text() == '2' or btn.text() == '3' or btn.text() == str(page-1) or btn.text() == str(page) or btn.text() == "<<" or btn.text() == ">>"):
                     self.btnGroup.removeButton(self.gBtn[0])
                     item = self.gBtn.pop(0)
@@ -1724,6 +1724,7 @@ class Emplist(QMainWindow, form_class):
                         j+=1
             # 231209 3>2>1 내림차순으로 페이지 이동 by 정현아
             else:
+                # 그리드 레이아웃에서 제일 뒤에 있는 버튼 제거 후 다시 제일 앞에 배치
                 if not(btn.text() == '1' or btn.text() == '2' or btn.text() == str(page-2) or btn.text() == str(page-1) or btn.text() == str(page) or btn.text() == "<<" or btn.text() == ">>"):
                     self.btnGroup.removeButton(self.gBtn[4])
                     item = self.gBtn.pop(4)
@@ -1742,6 +1743,7 @@ class Emplist(QMainWindow, form_class):
                     for button in self.gBtn:
                         self.gbox.addWidget(button,0,j)
                         j+=1
+                # 제일 앞으로 버튼 클릭시 1번 버튼 bold처리 및 버튼 숫자 1~5 세팅
                 elif btn.text() =='<<':
                     self.current_page = 1
                     for i in range(5):
@@ -1769,7 +1771,6 @@ class Emplist(QMainWindow, form_class):
                         "QToolButton { border: None; color : black; font-weight: bold; }"
                     )   
                    
-
         self.ignore_paging_btn = True
         self.setTables(query)
 
@@ -1778,6 +1779,7 @@ class Emplist(QMainWindow, form_class):
         # 테이블 정렬 상태 확인 후 쿼리를 정렬하는 쿼리로 변경함
         current_sorting_column = self.table.horizontalHeader().sortIndicatorSection()
         current_sorting_order = self.table.horizontalHeader().sortIndicatorOrder()
+        # 소팅컬럼 초기화할 때 미리 세팅해놓으면 8로 리턴되어 1로 다시 세팅
         if current_sorting_column == 8:
             current_sorting_column = 1
         order_direction = "ASC" if current_sorting_order == 0 else "DESC"
@@ -1785,6 +1787,7 @@ class Emplist(QMainWindow, form_class):
         self.table.blockSignals(True)
         # 테이블 내의 아이템을 모두 삭제
         self.table.clearContents()
+        # 페이지 내의 컬럼수 세팅
         page_row = 15
         self.table.setRowCount(page_row)
         self.cur.execute(sort_query)
@@ -1792,6 +1795,7 @@ class Emplist(QMainWindow, form_class):
         # 231209 버튼 페이지 세팅, setCheckedBtn에서 호출시 페이징 버튼 생성 함수는 호출하지 않음 by 정현아
         if not self.ignore_paging_btn:
             self.setPagingBtn(len(result), query)
+            # 테이블 아이템 다시 세팅시 페이지 수 1로 설정
             self.current_page = 1
         self.ignore_paging_btn = False
         self.table.setSortingEnabled(False)
@@ -1816,7 +1820,6 @@ class Emplist(QMainWindow, form_class):
 
     # 231209 정렬할 때마다 헤더 옆에 화살표 특수문자를 붙여서 보여줌 by 정현아
     def chgHeader(self,index):
-        current_sorting_column = self.table.horizontalHeader().sortIndicatorSection()
         current_sorting_order = self.table.horizontalHeader().sortIndicatorOrder()
         if index != 0 and current_sorting_order==0:
             self.table.setHorizontalHeaderItem(index, QTableWidgetItem(self.header[index]+'▲'))
@@ -1827,7 +1830,7 @@ class Emplist(QMainWindow, form_class):
                 continue
             self.table.setHorizontalHeaderItem(i, QTableWidgetItem(self.header[i]))
             
-    # 231202 체크된 로우 확인 및 저장, 해당 이벤트는 테이블 아이템이 변화될 때마다 호출되므로 다른 테이블 변경 이벤트는 시그널 블록처리 by 정현아
+    # 231202 체크된 로우 확인 및 저장 by 정현아
     def delChk(self, item):
         if item.column() == 0 and item.checkState() == Qt.Checked:
             self.delRowList.append(item.row())
@@ -1852,7 +1855,7 @@ class Emplist(QMainWindow, form_class):
         reply = QMessageBox.question(self, '삭제 확인', '삭제하시겠습니까??', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             try:
-                self.cur.executemany(query,delData)
+                self.cur.executemany(query,(tuple(delData)))
                 self.conn.commit()
                 QMessageBox.information(self,"사원삭제성공","삭제 되었습니다.") 
                 self.setTables(self.main_query)
@@ -2296,23 +2299,26 @@ class Emplist(QMainWindow, form_class):
             QMessageBox.warning(self, "개인정보변경실패", "우편번호는 5자리를 입력하셔야 합니다.")
             return
         
-        if self.result[5] + self.result[6] != attrDict['주민번호'] or self.result[2] != attrDict['사번']:
-            t1 = (self.result[2], attrDict['사번'], self.result[5] + self.result[6],attrDict['주민번호'])
+        if self.result[5] + self.result[6] != attrDict['주민번호'] or self.result[2] != attrDict['사번'] or self.result[8] + self.result[9] + self.result[10] != attrDict['휴대폰번호']:
+            t1 = (attrDict['사번'], attrDict['주민번호'], attrDict['사번'], attrDict['주민번호'], attrDict['휴대폰번호'])
             query = """
-            SELECT NULLIF(EMP_NUM, %s), NULLIF(REG_NUM , %s) FROM MAIN_TABLE WHERE EMP_NUM=%s OR  REG_NUM =%s;
+            SELECT NULLIF(EMP_NUM, %s), NULLIF(REG_NUM, %s), PHONE FROM MAIN_TABLE WHERE EMP_NUM= %s OR REG_NUM = %s OR PHONE = %s;
             """
             try:
                 self.cur.execute(query, t1)
                 result = self.cur.fetchone()
-                if result is not None :
+                if result :
                     if result[0] is not None:
                         QMessageBox.warning(self, "개인정보변경실패", "이미 등록된 사번입니다.")
                         return
                     elif result[1] is not None: 
                         QMessageBox.warning(self, "개인정보변경실패", "이미 등록된 주민번호입니다.")
                         return
+                    else: 
+                        QMessageBox.warning(self, "개인정보변경실패", "이미 등록된 휴대폰번호입니다.")
+                        return
             except Exception as e:
-                QMessageBox.warning(self, "사원등록실패", "Error: " + str(e))
+                QMessageBox.warning(self, "개인정보변경실패", "Error: " + str(e))
                 return        
 
         query = """
@@ -2322,7 +2328,7 @@ class Emplist(QMainWindow, form_class):
         DEPT_BIZ = %s, WORK_POS = %s, DEPT_GROUP = %s, POSITION = %s, SALARY =%s, AGE = %s, GENDER = %s
         WHERE EMP_NUM = %s; 
         """
-        reply = QMessageBox.question(self, '변경 확인', '변경하시겠습니까??', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        reply = QMessageBox.question(self, '변경 확인', '변경하시겠습니까??', QMessageBox.Yes | QMessageBox.No)
         if reply == QMessageBox.Yes:
             try:
                 self.cur.execute(query,tuple(attrDict.values()) + (self.emp_num,))

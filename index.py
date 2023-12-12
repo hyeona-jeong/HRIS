@@ -34,7 +34,6 @@ class Index(QMainWindow, form_class):
         self.auth = None
         self.w = None
 
-        self.index.setLayout(self.indexlayout)
         self.index.setStyleSheet(stylesheet)
 
         # 메뉴바 생성
@@ -130,6 +129,7 @@ stylesheet = """
     QMenuBar::item {
         padding-left: 20px;
         padding-right: 20px;
+        padding-bottom: 15px;
         margin-right: 5px;
         margin-left: 5px;
     }
