@@ -465,7 +465,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string/>
+   <string>                    </string>
   </property>
   <widget class="QWidget" name="eduList">
    <layout class="QVBoxLayout" name="verticalLayout_2">

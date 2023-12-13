@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string/>
+   <string>               </string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>windowicon.jpg</normaloff>windowicon.jpg</iconset>
   </property>
   <widget class="QToolButton" name="searchbutton">
    <property name="geometry">

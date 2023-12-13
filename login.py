@@ -34,6 +34,7 @@ class Login(QMainWindow, form_class):
         self.BS = ['경영지원','']
         
         self.setupUi(self)
+        self.setWindowTitle("        ")
         self.setStyleSheet(stylesheet)
         self.loginBtn.clicked.connect(self.loginfunction)
         self.passwdlineEdit.returnPressed.connect(self.loginfunction)
