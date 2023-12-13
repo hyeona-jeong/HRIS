@@ -18,7 +18,7 @@ def resource_path(relative_path):
 form = resource_path('find.ui')
 form_class = uic.loadUiType(form)[0]
 
-class Find(QMainWindow, form_class):
+class Find(QDialog, form_class):
 
     def __init__(self):
         super( ).__init__( )

@@ -41,14 +41,14 @@ class DialogClass(QDialog, form_class):
             data = []
             for col in range(cols):
                 item = self.addT.item(row, col)
-                if item is None:
+                if item is None or item.text() == '':
                     if col == 0:
                         return
                     else : 
                         QMessageBox.warning(self, "입력실패", "모든 내용을 입력해주셔야합니다.")
                         return
                 else:
-                    if col == 0:
+                    if col == 0 and row != 0:
                         if not(item.text().isdigit()):
                             QMessageBox.warning(self, "입력실패", "숫자를 입력해주셔야합니다.")
                             return

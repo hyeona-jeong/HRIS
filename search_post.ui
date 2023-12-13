@@ -46,6 +46,9 @@
          <height>28</height>
         </size>
        </property>
+       <property name="styleSheet">
+        <string notr="true">color: #404040;</string>
+       </property>
        <property name="text">
         <string>검색</string>
        </property>
@@ -55,6 +58,9 @@
    </item>
    <item>
     <widget class="QTableWidget" name="table">
+     <property name="styleSheet">
+      <string notr="true">color: #404040;</string>
+     </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
@@ -93,6 +99,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="saveBtn">
+       <property name="styleSheet">
+        <string notr="true">color: #404040;</string>
+       </property>
        <property name="text">
         <string>저장</string>
        </property>
@@ -100,6 +109,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="cnlBtn">
+       <property name="styleSheet">
+        <string notr="true">color: #404040;</string>
+       </property>
        <property name="text">
         <string>취소</string>
        </property>

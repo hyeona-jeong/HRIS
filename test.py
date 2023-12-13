@@ -1,4 +1,3 @@
-item = 'Y'
-if not(item == 'Y' or item == 'N'):
-    print("X")
-print(f"{item}")
+import math
+page = math.ceil(0/15)
+print(page)

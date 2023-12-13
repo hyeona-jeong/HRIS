@@ -20,7 +20,7 @@ def resource_path(relative_path):
 form = resource_path('sign_up.ui')
 form_class = uic.loadUiType(form)[0]
 
-class SignUp(QMainWindow, form_class):
+class SignUp(QDialog, form_class):
     def __init__(self):
         super( ).__init__( )
         self.setupUi(self)        
@@ -94,7 +94,6 @@ class SignUp(QMainWindow, form_class):
                         else:
                             mail = sinkYN[1]
                             query ='SELECT ID FROM LOGIN_DATA WHERE EMP_NUM = ' + emp_num +';'
-                            print(emp_num)
                             self.cur.execute(query)
                             emptyYN = self.cur.fetchone()
                             if emptyYN:
@@ -115,21 +114,19 @@ class SignUp(QMainWindow, form_class):
                                 
                                 self.initSignUp()  
                                 # 231206 등록된 메일로 ID, 임시 비밀번호 전송
-                                # smtp = smtplib.SMTP('smtp.gmail.com',587)
-                                # smtp.ehlo()
-                                # smtp.starttls()
-                                # smtp.login('wjdgusk310@gmail.com','fmvs mwrf ydyp ifkw')
+                                smtp = smtplib.SMTP('smtp.gmail.com',587)
+                                smtp.ehlo()
+                                smtp.starttls()
+                                smtp.login('wjdgusk310@gmail.com','fmvs mwrf ydyp ifkw')
 
-                                # msg = EmailMessage()
-                                # msg['Subject'] = 'NoriSystem ID, 비밀번호입니다.'
-                                # msg.set_content('ID: ' + self.id +'\n비밀번호: ' + passwd + '입니다.')
+                                msg = EmailMessage()
+                                msg['Subject'] = 'NoriSystem ID, 비밀번호입니다.'
+                                msg.set_content('ID: ' + self.id +'\n비밀번호: ' + passwd + '입니다.')
 
-                                # msg['From']='wjdgusk310@gmail.com'
-                                # msg['To']=mail
-                                # smtp.send_message(msg)        
+                                msg['From']='wjdgusk310@gmail.com'
+                                msg['To']=mail
+                                smtp.send_message(msg)        
                                      
-                                                 
-        
     # 231123 ID중복체크 by 정현아
     def chkId(self):
         self.id = self.id_lineEdit.text()

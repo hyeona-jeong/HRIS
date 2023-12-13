@@ -48,7 +48,7 @@ class Index(QMainWindow, form_class):
         self.toolhr = self.menuBar.addAction('인사')
         self.tooledu = self.menuBar.addAction('교육')
         self.toolrc = self.menuBar.addAction('총무')
-        self.toolbm = self.menuBar.addAction('사업계획')
+        self.toolbm = self.menuBar.addAction('사업관리')
         
         
         # 231125 메뉴바에 메뉴 추가 
@@ -100,7 +100,8 @@ class Index(QMainWindow, form_class):
     
     def showIDRegist(self):
         self.w = SignUp()
-        self.w.show()    
+        self.w.cnlBtn.clicked.connect(self.w.accept)
+        result = self.w.exec_()  
     
     def sendLogin(self):
         self.showedEdit.emit()
@@ -137,7 +138,8 @@ stylesheet = """
         border-bottom: 3px solid ;
     }
     QMenu{
-        color: #c6c6c6;
+        background-color:#c8c8c8;
+        color: #404040;
         font-size: 16px;
         font-family: Malgun Gothic;
         width: 200px;

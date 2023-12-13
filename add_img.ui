@@ -44,6 +44,9 @@
         <pointsize>11</pointsize>
        </font>
       </property>
+      <property name="styleSheet">
+       <string notr="true">color:#404040;</string>
+      </property>
       <property name="text">
        <string>이미지 등록</string>
       </property>

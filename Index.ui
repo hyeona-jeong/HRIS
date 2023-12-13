@@ -735,6 +735,7 @@ color: #4c4c4c;
 background-color: #c6c6c6;
 border: 4px solid ;
 border-radius: 20px;
+color: #404040;
 }
 </string>
           </property>
@@ -910,6 +911,7 @@ border-radius: 20px;
 background-color: #c6c6c6;
 border: 4px solid ;
 border-radius: 20px;
+color: #404040;
 }
 </string>
           </property>
@@ -956,7 +958,7 @@ border-radius: 20px;
      <x>0</x>
      <y>0</y>
      <width>1269</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

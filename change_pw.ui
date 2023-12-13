@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,6 +9,18 @@
     <width>405</width>
     <height>266</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>405</width>
+    <height>266</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>405</width>
+    <height>266</height>
+   </size>
   </property>
   <property name="palette">
    <palette>
@@ -459,16 +471,8 @@
    <iconset>
     <normaloff>windowicon.jpg</normaloff>windowicon.jpg</iconset>
   </property>
-  <widget class="QWidget" name="chgpw">
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>401</width>
-      <height>261</height>
-     </rect>
-    </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
     <layout class="QVBoxLayout" name="chLayout">
      <item>
       <spacer name="verticalSpacer_2">
@@ -672,7 +676,7 @@
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true"/>
+          <string notr="true">color:#404040;</string>
          </property>
          <property name="text">
           <string>취소</string>
@@ -708,8 +712,8 @@
       </spacer>
      </item>
     </layout>
-   </widget>
-  </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

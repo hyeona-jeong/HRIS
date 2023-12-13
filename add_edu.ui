@@ -458,6 +458,9 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTableWidget" name="addT">
+     <property name="styleSheet">
+      <string notr="true">color:#404040;</string>
+     </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>
      </property>
@@ -597,7 +600,7 @@
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true"/>
+        <string notr="true">color:#404040;</string>
        </property>
        <property name="text">
         <string>닫기</string>

@@ -651,8 +651,7 @@ color white;</string>
                </size>
               </property>
               <property name="text">
-               <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;한글성명&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;한글성명&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -712,8 +711,7 @@ color white;</string>
                </size>
               </property>
               <property name="text">
-               <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;주민번호&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;주민번호&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -830,8 +828,7 @@ color white;</string>
                </size>
               </property>
               <property name="text">
-               <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;영문성명&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;영문성명&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -891,8 +888,7 @@ color white;</string>
                </size>
               </property>
               <property name="text">
-               <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;메일&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;메일&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -959,8 +955,7 @@ color white;</string>
                </size>
               </property>
               <property name="text">
-               <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;사번&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;사번&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1020,8 +1015,7 @@ color white;</string>
                </size>
               </property>
               <property name="text">
-               <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;휴대폰번호&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;휴대폰번호&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1232,8 +1226,7 @@ color white;</string>
                </size>
               </property>
               <property name="text">
-               <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;입사일&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;입사일&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1293,8 +1286,7 @@ color white;</string>
                </size>
               </property>
               <property name="text">
-               <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;사업부&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;사업부&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1384,8 +1376,7 @@ color white;</string>
                </size>
               </property>
               <property name="text">
-               <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;그룹&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;그룹&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1446,8 +1437,7 @@ color white;</string>
                </size>
               </property>
               <property name="text">
-               <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;직급&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;직급&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1552,8 +1542,7 @@ color white;</string>
                </size>
               </property>
               <property name="text">
-               <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;직책&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;직책&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1650,8 +1639,7 @@ color white;</string>
                </size>
               </property>
               <property name="text">
-               <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;직무&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;직무&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1816,8 +1804,7 @@ color white;</string>
                    </size>
                   </property>
                   <property name="text">
-                   <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;우편번호&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;우편번호&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1903,8 +1890,7 @@ color white;</string>
                    </size>
                   </property>
                   <property name="text">
-                   <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;주소&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;주소&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -1958,8 +1944,7 @@ color white;</string>
                    </size>
                   </property>
                   <property name="text">
-                   <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;호봉&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;호봉&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -2372,6 +2357,9 @@ color white;</string>
                        <height>19</height>
                       </rect>
                      </property>
+                     <property name="styleSheet">
+                      <string notr="true">color: #404040;</string>
+                     </property>
                      <property name="text">
                       <string>미혼</string>
                      </property>
@@ -2421,8 +2409,7 @@ color white;</string>
                    </size>
                   </property>
                   <property name="text">
-                   <string>
-&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;*&lt;/span&gt;&amp;nbsp;최종학력&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff1d3b;&quot;&gt;* &lt;/span&gt;&lt;span style=&quot; color:#404040;&quot;&gt;최종학력&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

@@ -1403,6 +1403,9 @@ color white;</string>
         </item>
         <item>
          <widget class="QPushButton" name="listChgbtn">
+          <property name="styleSheet">
+           <string notr="true">color: #404040;</string>
+          </property>
           <property name="text">
            <string>변경</string>
           </property>
@@ -1410,6 +1413,9 @@ color white;</string>
         </item>
         <item>
          <widget class="QPushButton" name="cnlBtn">
+          <property name="styleSheet">
+           <string notr="true">color: #404040;</string>
+          </property>
           <property name="text">
            <string>닫기</string>
           </property>

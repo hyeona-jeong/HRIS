@@ -93,6 +93,8 @@ class EduList(QMainWindow, form_class):
         self.btnGroup = QButtonGroup(self)
         # 페이지 수 세팅
         page = math.ceil(row/15)
+        if page == 0 :
+            page = 1
         # 페이지 수가 5미만일 경우 페이지 수만큼 버튼생성, 5이상일 경우 5개 생성
         if page <5:
             for i in range(page):
@@ -240,6 +242,10 @@ class EduList(QMainWindow, form_class):
         if not self.ignore_paging_btn:
             self.setPagingBtn(len(result), query)
             self.current_page = 1
+            self.gBtn[0].setChecked(True)
+            self.gBtn[0].setStyleSheet(
+                        "QToolButton { border: None; color : black; font-weight: bold; }"
+                    )
         self.ignore_paging_btn = False
         self.table.setSortingEnabled(False)
         # 테이블 내에 아이템 세팅 페이지당 row수 15개로 제한
@@ -248,11 +254,18 @@ class EduList(QMainWindow, form_class):
                 continue
             if row == 15 * self.current_page :
                 break
-            chk_bx = QTableWidgetItem()
-            chk_bx.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-            chk_bx.setCheckState(Qt.Unchecked)
-            # 첫 열 체크박스 세팅self.main_query
-            self.table.setItem(row % 15, 0, chk_bx)
+            # 첫 열 체크박스 세팅 체크박스 정렬을 위해 위젯 생성 후 정렬
+            chk_widget = QWidget()
+            chk_layout = QHBoxLayout(chk_widget)
+            chk_layout.setAlignment(Qt.AlignCenter)
+
+            chk_bx = QCheckBox()
+            chk_layout.addWidget(chk_bx)
+            chk_layout.setContentsMargins(0, 0, 0, 0)
+            chk_widget.setLayout(chk_layout)
+
+            self.table.setCellWidget(row % 15, 0, chk_widget)
+            chk_bx.stateChanged.connect(lambda state, row=row % 15: self.delChk(state, row))
             for col, data in enumerate(row_data):
                 item = QTableWidgetItem(str(data))
                 item.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
@@ -274,13 +287,13 @@ class EduList(QMainWindow, form_class):
         self.biz = biz 
         if self.name == '' :
             if self.biz == '전체':
-                self.cur.execute(self.main_query)
+                self.setTables(self.main_query)
             else:
                 query = """
                 SELECT MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
                 FROM MAIN_TABLE,E_C
                 WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = \'""" + biz +'\''
-            self.setTables(query)
+                self.setTables(query)
         else : 
             self.searchEmp()
         self.table.blockSignals(False)
@@ -294,14 +307,14 @@ class EduList(QMainWindow, form_class):
                 query = f"""
                 SELECT MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
                 FROM MAIN_TABLE,E_C
-                WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND NAME_KOR LIKE %{self.name}%
+                WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND NAME_KOR LIKE '%{self.name}%'
                 """
 
             elif self.biz != '전체':
                 query = f"""
                 SELECT MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
                 FROM MAIN_TABLE,E_C
-                WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = {self.biz} AND NAME_KOR LIKE %{self.name}%
+                WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = '{self.biz}' AND NAME_KOR LIKE '%{self.name}%'
                 """
             self.setTables(query)
         else:
@@ -379,14 +392,24 @@ class EduList(QMainWindow, form_class):
     # 231120 입력 팝업창 생성 by 정현아
     def addEdu(self):
         self.w = DialogClass()
-        self.w.show()
-        self.w.cnlBtn.clicked.connect(self.w.close)
-        
-    def delChk(self, item):
-        if item.column() == 0 and item.checkState() == Qt.Checked:
-            self.delRowList.append(item.row())
-        elif item.column() == 0 and item.checkState() == Qt.Unchecked:
-            self.delRowList.remove(item.row())
+        self.w.cnlBtn.clicked.connect(self.onDialogClosed)
+        result = self.w.exec_()
+         
+    def onDialogClosed(self):
+        self.setTables(self.main_query)
+        self.table.sortByColumn(1,Qt.AscendingOrder)
+        self.gBtn[0].setChecked(True)
+        self.gBtn[0].setStyleSheet(
+                    "QToolButton { border: None; color : black; font-weight: bold; }"
+                )
+        self.w.accept() 
+
+    def delChk(self, state, row):
+        if state == Qt.Checked:
+            self.delRowList.append(row)
+        elif state == Qt.Unchecked:
+            self.delRowList.remove(row)
+
         
     # 231202 교육이수정보 삭제
     def delChkList(self):

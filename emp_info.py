@@ -24,6 +24,7 @@ class EmpInfo(QMainWindow, form_class):
         self.flag = 0;
         
         self.listChgbtn.clicked.connect(self.showEdit)
+        self.empinfo.setStyleSheet(stylesheet)
     
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):
@@ -46,6 +47,16 @@ class EmpInfo(QMainWindow, form_class):
     def back(self):
         self.w.hide()
         self.show()
+        
+
+stylesheet = """
+    QTabBar::tab {
+        color: black;
+    }
+    QLabel{
+        color: #404040;
+    }
+"""
          
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
