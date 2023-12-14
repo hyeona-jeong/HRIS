@@ -256,7 +256,7 @@ class Emplist(QMainWindow, form_class):
         self.setLoadingCursor(True)
         # 테이블 정렬 상태 확인 후 쿼리를 정렬하는 쿼리로 변경함
         current_sorting_column = self.current_index
-        current_sorting_order = self.align_index[self.current_index]
+        current_sorting_order = self.align_index[self.current_index%]
         # 소팅컬럼 초기화할 때 미리 세팅해놓으면 8로 리턴되어 1로 다시 세팅
         if current_sorting_column == 8:
             current_sorting_column = 1
