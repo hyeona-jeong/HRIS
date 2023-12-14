@@ -34,8 +34,11 @@ class EduList(QMainWindow, form_class):
         self.delRowList = []
         self.current_page = 1
         self.prev_page = None
+        self.align_index = [0,0,0,0,0,0,0,0]
+        self.current_index = 1
+        self.prev_index = None
         self.ignore_paging_btn = False
-        self.header = ['','사번','사업부','그룹','이름','교육명','교육기관','이수여부']
+        self.header = ['','사번','사업부','그룹','이름','교육명','교육기관','이수여부☐']
         
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)  
@@ -70,14 +73,12 @@ class EduList(QMainWindow, form_class):
         # 231128 table 세팅 by 정현아
         self.table.setRowCount(0)
         self.setTables(self.main_query)
-        self.table.sortByColumn(1,Qt.AscendingOrder)
         self.table.itemChanged.connect(self.chCell)
         self.saveBtn.clicked.connect(self.updateCell)
         self.gBtn[0].setChecked(True)
         self.gBtn[0].setStyleSheet(
                     "QToolButton { border: None; color : black; font-weight: bold; }"
                 )
-        self.table.sortByColumn(1,Qt.AscendingOrder)
         
     # 231128 페이징 버튼 생성 by 정현아
     def setPagingBtn(self, row, query):
@@ -219,15 +220,22 @@ class EduList(QMainWindow, form_class):
         self.ignore_paging_btn = True
         self.setTables(query)
 
+    # 로딩시 커서 변경
+    def setLoadingCursor(self, loading):
+        if loading:
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+        else:
+            QApplication.restoreOverrideCursor()
+
     # 231202 테이블 세팅 함수 쿼리값 변경시 테이블위젯에 세팅된 테이블 값도 변경 by 정현아
     def setTables(self, query):
+        # 로딩 중에 WaitCursor로 변경
+        self.setLoadingCursor(True)
         # 테이블 정렬 상태 확인 후 쿼리를 정렬하는 쿼리로 변경함
-        current_sorting_column = self.table.horizontalHeader().sortIndicatorSection()
-        current_sorting_order = self.table.horizontalHeader().sortIndicatorOrder()
-        if current_sorting_column == 8:
-            current_sorting_column = 1
+        current_sorting_column = self.current_index
+        current_sorting_order = self.align_index[self.current_index]%2
         order_direction = "ASC" if current_sorting_order == 0 else "DESC"
-        sort_query = f"{query} ORDER BY {current_sorting_column} {order_direction};"
+        sort_query = f"{query} ORDER BY {current_sorting_column} {order_direction}"
         self.table.blockSignals(True)
         # 테이블 내의 아이템을 모두 삭제
         self.table.clearContents()
@@ -244,7 +252,6 @@ class EduList(QMainWindow, form_class):
                         "QToolButton { border: None; color : black; font-weight: bold; }"
                     )
         self.ignore_paging_btn = False
-        self.table.setSortingEnabled(False)
         # 테이블 내에 아이템 세팅 페이지당 row수 15개로 제한
         for row, row_data in enumerate(result):
             if row < 15 * (self.current_page-1) :
@@ -274,10 +281,9 @@ class EduList(QMainWindow, form_class):
                     self.table.item(r,c).setTextAlignment(Qt.AlignCenter|Qt.AlignVCenter)
                     if c == 1 or c == 2 or c == 3 or c == 4:
                         self.table.item(r,c).setFlags(self.table.item(r,c).flags() & ~ (Qt.ItemIsEditable))
-        self.table.sortByColumn(current_sorting_column, current_sorting_order)
-        self.table.setSortingEnabled(True)
         self.table.blockSignals(False)
-        self.table.horizontalHeader().setSortIndicatorShown(False)
+        # 로딩이 끝나면 기본 커서로 변경
+        self.setLoadingCursor(False) 
 
     # 231129 사업부검색 함수 
     def searchBiz(self,biz):
@@ -318,26 +324,34 @@ class EduList(QMainWindow, form_class):
         else:
             self.searchBiz(self.biz)
         self.table.blockSignals(False)
-        
-    # 0번 컬럼과 7번을 제외하고 정렬시 헤더에 표시
-    def onHeaderClicked(self, index):
+
+    # 231209 정렬할 때마다 헤더 옆에 화살표 특수문자를 붙여서 보여줌 by 정현아
+    def onHeaderClicked(self,index):
         if index == 0:
-            return 
-        elif index != 7:
-            current_sorting_order = self.table.horizontalHeader().sortIndicatorOrder()
-            if index != 0 and current_sorting_order==0:
+            return
+        if self.prev_index != self.current_index:
+           self.prev_index = self.current_index
+        self.current_index = index
+        if self.current_index == self.prev_index:
+            self.align_index[index]+=1        
+        if index != 0 and self.align_index[index] %2 == 0:
+            if index != 7:
                 self.table.setHorizontalHeaderItem(index, QTableWidgetItem(self.header[index]+'▲'))
-            elif index != 0 and current_sorting_order==1:
+            self.searchEmp()
+        elif index != 0 and self.align_index[index] %2 != 0:
+            if index != 7:
                 self.table.setHorizontalHeaderItem(index, QTableWidgetItem(self.header[index]+'▼'))
-            for i in range(len(self.header)):
-                if not(i == index or i == 7):
-                    self.table.setHorizontalHeaderItem(i, QTableWidgetItem(self.header[i]))
-        elif(self.flag == 0):
+            self.searchEmp()
+        for i in range(len(self.header)):
+            if i == index:
+                continue
+            self.table.setHorizontalHeaderItem(i, QTableWidgetItem(self.header[i]))
+        if index == 7 and self.flag == 0:
             self.filter()
-        elif(self.flag == 1):
+        elif index == 7 and self.flag == 1:
             self.cnlFilter()
             self.flag -=1
-
+        
     # 231118필터링 팝업창 생성 by 정현아
     def filter(self):
         self.table.blockSignals(True)
@@ -397,7 +411,6 @@ class EduList(QMainWindow, form_class):
          
     def onDialogClosed(self):
         self.setTables(self.main_query)
-        self.table.sortByColumn(1,Qt.AscendingOrder)
         self.gBtn[0].setChecked(True)
         self.gBtn[0].setStyleSheet(
                     "QToolButton { border: None; color : black; font-weight: bold; }"
@@ -409,7 +422,6 @@ class EduList(QMainWindow, form_class):
             self.delRowList.append(row)
         elif state == Qt.Unchecked:
             self.delRowList.remove(row)
-        print(row)
         
     # 231202 교육이수정보 삭제
     def delChkList(self):

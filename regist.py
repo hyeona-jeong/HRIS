@@ -39,10 +39,10 @@ class Emplist(QMainWindow, form_class):
         self.fname = None
         self.pixmap = None
         self.gBtn = []
-        self.current_page = 1
-        self.prev_page = None
+        self.current_page = 0
+        self.prev_page = 0
         self.align_index = [0,0,0,0,0,0,0,0]
-        self.current_index = 8
+        self.current_index = 1
         self.prev_index = None
         self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄','']
         self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G','']
@@ -256,10 +256,7 @@ class Emplist(QMainWindow, form_class):
         self.setLoadingCursor(True)
         # 테이블 정렬 상태 확인 후 쿼리를 정렬하는 쿼리로 변경함
         current_sorting_column = self.current_index
-        current_sorting_order = self.align_index[self.current_index%]
-        # 소팅컬럼 초기화할 때 미리 세팅해놓으면 8로 리턴되어 1로 다시 세팅
-        if current_sorting_column == 8:
-            current_sorting_column = 1
+        current_sorting_order = self.align_index[self.current_index]%2
         order_direction = "ASC" if current_sorting_order == 0 else "DESC"
         sort_query = f"{query} ORDER BY {current_sorting_column} {order_direction}"
         self.table.blockSignals(True)
@@ -312,19 +309,23 @@ class Emplist(QMainWindow, form_class):
         if self.prev_index != self.current_index:
            self.prev_index = self.current_index
         self.current_index = index
+        print(self.prev_index,self.current_index,self.align_index[index])
+        if self.current_index == self.prev_index:
+            self.align_index[index]+=1        
         if index != 0 and self.align_index[index] %2 == 0:
             self.table.setHorizontalHeaderItem(index, QTableWidgetItem(self.header[index]+'▲'))
+            self.searchEmp()
         elif index != 0 and self.align_index[index] %2 != 0:
             self.table.setHorizontalHeaderItem(index, QTableWidgetItem(self.header[index]+'▼'))
+            self.searchEmp()
         for i in range(len(self.header)):
             if i == index:
                 continue
             self.table.setHorizontalHeaderItem(i, QTableWidgetItem(self.header[i]))
-        if self.current_index == self.prev_index:
-            self.align_index[index]+=1
             
     # 231202 체크된 로우 확인 및 저장 by 정현아
     def delChk(self, state, row):
+        print(row)
         if state == Qt.Checked:
             self.delRowList.append(row)
         elif state == Qt.Unchecked:
