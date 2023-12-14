@@ -77,8 +77,7 @@ class EduList(QMainWindow, form_class):
         self.gBtn[0].setStyleSheet(
                     "QToolButton { border: None; color : black; font-weight: bold; }"
                 )
-        self.table.sortByColumn(7,Qt.AscendingOrder)
-        self.table.horizontalHeader().setSortIndicatorShown(False)
+        self.table.sortByColumn(1,Qt.AscendingOrder)
         
     # 231128 페이징 버튼 생성 by 정현아
     def setPagingBtn(self, row, query):
@@ -217,8 +216,6 @@ class EduList(QMainWindow, form_class):
                 self.gBtn[page-1].setStyleSheet(
                         "QToolButton { border: None; color : black; font-weight: bold; }"
                     )   
-                   
-
         self.ignore_paging_btn = True
         self.setTables(query)
 
@@ -275,11 +272,12 @@ class EduList(QMainWindow, form_class):
             for c in range(self.table.columnCount()):
                 if self.table.item(r,c) is not None:
                     self.table.item(r,c).setTextAlignment(Qt.AlignCenter|Qt.AlignVCenter)
-                    if c == 0 or c == 1 or c == 2 or c == 3 or c == 4:
+                    if c == 1 or c == 2 or c == 3 or c == 4:
                         self.table.item(r,c).setFlags(self.table.item(r,c).flags() & ~ (Qt.ItemIsEditable))
         self.table.sortByColumn(current_sorting_column, current_sorting_order)
         self.table.setSortingEnabled(True)
         self.table.blockSignals(False)
+        self.table.horizontalHeader().setSortIndicatorShown(False)
 
     # 231129 사업부검색 함수 
     def searchBiz(self,biz):
@@ -323,7 +321,9 @@ class EduList(QMainWindow, form_class):
         
     # 0번 컬럼과 7번을 제외하고 정렬시 헤더에 표시
     def onHeaderClicked(self, index):
-        if(index == 0 or index != 7):
+        if index == 0:
+            return 
+        elif index != 7:
             current_sorting_order = self.table.horizontalHeader().sortIndicatorOrder()
             if index != 0 and current_sorting_order==0:
                 self.table.setHorizontalHeaderItem(index, QTableWidgetItem(self.header[index]+'▲'))
@@ -409,7 +409,7 @@ class EduList(QMainWindow, form_class):
             self.delRowList.append(row)
         elif state == Qt.Unchecked:
             self.delRowList.remove(row)
-
+        print(row)
         
     # 231202 교육이수정보 삭제
     def delChkList(self):
@@ -417,8 +417,9 @@ class EduList(QMainWindow, form_class):
         delData = []
         if not self.delRowList :
             QMessageBox.warning(self, "사원삭제실패", "선택된 사원이 없습니다.")
+            return
         else:
-            # 231202 리스트에 선택된 로우의 이름과 핸드폰 정보를 리스트에 저장
+            # 231202 리스트에 선택된 로우의 교육명과 교육정보를 리스트에 저장
             for i in self.delRowList :
                 colData = []
                 colData.append(int(self.table.item(i,1).text()))

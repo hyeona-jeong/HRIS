@@ -47,6 +47,8 @@ class Index(QMainWindow, form_class):
         # 231125 메뉴바에 액션 추가
         self.toolhr = self.menuBar.addAction('인사')
         self.tooledu = self.menuBar.addAction('교육')
+        
+        
         self.toolrc = self.menuBar.addAction('총무')
         self.toolbm = self.menuBar.addAction('사업관리')
         
@@ -70,14 +72,13 @@ class Index(QMainWindow, form_class):
 
         # 스타일 시트 설정
         self.menuBar.setStyleSheet(stylesheet)
-
-        self.empBtn.clicked.connect(self.showPage)
-        self.eduBtn.clicked.connect(self.showPage)
         
     # 231126 버튼 별로 화면 페이지 구분하여 페이지 전환 by 정현아
     def showPage(self):
         sender = self.sender().text()
+
         if sender == '사원정보검색' or sender == '인사':
+            print(self.empBtn.receivers(self.empBtn.clicked))
             self.w = Emplist()
             self.showedList.emit()
             self.w.listToInfo.connect(self.listToInfo.emit)
@@ -95,7 +96,7 @@ class Index(QMainWindow, form_class):
             self.w = EduList()
         self.w.show()
         self.hide()
-        self.w.cnlBtn.clicked.connect(self.back)
+        self.w.cnlBtn.clicked.connect(self.w.close)
         self.w.closed.connect(self.show)            
     
     def showIDRegist(self):
@@ -106,22 +107,9 @@ class Index(QMainWindow, form_class):
     def sendLogin(self):
         self.showedEdit.emit()
 
-    def back(self):
-        self.w.close()
-        self.show()
-
     def closeEvent(self, e):
         self.closed.emit()
         super().closeEvent(e)
-        
-    # 231126 마우스가 버튼위에 위치하면 자동으로 메뉴가 보이게 하는 함수 by정현아 
-    # def eventFilter(self, object, event):
-    #     if event.type() == QEvent.HoverEnter:
-    #         object.showMenu()
-    #         return True
-    #     elif event.type() == QEvent.HoverLeave:
-    #         print( "mouseout!")
-    #     return False
 
 stylesheet = """
     QMenuBar {

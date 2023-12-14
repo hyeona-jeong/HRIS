@@ -112,6 +112,9 @@ class SignUp(QDialog, form_class):
                                     print(str(e))
                                     return
                                 
+                                # 로딩 중에 WaitCursor로 변경
+                                self.setLoadingCursor(True)     
+                                                           
                                 self.initSignUp()  
                                 # 231206 등록된 메일로 ID, 임시 비밀번호 전송
                                 smtp = smtplib.SMTP('smtp.gmail.com',587)
@@ -125,7 +128,10 @@ class SignUp(QDialog, form_class):
 
                                 msg['From']='wjdgusk310@gmail.com'
                                 msg['To']=mail
-                                smtp.send_message(msg)        
+                                smtp.send_message(msg)      
+                                
+                                # 로딩이 끝나면 기본 커서로 변경
+                                self.setLoadingCursor(False)  
                                      
     # 231123 ID중복체크 by 정현아
     def chkId(self):
@@ -158,6 +164,12 @@ class SignUp(QDialog, form_class):
         self.name_lineEdit.setFocus()
         self.chkBtn.setChecked(False)
         
+    # 로딩시 커서 변경
+    def setLoadingCursor(self, loading):
+        if loading:
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+        else:
+            QApplication.restoreOverrideCursor()
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
     myWindow = SignUp() 

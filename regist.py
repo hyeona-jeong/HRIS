@@ -10,7 +10,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from emp_regist import Regist
 from emp_info import EmpInfo
-from add_img import AddImg
 from edit_tap import *
 
 def resource_path(relative_path):
@@ -42,6 +41,9 @@ class Emplist(QMainWindow, form_class):
         self.gBtn = []
         self.current_page = 1
         self.prev_page = None
+        self.align_index = [0,0,0,0,0,0,0,0]
+        self.current_index = 8
+        self.prev_index = None
         self.TSP = ['생산실행IT G','생산스케쥴IT G','생산품질IT G','TSP운영 1G','TSP운영 2G','TSP고객총괄','']
         self.FAB = ['빅데이터 G','인프라 G','스마트팩토리 G','']
         self.MIS = ['전기운영 G','PLM G','']
@@ -75,7 +77,6 @@ class Emplist(QMainWindow, form_class):
         self.cur = self.conn.cursor()
         self.main_query = "SELECT CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL FROM MAIN_TABLE"
         self.setTables(self.main_query)
-        self.table.sortByColumn(1,Qt.AscendingOrder)
         self.gBtn[0].setChecked(True)
         self.gBtn[0].setStyleSheet(
                     "QToolButton { border: None; color : black; font-weight: bold; }"
@@ -102,7 +103,6 @@ class Emplist(QMainWindow, form_class):
         self.listRegBtn.clicked.connect(self.showRegsit)
         self.table.cellDoubleClicked.connect(self.showEmpInfo)
         self.table.horizontalHeader().sectionClicked.connect(self.chgHeader)
-        self.table.horizontalHeader().setSortIndicatorShown(False)
     
     # 페이지 버튼 생성 함수 by 정현아
     def setPagingBtn(self, row, query):
@@ -117,6 +117,8 @@ class Emplist(QMainWindow, form_class):
         self.btnGroup = QButtonGroup(self)
         # 페이지 수 세팅
         page = math.ceil(row/15)
+        if page == 0 :
+            page = 1
         # 페이지 수가 5이하일 경우 페이지 수만큼 버튼생성, 5이상일 경우 5개 생성
         if page <=5:
             for i in range(page):
@@ -240,12 +242,21 @@ class Emplist(QMainWindow, form_class):
                    
         self.ignore_paging_btn = True
         self.setTables(query)
+        
+    # 로딩시 커서 변경
+    def setLoadingCursor(self, loading):
+        if loading:
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+        else:
+            QApplication.restoreOverrideCursor()
 
     # 231202 테이블 세팅 함수 쿼리값 변경시 테이블위젯에 세팅된 테이블 값도 변경 by 정현아
     def setTables(self, query):
+        # 로딩 중에 WaitCursor로 변경
+        self.setLoadingCursor(True)
         # 테이블 정렬 상태 확인 후 쿼리를 정렬하는 쿼리로 변경함
-        current_sorting_column = self.table.horizontalHeader().sortIndicatorSection()
-        current_sorting_order = self.table.horizontalHeader().sortIndicatorOrder()
+        current_sorting_column = self.current_index
+        current_sorting_order = self.align_index[self.current_index]
         # 소팅컬럼 초기화할 때 미리 세팅해놓으면 8로 리턴되어 1로 다시 세팅
         if current_sorting_column == 8:
             current_sorting_column = 1
@@ -264,15 +275,18 @@ class Emplist(QMainWindow, form_class):
             self.setPagingBtn(len(result), query)
             # 테이블 아이템 다시 세팅시 페이지 수 1로 설정
             self.current_page = 1
+            self.gBtn[0].setChecked(True)
+            self.gBtn[0].setStyleSheet(
+                        "QToolButton { border: None; color : black; font-weight: bold; }"
+                    )
         self.ignore_paging_btn = False
-        self.table.setSortingEnabled(False)
         # 테이블 내에 아이템 세팅 페이지당 row수 15개로 제한
         for row, row_data in enumerate(result):
             if row < 15 * (self.current_page-1) :
                 continue
             if row == 15 * self.current_page :
                 break
-            # 첫 열 체크박스 세팅
+            # 첫 열 체크박스 세팅 체크박스 정렬을 위해 위젯 생성 후 정렬
             chk_widget = QWidget()
             chk_layout = QHBoxLayout(chk_widget)
             chk_layout.setAlignment(Qt.AlignCenter)
@@ -288,21 +302,26 @@ class Emplist(QMainWindow, form_class):
                 item = QTableWidgetItem(str(data))
                 item.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                 self.table.setItem(row % 15, col + 1, item)
-        self.table.sortByColumn(current_sorting_column, current_sorting_order)
-        self.table.setSortingEnabled(True)
         self.table.blockSignals(False)
+        # 로딩이 끝나면 기본 커서로 변경
+        self.setLoadingCursor(False) 
+        self.table.horizontalHeader().setSortIndicatorShown(False)
 
     # 231209 정렬할 때마다 헤더 옆에 화살표 특수문자를 붙여서 보여줌 by 정현아
     def chgHeader(self,index):
-        current_sorting_order = self.table.horizontalHeader().sortIndicatorOrder()
-        if index != 0 and current_sorting_order==0:
+        if self.prev_index != self.current_index:
+           self.prev_index = self.current_index
+        self.current_index = index
+        if index != 0 and self.align_index[index] %2 == 0:
             self.table.setHorizontalHeaderItem(index, QTableWidgetItem(self.header[index]+'▲'))
-        elif index != 0 and current_sorting_order==1:
+        elif index != 0 and self.align_index[index] %2 != 0:
             self.table.setHorizontalHeaderItem(index, QTableWidgetItem(self.header[index]+'▼'))
         for i in range(len(self.header)):
             if i == index:
                 continue
             self.table.setHorizontalHeaderItem(i, QTableWidgetItem(self.header[i]))
+        if self.current_index == self.prev_index:
+            self.align_index[index]+=1
             
     # 231202 체크된 로우 확인 및 저장 by 정현아
     def delChk(self, state, row):
@@ -310,6 +329,7 @@ class Emplist(QMainWindow, form_class):
             self.delRowList.append(row)
         elif state == Qt.Unchecked:
             self.delRowList.remove(row)
+        print(row)
 
     # 231202 사원정보 삭제
     def delChkList(self):
@@ -317,6 +337,7 @@ class Emplist(QMainWindow, form_class):
         delData = []
         if not self.delRowList :
             QMessageBox.warning(self, "사원삭제실패", "선택된 사원이 없습니다.")
+            return
         else:
             # 231202 리스트에 선택된 로우의 이름과 핸드폰 정보를 리스트에 저장
             for i in self.delRowList :
@@ -335,7 +356,7 @@ class Emplist(QMainWindow, form_class):
                 self.setTables(self.main_query)
                 self.delRowList = list()
             except Exception as e:
-                QMessageBox.warning(self, "사원등록실패", "Error: " + str(e))
+                QMessageBox.warning(self, "사원삭제실패", "Error: " + str(e))
                 return       
         self.table.blockSignals(False)
 
@@ -829,11 +850,12 @@ class Emplist(QMainWindow, form_class):
 
     # 이미지 저장 팝업창 생성
     def showAddImg(self):
-        self.w1 = AddImg()
-        self.w1.show()
+        self.w1 = QDialog(self)
+        addImg = uic.loadUi(resource_path('add_img.ui'), self.w1)
         self.w1.searchbutton.clicked.connect(self.openImage)
         self.w1.savebtn.clicked.connect(self.save_img)
-        self.w1.cnlBtn.clicked.connect(self.w1.close)
+        self.w1.cnlBtn.clicked.connect(self.w1.accept)
+        result = self.w1.exec_() 
     
     # 231130 이미지 선택하고 다이알로그 텍스트 라인 에디트에 파일경로 세팅 by 정현아
     def openImage(self):

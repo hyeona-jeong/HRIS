@@ -44,11 +44,6 @@ class EmpInfo(QMainWindow, form_class):
         self.w.cnlBtn.clicked.connect(self.back)
         self.w.closed.connect(self.show)
         
-    def back(self):
-        self.w.hide()
-        self.show()
-        
-
 stylesheet = """
     QTabBar::tab {
         color: black;

@@ -172,6 +172,9 @@ class Find(QDialog, form_class):
             self.cur.execute(query,(newpasswd))
             self.conn.commit()
             
+            # 로딩 중에 WaitCursor로 변경
+            self.setLoadingCursor(True)
+            
             # 231125 등록된 메일로 임시 비밀번호 전송
             smtp = smtplib.SMTP('smtp.gmail.com',587)
             smtp.ehlo()
@@ -198,9 +201,18 @@ class Find(QDialog, form_class):
                 for i in range(mlen):
                     mail[i] ='*'
                 mail = ''.join(mail)
-
+            
+            # 로딩이 끝나면 기본 커서로 변경
+            self.setLoadingCursor(False)    
             QMessageBox.information(self, "Find Succeed", "{}로 메일이 전송되었습니다.".format(mail))
             self.fsubmitBtn_2.setDisabled(True)        
+    
+    # 로딩시 커서 변경
+    def setLoadingCursor(self, loading):
+        if loading:
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+        else:
+            QApplication.restoreOverrideCursor()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv) 

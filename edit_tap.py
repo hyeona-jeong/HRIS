@@ -34,6 +34,7 @@ class FamilyTab(QWidget):
             self.addFamilyMember()
         else: 
             self.fAdd_btn = QPushButton("추가")
+            self.del_btn = list()
             self.editFamilyMember()
             self.fAdd_btn.clicked.connect(self.editFamilyMember)
 
@@ -122,6 +123,7 @@ class FamilyTab(QWidget):
                         self.fLive_cb.append(QComboBox())
                         self.fLive_cb[i].addItems(['Y', 'N'])
                         self.fLive_cb[i].setCurrentText(result[i][3])
+                        self.del_btn.append(QPushButton("삭제",self))
                 elif self.cnt != 0:
                     self.fName_lbl.append(QLabel("가족성명"))
                     self.fName_le.append(QLineEdit())
@@ -136,7 +138,8 @@ class FamilyTab(QWidget):
                     self.fLive_cb.append(QComboBox())
                     self.fLive_cb[self.cnt+len(result)-1].addItem('Y')
                     self.fLive_cb[self.cnt+len(result)-1].addItem('N')
-                    
+                
+                # 라벨 및 에디터 레이아웃에 세팅(홀수번째는 라벨, 짝수번째는 에디터로 각 라벨에 배치)
                 for j in range(len(result)+self.cnt):
                     for i in range(len(self.familyWidget)):
                         if i == 0:

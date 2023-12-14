@@ -459,7 +459,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>                      </string>
+   <string/>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -2665,7 +2665,7 @@ color white;</string>
            <string notr="true">color:#404040;</string>
           </property>
           <property name="text">
-           <string>취소</string>
+           <string>닫기</string>
           </property>
          </widget>
         </item>

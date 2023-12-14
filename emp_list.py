@@ -74,7 +74,6 @@ class Emplist(QMainWindow, form_class):
         self.cur = self.conn.cursor()
         self.main_query = "SELECT CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL FROM MAIN_TABLE"
         self.setTables(self.main_query)
-        self.table.sortByColumn(1,Qt.AscendingOrder)
         self.gBtn[0].setChecked(True)
         self.gBtn[0].setStyleSheet(
                     "QToolButton { border: None; color : black; font-weight: bold; }"
@@ -101,7 +100,6 @@ class Emplist(QMainWindow, form_class):
         self.listRegBtn.clicked.connect(self.showRegsit)
         self.table.cellDoubleClicked.connect(self.showEmpInfo)
         self.table.horizontalHeader().sectionClicked.connect(self.chgHeader)
-        self.table.horizontalHeader().setSortIndicatorShown(False)
     
     # 페이지 버튼 생성 함수 by 정현아
     def setPagingBtn(self, row, query):
@@ -241,9 +239,18 @@ class Emplist(QMainWindow, form_class):
                    
         self.ignore_paging_btn = True
         self.setTables(query)
+        
+    # 로딩시 커서 변경
+    def setLoadingCursor(self, loading):
+        if loading:
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+        else:
+            QApplication.restoreOverrideCursor()
 
     # 231202 테이블 세팅 함수 쿼리값 변경시 테이블위젯에 세팅된 테이블 값도 변경 by 정현아
     def setTables(self, query):
+        # 로딩 중에 WaitCursor로 변경
+        self.setLoadingCursor(True)
         # 테이블 정렬 상태 확인 후 쿼리를 정렬하는 쿼리로 변경함
         current_sorting_column = self.table.horizontalHeader().sortIndicatorSection()
         current_sorting_order = self.table.horizontalHeader().sortIndicatorOrder()
@@ -293,9 +300,11 @@ class Emplist(QMainWindow, form_class):
                 item = QTableWidgetItem(str(data))
                 item.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                 self.table.setItem(row % 15, col + 1, item)
-        self.table.sortByColumn(current_sorting_column, current_sorting_order)
         self.table.setSortingEnabled(True)
         self.table.blockSignals(False)
+        # 로딩이 끝나면 기본 커서로 변경
+        self.setLoadingCursor(False) 
+        self.table.horizontalHeader().setSortIndicatorShown(False)
 
     # 231209 정렬할 때마다 헤더 옆에 화살표 특수문자를 붙여서 보여줌 by 정현아
     def chgHeader(self,index):
@@ -315,6 +324,7 @@ class Emplist(QMainWindow, form_class):
             self.delRowList.append(row)
         elif state == Qt.Unchecked:
             self.delRowList.remove(row)
+        print(row)
 
     # 231202 사원정보 삭제
     def delChkList(self):
@@ -322,6 +332,7 @@ class Emplist(QMainWindow, form_class):
         delData = []
         if not self.delRowList :
             QMessageBox.warning(self, "사원삭제실패", "선택된 사원이 없습니다.")
+            return
         else:
             # 231202 리스트에 선택된 로우의 이름과 핸드폰 정보를 리스트에 저장
             for i in self.delRowList :
@@ -340,7 +351,7 @@ class Emplist(QMainWindow, form_class):
                 self.setTables(self.main_query)
                 self.delRowList = list()
             except Exception as e:
-                QMessageBox.warning(self, "사원등록실패", "Error: " + str(e))
+                QMessageBox.warning(self, "사원삭제실패", "Error: " + str(e))
                 return       
         self.table.blockSignals(False)
 
