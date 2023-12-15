@@ -17,12 +17,12 @@ def resource_path(relative_path):
 form = resource_path('user_auth.ui')
 form_class = uic.loadUiType(form)[0]
 
-class EduList(QMainWindow, form_class):
+class UserAuth(QMainWindow, form_class):
     closed = pyqtSignal()
     def __init__(self):
         super( ).__init__( )
         self.setupUi(self)
-        self.eduList.setStyleSheet(stylesheet)
+        self.userAuth.setStyleSheet(stylesheet)
         
         # 변경된 셀값 저장
         self.biz = '전체'
@@ -469,6 +469,6 @@ stylesheet = """
 """
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
-    myWindow = EduList() 
+    myWindow = UserAuth() 
     myWindow.show() 
     app.exec_() 

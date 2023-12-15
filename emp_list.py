@@ -86,7 +86,8 @@ class Emplist(QMainWindow, form_class):
         countQuery = "SELECT COUNT(*) FROM MAIN_TABLE;"
         self.cur.execute(countQuery)
         count = self.cur.fetchone()[0]
-        self.countLabel.setText("총 "+ str(count) + "건")
+        page = math.ceil(count/15)
+        self.countLabel.setText("총 ("+ str(count) + ")건")
         
         # 체크박스와 메일은 컬럼 내용에 맞게 사이즈 설정, 그외 컬럼은 stretch로 설정 by 정현아
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)   
@@ -303,7 +304,7 @@ class Emplist(QMainWindow, form_class):
         # 로딩이 끝나면 기본 커서로 변경
         self.setLoadingCursor(False) 
 
-    # 231209 정렬할 때마다 헤더 옆에 화살표 특수문자를 붙여서 보여줌 by 정현아
+    # 231209 정렬할 때마다 헤더 옆에 화살표 특수문자를 붙여서 보여주고 정렬 방향 선택 by 정현아
     def chgHeader(self,index):
         if index == 0:
             return
@@ -369,7 +370,7 @@ class Emplist(QMainWindow, form_class):
                 countQuery = "SELECT COUNT(*) FROM MAIN_TABLE;"
                 self.cur.execute(countQuery)
                 count = self.cur.fetchone()[0]
-                self.countLabel.setText("총 "+ str(count) + "건")
+                self.countLabel.setText("총 ("+ str(count) + ")건")
             else:
                 query = """SELECT 
                 CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL 
@@ -379,7 +380,7 @@ class Emplist(QMainWindow, form_class):
                 countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE DEPT_BIZ = '" + biz +"';"
                 self.cur.execute(countQuery)
                 count = self.cur.fetchone()[0]
-                self.countLabel.setText("총 "+ str(count) + "건")
+                self.countLabel.setText("총 ("+ str(count) + ")건")
         else : 
             self.searchEmp()
         self.table.blockSignals(False)
@@ -398,7 +399,7 @@ class Emplist(QMainWindow, form_class):
                 countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE NAME_KOR LIKE '%""" + self.name +"%'"
                 self.cur.execute(countQuery)
                 count = self.cur.fetchone()[0]
-                self.countLabel.setText("총 "+ str(count) + "건")
+                self.countLabel.setText("총 ("+ str(count) + ")건")
             else :
                 query = """SELECT 
                 CONCAT(DEPT_BIZ, ' > ', DEPT_GROUP) AS DEPT, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL 
@@ -408,7 +409,7 @@ class Emplist(QMainWindow, form_class):
                 countQuery = "SELECT COUNT(*) FROM MAIN_TABLE WHERE NAME_KOR LIKE '%""" + self.name +"%' AND DEPT_BIZ = '" + self.biz + "'"
                 self.cur.execute(countQuery)
                 count = self.cur.fetchone()[0]
-                self.countLabel.setText("총 "+ str(count) + "건")
+                self.countLabel.setText("총 ("+ str(count) + ")건")
         else:
             self.searchBiz(self.biz)
         self.table.blockSignals(False)

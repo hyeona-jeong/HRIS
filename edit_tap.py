@@ -8,8 +8,10 @@ class FamilyTab(QWidget):
     def __init__(self, emp_num, type):
         super(FamilyTab, self).__init__()
         self.cnt = 0
+        self.result_num = 0
         self.emp_num = emp_num
         self.type = type
+        self.delete_list = []
         self.initUI()
 
     def initUI(self):
@@ -18,7 +20,6 @@ class FamilyTab(QWidget):
         self.family.setWidget(self.fwidget)
         self.flay = QGridLayout(self.fwidget)
         self.family.setWidgetResizable(True)
-        self.fwidget.setStyleSheet("background-color: white;")
 
         self.fName_lbl = []
         self.fName_le = []
@@ -30,21 +31,24 @@ class FamilyTab(QWidget):
         self.fLive_cb = []
         self.familyWidget = [self.fName_lbl, self.fName_le, self.fYear_lbl, self.fYear_de, self.fRel_lbl, 
                              self.fRel_cb, self.fLive_lbl, self.fLive_cb]
+        self.ignored_result = False
         if self.type == 'info':
             self.addFamilyMember()
         else: 
             self.fAdd_btn = QPushButton("추가")
-            self.del_btn = list()
+            self.btnGroup = QButtonGroup(self)
+            self.del_btn = []
             self.editFamilyMember()
+            self.cnt = self.result_num
             self.fAdd_btn.clicked.connect(self.editFamilyMember)
+            self.btnGroup.buttonClicked[int].connect(self.disappearFamliy)
 
     def addFamilyMember(self):
         result = self.setData(self.emp_num)
         if not result :
             return
         else :
-            self.cnt =len(result)
-        
+            self.cnt = len(result)
         #데이터 세팅
         for i in range(self.cnt):
             self.fName_lbl.append(QLabel("성명:"))
@@ -73,7 +77,7 @@ class FamilyTab(QWidget):
         # 기존에 등록한 데이터가 있는지 확인
         result = self.setData(self.emp_num)
         # 231205 없을 경우 등록화면과 동일하게 동작 by 정현아
-        if not result:
+        if not result or self.ignored_result:
             if(self.cnt<=4):
                 self.fName_lbl.append(QLabel("가족성명"))
                 self.fName_le.append(QLineEdit(self))
@@ -105,6 +109,7 @@ class FamilyTab(QWidget):
                 QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
         # 231205 있을 경우 등록된 데이터를 각 에디터에 세팅 by 정현아
         else :
+            self.result_num = len(result)
             if(len(result) + self.cnt<=5):            
                 #데이터 세팅
                 if self.cnt == 0:
@@ -124,6 +129,8 @@ class FamilyTab(QWidget):
                         self.fLive_cb[i].addItems(['Y', 'N'])
                         self.fLive_cb[i].setCurrentText(result[i][3])
                         self.del_btn.append(QPushButton("삭제",self))
+                        self.btnGroup.addButton(self.del_btn[i])
+                        
                 elif self.cnt != 0:
                     self.fName_lbl.append(QLabel("가족성명"))
                     self.fName_le.append(QLineEdit())
@@ -138,19 +145,21 @@ class FamilyTab(QWidget):
                     self.fLive_cb.append(QComboBox())
                     self.fLive_cb[self.cnt+len(result)-1].addItem('Y')
                     self.fLive_cb[self.cnt+len(result)-1].addItem('N')
-                
-                # 라벨 및 에디터 레이아웃에 세팅(홀수번째는 라벨, 짝수번째는 에디터로 각 라벨에 배치)
+                    
+                # 라벨 및 에디터 레이아웃에 세팅(홀수번째는 라벨, 짝수번째는 에디터로 각 레이아웃에 배치)
                 for j in range(len(result)+self.cnt):
                     for i in range(len(self.familyWidget)):
                         if i == 0:
                             self.flay.addWidget(self.familyWidget[i][j],0 + 4 * j,0)
                         elif i % 2 == 0:
                             self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,0)
+                            if i % 4 == 2:
+                                if j < len(result):
+                                    self.flay.addWidget(self.del_btn[j], int(i/2)-1 + 4 * j,2)
                         elif i % 2 == 1:
                             self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,1)
                             if i % 4 == 3:
                                 self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * j,2)
-                
                 self.flay.setRowStretch(self.flay.rowCount(), 1)
                 self.cnt+=1
             else:
@@ -204,8 +213,29 @@ class FamilyTab(QWidget):
             
             query = "INSERT INTO FAMILY VALUES(%s, %s, %s, %s, %s, %s)"
             cur.execute(query, (emp_num, fName, fYear, age, fRel, fLive))
-            conn.commit()  
-    
+            conn.commit()
+              
+    def disappearFamliy(self,index):
+        j=0
+        btn = self.btnGroup.button(index)
+        for i in range(len(self.del_btn)):
+            if btn == self.del_btn[i]:
+                j = i
+        for i in range(len(self.familyWidget)):
+            self.flay.removeWidget(self.familyWidget[i][j])
+            self.familyWidget[i].pop(j)
+        self.flay.removeWidget(self.del_btn[j])
+        self.btnGroup.removeButton(self.del_btn[j])
+        self.del_btn.pop(j)
+        self.cnt-=1  
+        if self.cnt != 0:
+            self.flay.addWidget(self.fAdd_btn, 3 + 4 * (self.cnt-1),2)
+            print(3 + 4 * (self.cnt-1))
+        self.flay.setRowStretch(self.flay.rowCount(), 1)      
+        if self.cnt == 0:
+            self.ignored_result = True
+            self.editFamilyMember()
+        
 class ContactTab(QWidget):
     def __init__(self, emp_num, type):
         super(ContactTab, self).__init__()
@@ -220,7 +250,6 @@ class ContactTab(QWidget):
         self.contact.setWidget(self.cwidget)
         self.clay = QGridLayout(self.cwidget)
         self.contact.setWidgetResizable(True)
-        self.cwidget.setStyleSheet("background-color: white;")
 
         self.cName_lbl = []
         self.cName_le = []
@@ -408,7 +437,6 @@ class SchoolTab(QWidget):
         self.school.setWidget(self.schwidget)
         self.schlay = QGridLayout(self.schwidget)
         self.school.setWidgetResizable(True)
-        self.schwidget.setStyleSheet("background-color: white;")
 
         self.scheadmit_lbl = []
         self.scheadmit_de = []
@@ -639,7 +667,6 @@ class CertificationTab(QWidget):
         self.certificate.setWidget(self.certwidget)
         self.certlay = QGridLayout(self.certwidget)
         self.certificate.setWidgetResizable(True)
-        self.certwidget.setStyleSheet("background-color: white;")
 
         self.certName_lbl = []
         self.certName_le = []
@@ -791,7 +818,6 @@ class CareerTab(QWidget):
         self.career.setWidget(self.carwidget)
         self.carlay = QGridLayout(self.carwidget)
         self.career.setWidgetResizable(True)
-        self.carwidget.setStyleSheet("background-color: white;")
 
         self.company_lbl = []
         self.company_le = []
@@ -1011,7 +1037,6 @@ class TechnicalTab(QWidget):
         self.technical.setWidget(self.techwidget)
         self.techlay = QGridLayout(self.techwidget)
         self.technical.setWidgetResizable(True)
-        self.techwidget.setStyleSheet("background-color: white;")
 
         self.techDet_lbl = []
         self.techDet_le = []
@@ -1198,7 +1223,6 @@ class RPTab(QWidget):
         self.rp.setWidget(self.rpwidget)
         self.rplay = QGridLayout(self.rpwidget)
         self.rp.setWidgetResizable(True)
-        self.rpwidget.setStyleSheet("background-color: white;")
 
         self.rpName_lbl = []
         self.rpName_le = []
@@ -1392,7 +1416,6 @@ class RSTab(QWidget):
         self.rs.setWidget(self.rswidget)
         self.rslay = QGridLayout(self.rswidget)
         self.rs.setWidgetResizable(True)
-        self.rswidget.setStyleSheet("background-color: white;")
 
         self.rsRANK_lbl = []
         self.rsRANK_le = []

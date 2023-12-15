@@ -11,6 +11,7 @@ from emp_info import EmpInfo
 from emp_regist import Regist
 from edu_list import EduList
 from sign_up import SignUp
+from user_auth import UserAuth
 
 
 def resource_path(relative_path):
@@ -59,6 +60,7 @@ class Index(QMainWindow, form_class):
         self.menuHr.addAction('개인정보조회/편집',self.showPage)
         self.menuHr.addAction('사원정보등록',self.showPage)
         self.menuHr.addAction('사원ID등록',self.showIDRegist)
+        self.menuHr.addAction('사용자권한관리',self.showPage)
         self.toolhr.setMenu(self.menuHr)
         self.menuHr.setStyleSheet(stylesheet)
 
@@ -94,6 +96,10 @@ class Index(QMainWindow, form_class):
             
         elif sender == '교육' or sender == '교육이수정보 조회':
             self.w = EduList()
+            
+        elif sender == '사용자권한관리':
+            self.w = UserAuth()
+            
         self.w.show()
         self.hide()
         self.w.cnlBtn.clicked.connect(self.w.close)

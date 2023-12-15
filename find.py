@@ -76,6 +76,8 @@ class Find(QDialog, form_class):
             QMessageBox.warning(self, "Find Failed", "일치하는 사번({})이 없습니다.".format(self.emp_num))
         
         else:
+            # 로딩 중에 WaitCursor로 변경
+            self.setLoadingCursor(True)
             query = 'SELECT id, name_kor, mail FROM login_data,main_table WHERE name_kor=%s AND login_data.emp_num=%s AND login_data.emp_num = main_table.emp_num;'
             self.cur.execute(query,(self.name,self.emp_num))
             result = self.cur.fetchone()
@@ -104,6 +106,8 @@ class Find(QDialog, form_class):
             msg['To']=mail
             smtp.send_message(msg)
 
+            # 로딩이 끝나면 기본 커서로 변경
+            self.setLoadingCursor(False)  
             QMessageBox.information(self, "Find Succeed", "메일이 전송되었습니다.")
             self.cert_btn.setChecked(True)
             self.cert_btn.setDisabled(True)
@@ -156,6 +160,7 @@ class Find(QDialog, form_class):
             QMessageBox.warning(self, "Find Failed", "일치하는 사번({})이 없습니다.".format(self.emp_num))
             return
         else:
+            self.setLoadingCursor(True)
             query = 'SELECT id, name_kor, login_data.emp_num, mail FROM login_data,main_table WHERE id = %s AND name_kor = %s AND login_data.emp_num = %s AND login_data.emp_num = main_table.emp_num;'
             self.cur.execute(query,(self.id,self.name,self.emp_num))
             result = self.cur.fetchone()
@@ -171,9 +176,6 @@ class Find(QDialog, form_class):
             query = 'UPDATE login_data SET passwd = %s;'
             self.cur.execute(query,(newpasswd))
             self.conn.commit()
-            
-            # 로딩 중에 WaitCursor로 변경
-            self.setLoadingCursor(True)
             
             # 231125 등록된 메일로 임시 비밀번호 전송
             smtp = smtplib.SMTP('smtp.gmail.com',587)

@@ -468,8 +468,8 @@
   <widget class="QWidget" name="index">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QVBoxLayout" name="indexlayout" stretch="0,0,0,0,0,0">
-      <item alignment="Qt::AlignRight">
+     <layout class="QVBoxLayout" name="indexlayout" stretch="0,0,0,0,0,0,0">
+      <item alignment="Qt::AlignLeft">
        <widget class="QLabel" name="label">
         <property name="minimumSize">
          <size>
@@ -947,6 +947,13 @@ color: #646464;
          </size>
         </property>
        </spacer>
+      </item>
+      <item alignment="Qt::AlignLeft">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#404040;&quot;&gt;      노리시스템 인사교육 관리 V.0.0.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

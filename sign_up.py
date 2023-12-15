@@ -103,6 +103,7 @@ class SignUp(QDialog, form_class):
                             # 231123 모든 체크 완료시 DB에 Insert. 
                             else:
                                 try:
+                                    self.setLoadingCursor(True) 
                                     query ='INSERT INTO LOGIN_DATA(ID,PASSWD,EMP_NUM,AUTHORITY) VALUES(%s,%s,%s,%s);'
                                     self.cur.execute(query, (self.id, passwd, int(emp_num), auth))
                                     self.conn.commit()
@@ -113,7 +114,7 @@ class SignUp(QDialog, form_class):
                                     return
                                 
                                 # 로딩 중에 WaitCursor로 변경
-                                self.setLoadingCursor(True)     
+                                    
                                                            
                                 self.initSignUp()  
                                 # 231206 등록된 메일로 ID, 임시 비밀번호 전송
@@ -170,6 +171,7 @@ class SignUp(QDialog, form_class):
             QApplication.setOverrideCursor(Qt.WaitCursor)
         else:
             QApplication.restoreOverrideCursor()
+            
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
     myWindow = SignUp() 

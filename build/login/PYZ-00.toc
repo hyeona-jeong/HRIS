@@ -1589,6 +1589,7 @@
   ('urllib3.util.wait',
    'c:\\python\\lib\\site-packages\\urllib3\\util\\wait.py',
    'PYMODULE'),
+  ('user_auth', 'C:\\Users\\정현아\\.ssh\\HRIS\\user_auth.py', 'PYMODULE'),
   ('uu', 'c:\\python\\lib\\uu.py', 'PYMODULE'),
   ('webbrowser', 'c:\\python\\lib\\webbrowser.py', 'PYMODULE'),
   ('xml', 'c:\\python\\lib\\xml\\__init__.py', 'PYMODULE'),

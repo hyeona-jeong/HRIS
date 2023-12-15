@@ -96,7 +96,7 @@ class Login(QMainWindow, form_class):
 
         # 231202 권한제어 권한이 레귤러이면 사원정보등록화면 및 리스트 화면에서 삭제 버튼 비활성화 by 정현아
         for action in self.w.menuHr.actions():
-            if action.text() == '사원정보등록' or action.text() == '사원ID등록':
+            if action.text() == '사원정보등록' or action.text() == '사원ID등록' or action.text() == '사용자권한관리':
                 regist_action = action
                 if self.result_pass[2] == 'Regular' :
                     regist_action.setVisible(False)
