@@ -674,6 +674,9 @@ color white;</string>
           <property name="pixmap">
            <pixmap>peo.png</pixmap>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
         <item alignment="Qt::AlignVCenter">
