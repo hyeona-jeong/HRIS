@@ -8,17 +8,18 @@ class FamilyTab(QWidget):
     def __init__(self, emp_num, type):
         super(FamilyTab, self).__init__()
         self.cnt = 0
+        self.no_del_cnt = 0
         self.result_num = 0
+        self.edit_num = 0
         self.emp_num = emp_num
         self.type = type
-        self.delete_list = []
         self.initUI()
 
     def initUI(self):
         self.family = QScrollArea()
-        self.fwidget = QWidget()
-        self.family.setWidget(self.fwidget)
-        self.flay = QGridLayout(self.fwidget)
+        self.widget = QWidget()
+        self.family.setWidget(self.widget)
+        self.lay = QGridLayout(self.widget)
         self.family.setWidgetResizable(True)
 
         self.fName_lbl = []
@@ -40,9 +41,11 @@ class FamilyTab(QWidget):
             self.del_btn = []
             self.editFamilyMember()
             self.cnt = self.result_num
+            self.edit_num = self.result_num
             self.fAdd_btn.clicked.connect(self.editFamilyMember)
-            self.btnGroup.buttonClicked[int].connect(self.disappearFamliy)
+            self.btnGroup.buttonClicked[int].connect(self.disappearFamily)
 
+    # info화면에서 DB정보를 가져와서 라벨에 세팅
     def addFamilyMember(self):
         result = self.setData(self.emp_num)
         if not result :
@@ -51,7 +54,7 @@ class FamilyTab(QWidget):
             self.cnt = len(result)
         #데이터 세팅
         for i in range(self.cnt):
-            self.fName_lbl.append(QLabel("성명:"))
+            self.fName_lbl.append(QLabel("가족성명:"))
             self.fName_le.append(QLabel(result[i][0]))
             self.fYear_lbl.append(QLabel("생년월일:"))
             self.fYear_de.append(QLabel(str(result[i][1])))
@@ -63,21 +66,23 @@ class FamilyTab(QWidget):
         for j in range(self.cnt):
             for i in range(len(self.familyWidget)):
                 if i == 0:
-                    self.flay.addWidget(self.familyWidget[i][j],0 + 4 * j,0)
+                    self.lay.addWidget(self.familyWidget[i][j],0 + 4 * j,0)
                 elif i % 2 == 0:
-                    self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,0)
+                    self.lay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,0)
                 elif i % 2 == 1:
-                    self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,1)
+                    self.lay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,1)
         
-        self.flay.setRowStretch(self.flay.rowCount(), 1)
+        self.lay.setRowStretch(self.lay.rowCount(), 1)
         rightmost_column_index = len(self.familyWidget) - 1
-        self.flay.setColumnStretch(rightmost_column_index, 1)
+        self.lay.setColumnStretch(rightmost_column_index, 1)
 
     def editFamilyMember(self):
         # 기존에 등록한 데이터가 있는지 확인
         result = self.setData(self.emp_num)
         # 231205 없을 경우 등록화면과 동일하게 동작 by 정현아
         if not result or self.ignored_result:
+            print("edit before"+str(self.cnt))
+            self.cnt = len(self.fName_le)
             if(self.cnt<=4):
                 self.fName_lbl.append(QLabel("가족성명"))
                 self.fName_le.append(QLineEdit(self))
@@ -95,26 +100,27 @@ class FamilyTab(QWidget):
                 
                 for i in range(len(self.familyWidget)):
                     if i == 0:
-                        self.flay.addWidget(self.familyWidget[i][self.cnt],0 + 4 * self.cnt,0)
+                        self.lay.addWidget(self.familyWidget[i][self.cnt],0 + 4 * self.cnt,0)
                     elif i % 2 == 0:
-                        self.flay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,0)
+                        self.lay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,0)
                     elif i % 2 == 1:
-                        self.flay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,1)
+                        self.lay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,1)
                         if i % 4 == 3:
-                            self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * self.cnt,2)
+                            self.lay.addWidget(self.fAdd_btn,int(i/2) + 4 * self.cnt,2)
                 
-                self.flay.setRowStretch(self.flay.rowCount(), 1)
+                self.lay.setRowStretch(self.lay.rowCount(), 1)
                 self.cnt+=1
+                print("edit after"+str(self.cnt))
             else:
                 QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
         # 231205 있을 경우 등록된 데이터를 각 에디터에 세팅 by 정현아
         else :
             self.result_num = len(result)
-            if(len(result) + self.cnt<=5):            
+            if(len(result) + self.no_del_cnt<=5):            
                 #데이터 세팅
-                if self.cnt == 0:
+                if self.no_del_cnt == 0:
                     for i in range(len(result)):
-                        self.fName_lbl.append(QLabel("성명:"))
+                        self.fName_lbl.append(QLabel("가족성명:"))
                         self.fName_le.append(QLineEdit(result[i][0]))
                         self.fYear_lbl.append(QLabel("생년월일:"))
                         self.fYear_de.append(QDateEdit(QDate.fromString(result[i][1].strftime("%Y-%m-%d"), "yyyy-MM-dd")))
@@ -131,7 +137,7 @@ class FamilyTab(QWidget):
                         self.del_btn.append(QPushButton("삭제",self))
                         self.btnGroup.addButton(self.del_btn[i])
                         
-                elif self.cnt != 0:
+                elif self.no_del_cnt != 0:
                     self.fName_lbl.append(QLabel("가족성명"))
                     self.fName_le.append(QLineEdit())
                     self.fYear_lbl.append(QLabel("생년월일"))
@@ -140,28 +146,28 @@ class FamilyTab(QWidget):
                     self.fRel_cb.append(QComboBox())
                     self.f_list = ['부','모','형제','배우자','자녀','조부','조모','외조부','외조모','빙부','빙모']
                     for i in range(len(self.f_list)):
-                        self.fRel_cb[self.cnt+len(result)-1].addItem(self.f_list[i])
+                        self.fRel_cb[self.no_del_cnt+len(result)-1].addItem(self.f_list[i])
                     self.fLive_lbl.append(QLabel("동거여부"))
                     self.fLive_cb.append(QComboBox())
-                    self.fLive_cb[self.cnt+len(result)-1].addItem('Y')
-                    self.fLive_cb[self.cnt+len(result)-1].addItem('N')
+                    self.fLive_cb[self.no_del_cnt+len(result)-1].addItem('Y')
+                    self.fLive_cb[self.no_del_cnt+len(result)-1].addItem('N')
                     
                 # 라벨 및 에디터 레이아웃에 세팅(홀수번째는 라벨, 짝수번째는 에디터로 각 레이아웃에 배치)
-                for j in range(len(result)+self.cnt):
+                for j in range(len(result)+self.no_del_cnt):
                     for i in range(len(self.familyWidget)):
                         if i == 0:
-                            self.flay.addWidget(self.familyWidget[i][j],0 + 4 * j,0)
+                            self.lay.addWidget(self.familyWidget[i][j],0 + 4 * j,0)
                         elif i % 2 == 0:
-                            self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,0)
+                            self.lay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,0)
                             if i % 4 == 2:
                                 if j < len(result):
-                                    self.flay.addWidget(self.del_btn[j], int(i/2)-1 + 4 * j,2)
+                                    self.lay.addWidget(self.del_btn[j], int(i/2)-1 + 4 * j,2)
                         elif i % 2 == 1:
-                            self.flay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,1)
+                            self.lay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,1)
                             if i % 4 == 3:
-                                self.flay.addWidget(self.fAdd_btn,int(i/2) + 4 * j,2)
-                self.flay.setRowStretch(self.flay.rowCount(), 1)
-                self.cnt+=1
+                                self.lay.addWidget(self.fAdd_btn,int(i/2) + 4 * j,2)
+                self.lay.setRowStretch(self.lay.rowCount(), 1)
+                self.no_del_cnt+=1
             else:
                 QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
             
@@ -214,27 +220,44 @@ class FamilyTab(QWidget):
             query = "INSERT INTO FAMILY VALUES(%s, %s, %s, %s, %s, %s)"
             cur.execute(query, (emp_num, fName, fYear, age, fRel, fLive))
             conn.commit()
-              
-    def disappearFamliy(self,index):
+    # UI에서 위젯 삭제     
+    def disappearFamily(self,index):
+        print("dis before"+str(self.cnt))
         j=0
         btn = self.btnGroup.button(index)
+        # 삭제할 위젯 행 선택
         for i in range(len(self.del_btn)):
             if btn == self.del_btn[i]:
                 j = i
+        # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
+        for i in range(len(self.fName_lbl) - 1):
+            if i >= j:
+                # 현재 행을 j행으로 이동
+                self.fName_le[i].setText(self.fName_le[i + 1].text())
+                # 생년월일(QDateEdit)의 경우 setDate 메서드를 사용하여 값을 설정
+                self.fYear_de[i].setDate(self.fYear_de[i + 1].date())
+                self.fRel_cb[i].setCurrentText(self.fRel_cb[i + 1].currentText())
+                self.fLive_cb[i].setCurrentText(self.fLive_cb[i + 1].currentText())
+        # 위젯 한줄씩 삭제
         for i in range(len(self.familyWidget)):
-            self.flay.removeWidget(self.familyWidget[i][j])
-            self.familyWidget[i].pop(j)
-        self.flay.removeWidget(self.del_btn[j])
-        self.btnGroup.removeButton(self.del_btn[j])
-        self.del_btn.pop(j)
-        self.cnt-=1  
-        if self.cnt != 0:
-            self.flay.addWidget(self.fAdd_btn, 3 + 4 * (self.cnt-1),2)
-            print(3 + 4 * (self.cnt-1))
-        self.flay.setRowStretch(self.flay.rowCount(), 1)      
+            self.lay.removeWidget(self.familyWidget[i][self.edit_num-1])
+            self.familyWidget[i].pop(self.edit_num-1)
+        self.lay.removeWidget(self.del_btn[self.edit_num-1])
+        self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
+        self.del_btn.pop(self.edit_num-1)  
+        self.cnt-=1
+        self.edit_num-=1
+        # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
+        if self.edit_num != 0:
+            self.lay.addWidget(self.fAdd_btn, 3 + 4 * (len(self.fName_lbl)-1), 2)
+            print(self.lay.rowCount())
+            print(3 + 4 * (len(self.fName_lbl)-1))
+        self.lay.setRowStretch(self.lay.rowCount(), 1)      
+        # 위젯이 전부 제거 되면 다시 입력창 생성
         if self.cnt == 0:
-            self.ignored_result = True
             self.editFamilyMember()
+        self.ignored_result = True
+        print("dis after"+str(self.cnt))
         
 class ContactTab(QWidget):
     def __init__(self, emp_num, type):
