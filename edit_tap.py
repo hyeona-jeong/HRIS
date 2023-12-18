@@ -1895,7 +1895,6 @@ class RSTab(QWidget):
                             self.lay.addWidget(self.widget[i][j], int(i / 2) + 4 * j, 0)
                             if j < len(result):
                                 self.lay.addWidget(self.del_btn[j], int(i / 2) + 4 * j-1,2)
-                                print(int(i/2) + 3 * j-1)
                         elif i % 2 == 1:
                             self.lay.addWidget(self.widget[i][j], int(i / 2) + 4 * j, 1)
                             if i % 3 == 2:
