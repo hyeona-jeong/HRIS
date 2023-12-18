@@ -846,6 +846,7 @@ class Emplist(QMainWindow, form_class):
 
             except Exception as e:
                 QMessageBox.warning(self, "개인정보변경실패", "Error: " + str(e))
+                print(str(e))
                 return 
 
     # 이미지 저장 팝업창 생성

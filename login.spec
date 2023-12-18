@@ -13,7 +13,7 @@ ui = [('login.ui', '.'),
        ('sign_up.ui', '.'),
        ('search_post.ui', '.'),
        ('user_auth.ui', '.'),
-       ('rc.png', '.'),
+       ('rc1.png', '.'),
        ('peo.png', '.'),
        ('logout.png', '.'),
        ('hr.png', '.'),
@@ -25,7 +25,7 @@ ui = [('login.ui', '.'),
        ('nori.png', '.'),
        ('nori.gif', '.'),
        ('unknown.png', '.'),
-       ('busi.png', '.'),
+       ('busi1.png', '.'),
        ('windowicon.jpg', '.')  
 ]
 

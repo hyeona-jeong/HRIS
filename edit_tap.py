@@ -36,13 +36,14 @@ class FamilyTab(QWidget):
         if self.type == 'info':
             self.addFamilyMember()
         else: 
-            self.fAdd_btn = QPushButton("추가")
+            self.add_btn = QPushButton("추가")
             self.btnGroup = QButtonGroup(self)
             self.del_btn = []
             self.editFamilyMember()
             self.cnt = self.result_num
             self.edit_num = self.result_num
-            self.fAdd_btn.clicked.connect(self.editFamilyMember)
+            self.del_list = []
+            self.add_btn.clicked.connect(self.editFamilyMember)
             self.btnGroup.buttonClicked[int].connect(self.disappearFamily)
 
     # info화면에서 DB정보를 가져와서 라벨에 세팅
@@ -81,7 +82,6 @@ class FamilyTab(QWidget):
         result = self.setData(self.emp_num)
         # 231205 없을 경우 등록화면과 동일하게 동작 by 정현아
         if not result or self.ignored_result:
-            print("edit before"+str(self.cnt))
             self.cnt = len(self.fName_le)
             if(self.cnt<=4):
                 self.fName_lbl.append(QLabel("가족성명"))
@@ -106,11 +106,10 @@ class FamilyTab(QWidget):
                     elif i % 2 == 1:
                         self.lay.addWidget(self.familyWidget[i][self.cnt],int(i/2) + 4 * self.cnt,1)
                         if i % 4 == 3:
-                            self.lay.addWidget(self.fAdd_btn,int(i/2) + 4 * self.cnt,2)
+                            self.lay.addWidget(self.add_btn,int(i/2) + 4 * self.cnt,2)
                 
                 self.lay.setRowStretch(self.lay.rowCount(), 1)
                 self.cnt+=1
-                print("edit after"+str(self.cnt))
             else:
                 QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
         # 231205 있을 경우 등록된 데이터를 각 에디터에 세팅 by 정현아
@@ -165,9 +164,10 @@ class FamilyTab(QWidget):
                         elif i % 2 == 1:
                             self.lay.addWidget(self.familyWidget[i][j],int(i/2) + 4 * j,1)
                             if i % 4 == 3:
-                                self.lay.addWidget(self.fAdd_btn,int(i/2) + 4 * j,2)
+                                self.lay.addWidget(self.add_btn,int(i/2) + 4 * j,2)
                 self.lay.setRowStretch(self.lay.rowCount(), 1)
                 self.no_del_cnt+=1
+                self.cnt+=1
             else:
                 QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
             
@@ -189,80 +189,89 @@ class FamilyTab(QWidget):
     
     # 231205 변경된 데이터 저장, 기존에 등록된 정보가 있을 경우 UPDATE, 없으면 INSERT
     def saveFamily(self, emp_num, cur, conn):
+        # 저장된 정보를 가져옴
         result = self.setData(self.emp_num)
-        row = len(result)
-        if result:
-            for i in range(row):
-                if self.fName_le[i].text() == '':
-                    return
-                fName = self.fName_le[i].text()
-                fYear = self.fYear_de[i].date().toString("yyyy-MM-dd")
-                birth = self.fYear_de[i].date()
-                age = int(birth.daysTo(QDate.currentDate())/365)
-                fRel = self.fRel_cb[i].currentText()
-                fLive = self.fLive_cb[i].currentText()
-                
+        # 저장된 정보가 있으면 update 없으면 insert
+        if not result and self.fName_le[0].text() == '':
+            return
+        for i in range(len(self.fName_lbl)):
+            family_info = False
+            fName = self.fName_le[i].text()
+            fYear = self.fYear_de[i].date().toString("yyyy-MM-dd")
+            birth = self.fYear_de[i].date()
+            age = int(birth.daysTo(QDate.currentDate())/365)
+            fRel = self.fRel_cb[i].currentText()
+            fLive = self.fLive_cb[i].currentText()
+            query = "SELECT * FROM FAMILY WHERE EMP_NUM = %s AND NAME_FAMILY = %s"
+            cur.execute(query, (self.emp_num, fName,))
+            family_info = cur.fetchone()
+            # 저장된 데이터가 있으면 UPDATE, 없으면 INSERT
+            if family_info:
                 query = "UPDATE FAMILY SET NAME_FAMILY = %s, BIRTH = %s, AGE = %s, REL = %s, LIVE = %s WHERE EMP_NUM = %s AND NAME_FAMILY = %s;"
                 cur.execute(query, (fName, fYear, age, fRel, fLive, emp_num, fName,))
-                conn.commit()  
-            self.cnt -=1
-            
-        for i in range(self.cnt):
-            if self.fName_le[i+row].text() == '':
-                return
-            fName = self.fName_le[i+row].text()
-            fYear = self.fYear_de[i+row].date().toString("yyyy-MM-dd")
-            birth = self.fYear_de[i+row].date()
-            age = int(birth.daysTo(QDate.currentDate())/365)
-            fRel = self.fRel_cb[i+row].currentText()
-            fLive = self.fLive_cb[i+row].currentText()
-            
-            query = "INSERT INTO FAMILY VALUES(%s, %s, %s, %s, %s, %s)"
-            cur.execute(query, (emp_num, fName, fYear, age, fRel, fLive))
-            conn.commit()
-    # UI에서 위젯 삭제     
+            elif self.fName_le[i].text() != '':
+                query = "INSERT INTO FAMILY VALUES(%s, %s, %s, %s, %s, %s)"
+                cur.execute(query, (emp_num, fName, fYear, age, fRel, fLive))
+            conn.commit() 
+        # 저장된 삭제리스트가 있으면 삭제
+        if self.del_list:
+            for del_name in self.del_list:
+                query = "DELETE FROM FAMILY WHERE EMP_NUM = %s AND NAME_FAMILY = %s;"
+                cur.execute(query, (emp_num, del_name,))
+                conn.commit() 
+
+    # 231217 UI에서 위젯 삭제 by 정현아    
     def disappearFamily(self,index):
-        print("dis before"+str(self.cnt))
         j=0
         btn = self.btnGroup.button(index)
-        # 삭제할 위젯 행 선택
+        # 삭제할 위젯 행 찾기
         for i in range(len(self.del_btn)):
             if btn == self.del_btn[i]:
                 j = i
+        # 삭제할 위젯의 데이터 저장 
+        self.del_list.append(self.fName_le[j].text())
+        print(self.del_list)
         # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
         for i in range(len(self.fName_lbl) - 1):
             if i >= j:
                 # 현재 행을 j행으로 이동
                 self.fName_le[i].setText(self.fName_le[i + 1].text())
-                # 생년월일(QDateEdit)의 경우 setDate 메서드를 사용하여 값을 설정
                 self.fYear_de[i].setDate(self.fYear_de[i + 1].date())
                 self.fRel_cb[i].setCurrentText(self.fRel_cb[i + 1].currentText())
                 self.fLive_cb[i].setCurrentText(self.fLive_cb[i + 1].currentText())
-        # 위젯 한줄씩 삭제
-        for i in range(len(self.familyWidget)):
-            self.lay.removeWidget(self.familyWidget[i][self.edit_num-1])
-            self.familyWidget[i].pop(self.edit_num-1)
-        self.lay.removeWidget(self.del_btn[self.edit_num-1])
-        self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
-        self.del_btn.pop(self.edit_num-1)  
-        self.cnt-=1
+        # 위젯이 하나 남기 전까지 위젯 삭제
+        if self.edit_num != 1:
+            # 위젯 한줄씩 삭제
+            for i in range(len(self.familyWidget)):
+                self.lay.removeWidget(self.familyWidget[i][self.edit_num-1])
+                self.familyWidget[i].pop(self.edit_num-1)
+            self.lay.removeWidget(self.del_btn[self.edit_num-1])
+            self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
+            self.del_btn.pop(self.edit_num-1)  
+            self.cnt-=1
+        # 위젯이 하나 남을 경우 에디터 초기화
+        else : 
+            self.fName_le[i].setText("")
+            self.fYear_de[i].setDate(QDate(2000, 1, 1))
+            self.fRel_cb[i].setCurrentIndex(0)
+            self.fLive_cb[i].setCurrentIndex(0)
         self.edit_num-=1
         # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
         if self.edit_num != 0:
-            self.lay.addWidget(self.fAdd_btn, 3 + 4 * (len(self.fName_lbl)-1), 2)
-            print(self.lay.rowCount())
-            print(3 + 4 * (len(self.fName_lbl)-1))
+            self.lay.addWidget(self.add_btn, 3 + 4 * (len(self.fName_lbl)-1), 2)
         self.lay.setRowStretch(self.lay.rowCount(), 1)      
         # 위젯이 전부 제거 되면 다시 입력창 생성
         if self.cnt == 0:
             self.editFamilyMember()
         self.ignored_result = True
-        print("dis after"+str(self.cnt))
         
 class ContactTab(QWidget):
     def __init__(self, emp_num, type):
         super(ContactTab, self).__init__()
         self.cnt = 0
+        self.no_del_cnt = 0
+        self.result_num = 0
+        self.edit_num = 0
         self.emp_num = emp_num
         self.type = type
         self.initUI()
@@ -271,7 +280,7 @@ class ContactTab(QWidget):
         self.contact = QScrollArea()
         self.cwidget = QWidget()
         self.contact.setWidget(self.cwidget)
-        self.clay = QGridLayout(self.cwidget)
+        self.lay = QGridLayout(self.cwidget)
         self.contact.setWidgetResizable(True)
 
         self.cName_lbl = []
@@ -281,14 +290,22 @@ class ContactTab(QWidget):
         self.cCont_lbl = []
         self.cCont_le = []
         self.contactWidget = [self.cName_lbl, self.cName_le, self.cRel_lbl, self.cRel_cb, self.cCont_lbl, self.cCont_le]
-        
+        self.ignored_result = False
         if self.type =='info':
             self.addContact()
         else:
-            self.cAdd_btn = QPushButton("추가")
+            self.add_btn = QPushButton("추가")
+            self.btnGroup = QButtonGroup(self)
+            self.del_btn = []
             self.editContact()
-            self.cAdd_btn.clicked.connect(self.editContact)
-
+            self.cnt = self.result_num
+            self.edit_num = self.result_num
+            self.del_name = []
+            self.del_cont = []
+            self.add_btn.clicked.connect(self.editContact)
+            self.btnGroup.buttonClicked[int].connect(self.disappearContact)
+            
+    # info화면에서 DB정보를 가져와서 라벨에 세팅
     def addContact(self):
         result = self.setData(self.emp_num)
         if not result:
@@ -308,17 +325,20 @@ class ContactTab(QWidget):
         for j in range(self.cnt):
             for i in range(len(self.contactWidget)):
                 if i % 2 == 0:
-                    self.clay.addWidget(self.contactWidget[i][j], int(i/2) + 3 * j, 0)
+                    self.lay.addWidget(self.contactWidget[i][j], int(i/2) + 3 * j, 0)
                 elif i % 2 == 1:
-                    self.clay.addWidget(self.contactWidget[i][j], int(i/2) + 3 * j, 1)
+                    self.lay.addWidget(self.contactWidget[i][j], int(i/2) + 3 * j, 1)
 
-        self.clay.setRowStretch(self.clay.rowCount(), 1)
+        self.lay.setRowStretch(self.lay.rowCount(), 1)
         rightmost_column_index = len(self.contactWidget) - 1
-        self.clay.setColumnStretch(rightmost_column_index, 1)
+        self.lay.setColumnStretch(rightmost_column_index, 1)
 
     def editContact(self):
+        # 기존에 등록한 데이터가 있는지 확인
         result = self.setData(self.emp_num)
-        if not result:
+        # 231205 없을 경우 등록화면과 동일하게 동작 또는 위젯이 삭제되었을 경우 by 정현아
+        if not result or self.ignored_result:
+            self.cnt = len(self.cName_le)
             if(self.cnt<=1):
                 self.cName_lbl.append(QLabel("성명"))
                 self.cName_le.append(QLineEdit(self))
@@ -332,27 +352,28 @@ class ContactTab(QWidget):
                 
                 for i in range(len(self.contactWidget)):
                     if i == 0:
-                        self.clay.addWidget(self.contactWidget[i][self.cnt],0 + 3 * self.cnt,0)
+                        self.lay.addWidget(self.contactWidget[i][self.cnt],0 + 3 * self.cnt,0)
                     elif i % 2 == 0:
-                        self.clay.addWidget(self.contactWidget[i][self.cnt],int(i/2) + 3 * self.cnt,0)
+                        self.lay.addWidget(self.contactWidget[i][self.cnt],int(i/2) + 3 * self.cnt,0)
                     elif i % 2 == 1:
-                        self.clay.addWidget(self.contactWidget[i][self.cnt],int(i/2) + 3 * self.cnt,1)
+                        self.lay.addWidget(self.contactWidget[i][self.cnt],int(i/2) + 3 * self.cnt,1)
                         if i % 3 == 2:
-                            self.clay.addWidget(self.cAdd_btn,int(i/2) + 3 * self.cnt,2)
+                            self.lay.addWidget(self.add_btn,int(i/2) + 3 * self.cnt,2)
                 # 연락처 라인에디트에 입력제한 by 정현아
                 for i in range(self.cnt+1):
                     self.cCont_le[i].setValidator(QIntValidator())
                     self.cCont_le[i].setMaxLength(11)
                     
-                self.clay.setRowStretch(self.clay.rowCount(), 1)
+                self.lay.setRowStretch(self.lay.rowCount(), 1)
                 self.cnt+=1
                 
             else:
                 QMessageBox.information(self,"경고","2번 이상 등록하실 수 없습니다.")
         else:
-            if(len(result) + self.cnt <= 2):            
+            self.result_num = len(result)
+            if(len(result) + self.no_del_cnt <= 2):            
                 # 데이터 세팅
-                if self.cnt == 0:
+                if self.no_del_cnt == 0:
                     for i in range(len(result)):
                         self.cName_lbl.append(QLabel("성명"))
                         self.cName_le.append(QLineEdit(result[i][0]))
@@ -364,34 +385,40 @@ class ContactTab(QWidget):
                         self.cRel_cb[i].setCurrentText(result[i][1])
                         self.cCont_lbl.append(QLabel("연락처"))
                         self.cCont_le.append(QLineEdit(result[i][2]))
+                        self.del_btn.append(QPushButton("삭제",self))
+                        self.btnGroup.addButton(self.del_btn[i])
                         
-                elif self.cnt != 0:
+                elif self.no_del_cnt != 0:
                     self.cName_lbl.append(QLabel("성명"))
                     self.cName_le.append(QLineEdit())
                     self.cRel_lbl.append(QLabel("관계"))
                     self.cRel_cb.append(QComboBox())
                     self.c_list = ['부','모','형제','배우자','자녀','조부','조모','외조부','외조모','빙부','빙모']
                     for i in range(len(self.c_list)):
-                        self.cRel_cb[self.cnt + len(result) - 1].addItem(self.c_list[i])
+                        self.cRel_cb[self.no_del_cnt + len(result) - 1].addItem(self.c_list[i])
                     self.cCont_lbl.append(QLabel("연락처"))
                     self.cCont_le.append(QLineEdit())
                     
-                for j in range(len(result) + self.cnt):
+                # 라벨 및 에디터 레이아웃에 세팅(홀수번째는 라벨, 짝수번째는 에디터로 각 레이아웃에 배치)        
+                for j in range(len(result) + self.no_del_cnt):
                     for i in range(len(self.contactWidget)):
                         if i == 0:
-                            self.clay.addWidget(self.contactWidget[i][j],0 + 3 * j,0)
+                            self.lay.addWidget(self.contactWidget[i][j],0 + 3 * j,0)
                         elif i % 2 == 0:
-                            self.clay.addWidget(self.contactWidget[i][j],int(i/2) + 3 * j,0)
+                            self.lay.addWidget(self.contactWidget[i][j],int(i/2) + 3 * j,0)
                         elif i % 2 == 1:
-                            self.clay.addWidget(self.contactWidget[i][j],int(i/2) + 3 * j,1)
+                            self.lay.addWidget(self.contactWidget[i][j],int(i/2) + 3 * j,1)
+                            if j < len(result):
+                                    self.lay.addWidget(self.del_btn[j], int(i/2)-1 + 3 * j,2)
                             if i % 3 == 2:
-                                self.clay.addWidget(self.cAdd_btn,int(i/2) + 3 * j,2)
+                                self.lay.addWidget(self.add_btn,int(i/2) + 3 * j,2)
                 
                 for i in range(self.cnt+1):
                     self.cCont_le[i].setValidator(QIntValidator())
                     self.cCont_le[i].setMaxLength(11)
                 
-                self.clay.setRowStretch(self.clay.rowCount(), 1)
+                self.lay.setRowStretch(self.lay.rowCount(), 1)
+                self.no_del_cnt+=1
                 self.cnt += 1
                 
             else:
@@ -415,40 +442,86 @@ class ContactTab(QWidget):
         return result
     
     def saveContact(self, emp_num, cur, conn):
+        # 저장된 정보를 가져옴
         result = self.setData(self.emp_num)
-        row = len(result)
-
-        if result:
-            for i in range(row):
-                if self.cName_le[i].text() == '':
-                    return
-
-                cName = self.cName_le[i].text()
-                cRel = self.cRel_cb[i].currentText()
-                cCont = self.cCont_le[i].text()
-
-                query = "UPDATE CONTACT SET NAME = %s, REL = %s, PHONE = %s WHERE EMP_NUM = %s AND NAME = %s;"
-                cur.execute(query, (cName, cRel, cCont, emp_num, cName,))
-                conn.commit()
-
-            self.cnt -= 1
-
-        for i in range(self.cnt):
-            if self.cName_le[i + row].text() == '':
-                return
-
-            cName = self.cName_le[i + row].text()
-            cRel = self.cRel_cb[i + row].currentText()
-            cCont = self.cCont_le[i + row].text()
-
-            query = "INSERT INTO CONTACT VALUES(%s, %s, %s, %s)"
-            cur.execute(query, (emp_num, cName, cRel, cCont))
+        # 저장된 정보가 없고 첫 라인에디트가 비어있으면 리턴
+        if not result and self.cName_le[0].text() == '':
+            return
+        for i in range(len(self.cName_lbl)):
+            contact_info = False
+            cName = self.cName_le[i].text()
+            cRel = self.cRel_cb[i].currentText()
+            cCont = self.cCont_le[i].text()
+            # 저장된 데이터가 있으면 UPDATE, 없으면 INSERT
+            query = "SELECT * FROM CONTACT WHERE EMP_NUM = %s AND NAME = %s AND PHONE = %s;"
+            cur.execute(query, (self.emp_num, cName, cCont,))
+            contact_info = cur.fetchone()
+            if contact_info:
+                query = "UPDATE CONTACT SET NAME = %s, REL = %s, PHONE = %s WHERE EMP_NUM = %s AND NAME = %s AND PHONE = %s;"
+                cur.execute(query, (cName, cRel, cCont, emp_num, cName, cCont,))
+            elif self.cName_le[i].text() != '':
+                query = "INSERT INTO CONTACT VALUES(%s, %s, %s, %s)"
+                cur.execute(query, (emp_num, cName, cRel, cCont))
             conn.commit()
+        # 삭제리스트가 있으면 삭제
+        if self.del_name:
+            for i in range(len(self.del_name)):
+                query = "DELETE FROM CONTACT WHERE EMP_NUM = %s AND NAME = %s AND PHONE = %s;"
+                cur.execute(query, (emp_num, self.del_name[i], self.del_cont[i],))
+                conn.commit() 
+                
+    def disappearContact(self,index):
+        j=0
+        btn = self.btnGroup.button(index)
+        # 삭제할 위젯 행 찾기
+        for i in range(len(self.del_btn)):
+            if btn == self.del_btn[i]:
+                j = i
+        # 삭제할 위젯의 데이터 저장 
+        self.del_name.append(self.cName_le[j].text())
+        self.del_cont.append(self.cCont_le[j].text())
+        # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
+        for i in range(len(self.cName_lbl) - 1):
+            if i >= j:
+                # 현재 행을 j행으로 이동
+                self.cName_le[i].setText(self.cName_le[i + 1].text())
+                self.cRel_cb[i].setCurrentText(self.cRel_cb[i + 1].currentText())
+                self.cCont_le[i].setText(self.cCont_le[i + 1].text())
+        # 위젯이 하나 남기 전까지 위젯 삭제
+        if self.edit_num != 1:
+            # 위젯 한줄씩 삭제
+            for i in range(len(self.contactWidget)):
+                self.lay.removeWidget(self.contactWidget[i][self.edit_num-1])
+                self.contactWidget[i].pop(self.edit_num-1)
+            self.lay.removeWidget(self.del_btn[self.edit_num-1])
+            self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
+            self.del_btn.pop(self.edit_num-1)  
+            self.cnt-=1
+        # 위젯이 하나 남을 경우 에디터 초기화
+        else : 
+            self.cName_le[i].setText("")
+            self.cRel_cb[i].setCurrentIndex(0)
+            self.cCont_le[i].setText("")
+            self.cCont_le[i].setValidator(QIntValidator())
+            self.cCont_le[i].setMaxLength(11)
+        self.edit_num-=1
+        # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
+        if self.edit_num != 0:
+            self.lay.addWidget(self.add_btn, 2 + 3 * (len(self.cName_lbl)-1), 2)
+        self.lay.setRowStretch(self.lay.rowCount(), 1)      
+        # 위젯이 전부 제거 되면 다시 입력창 생성
+        if self.cnt == 0:
+            self.editContact()
+        self.ignored_result = True        
+            
     
 class SchoolTab(QWidget):
     def __init__(self, emp_num, type):
         super(SchoolTab, self).__init__()
         self.cnt = 0
+        self.no_del_cnt = 0
+        self.result_num = 0
+        self.edit_num = 0
         self.emp_num = emp_num
         self.type = type
         self.initUI()
@@ -458,7 +531,7 @@ class SchoolTab(QWidget):
         self.cnt = 0
         self.schwidget = QWidget()
         self.school.setWidget(self.schwidget)
-        self.schlay = QGridLayout(self.schwidget)
+        self.lay = QGridLayout(self.schwidget)
         self.school.setWidgetResizable(True)
 
         self.scheadmit_lbl = []
@@ -477,12 +550,20 @@ class SchoolTab(QWidget):
         self.comment_le = []
         self.schWidget = [self.scheadmit_lbl, self.scheadmit_de, self.schgrad_lbl, self.schgrad_de, self.schname_lbl, self.schname_le, self.schloc_lbl , self.schloc_le ,
                           self.schmajor_lbl , self.schmajor_le , self.schsubmajor_lbl , self.schsubmajor_le , self.comment_lbl , self.comment_le ]
+        self.ignored_result = False
         if self.type == 'info':
             self.addSchoolInfo()
         else:    
-            self.schAdd_btn = QPushButton("추가")
+            self.add_btn = QPushButton("추가")
+            self.btnGroup = QButtonGroup(self)
+            self.del_btn = []
             self.editSchool()
-            self.schAdd_btn.clicked.connect(self.editSchool)
+            self.cnt = self.result_num
+            self.edit_num = self.result_num
+            self.del_admitdate = []
+            self.del_name = []
+            self.add_btn.clicked.connect(self.editSchool)
+            self.btnGroup.buttonClicked[int].connect(self.disappearSchool)
 
     def addSchoolInfo(self):
         result = self.setData(self.emp_num)
@@ -511,17 +592,20 @@ class SchoolTab(QWidget):
         for j in range(self.cnt):
             for i in range(len(self.schWidget)):
                 if i % 2 == 0:
-                    self.schlay.addWidget(self.schWidget[i][j], int(i / 2) + 7 * j, 0)
+                    self.lay.addWidget(self.schWidget[i][j], int(i / 2) + 7 * j, 0)
                 elif i % 2 == 1:
-                    self.schlay.addWidget(self.schWidget[i][j], int(i / 2) + 7 * j, 1)
+                    self.lay.addWidget(self.schWidget[i][j], int(i / 2) + 7 * j, 1)
 
-        self.schlay.setRowStretch(self.schlay.rowCount(), 1)
+        self.lay.setRowStretch(self.lay.rowCount(), 1)
         rightmost_column_index = len(self.schWidget) - 1
-        self.schlay.setColumnStretch(rightmost_column_index, 1)
+        self.lay.setColumnStretch(rightmost_column_index, 1)
  
     def editSchool(self):
+        # 기존에 등록한 데이터가 있는지 확인
         result = self.setData(self.emp_num)
-        if not result:
+        # 231205 없을 경우 등록화면과 동일하게 동작 by 정현아
+        if not result or self.ignored_result:
+            self.cnt = len(self.scheadmit_de)
             if self.cnt <= 3:
                 self.scheadmit_lbl.append(QLabel("입학일"))
                 self.scheadmit_de.append(QDateEdit(self))
@@ -540,23 +624,24 @@ class SchoolTab(QWidget):
 
                 for i in range(len(self.schWidget)):
                     if i == 0:
-                        self.schlay.addWidget(self.schWidget[i][self.cnt], 0 + 7 * self.cnt, 0)
+                        self.lay.addWidget(self.schWidget[i][self.cnt], 0 + 7 * self.cnt, 0)
                     elif i % 2 == 0:
-                        self.schlay.addWidget(self.schWidget[i][self.cnt], int(i / 2) + 7 * self.cnt, 0)
+                        self.lay.addWidget(self.schWidget[i][self.cnt], int(i / 2) + 7 * self.cnt, 0)
                     elif i % 2 == 1:
-                        self.schlay.addWidget(self.schWidget[i][self.cnt], int(i / 2) + 7 * self.cnt, 1)
+                        self.lay.addWidget(self.schWidget[i][self.cnt], int(i / 2) + 7 * self.cnt, 1)
                         if i % 7 == 6:
-                            self.schlay.addWidget(self.schAdd_btn, int(i / 2) + 7 * self.cnt, 2)
+                            self.lay.addWidget(self.add_btn, int(i / 2) + 7 * self.cnt, 2)
 
-                self.schlay.setRowStretch(self.schlay.rowCount(), 1)
+                self.lay.setRowStretch(self.lay.rowCount(), 1)
                 self.cnt += 1
 
             else:
                 QMessageBox.information(self, "경고", "4번 이상 등록하실 수 없습니다.")
         else:
-            if len(result) + self.cnt <= 4:
+            self.result_num = len(result)
+            if len(result) + self.no_del_cnt <= 4:
                 # 데이터 세팅
-                if self.cnt == 0:
+                if self.no_del_cnt == 0:
                     for i in range(len(result)):
                         self.scheadmit_lbl.append(QLabel("입학일:"))
                         self.scheadmit_de.append(QDateEdit(QDate.fromString(result[i][0].strftime("%Y-%m-%d"), "yyyy-MM-dd")))
@@ -572,8 +657,10 @@ class SchoolTab(QWidget):
                         self.schsubmajor_le.append(QLineEdit(result[i][5]))
                         self.comment_lbl.append(QLabel("특기사항:"))
                         self.comment_le.append(QLineEdit(result[i][6]))
+                        self.del_btn.append(QPushButton("삭제",self))
+                        self.btnGroup.addButton(self.del_btn[i])
 
-                elif self.cnt != 0:
+                elif self.no_del_cnt != 0:
                     self.scheadmit_lbl.append(QLabel("입학일"))
                     self.scheadmit_de.append(QDateEdit(self))
                     self.schgrad_lbl.append(QLabel("졸업일"))
@@ -589,35 +676,26 @@ class SchoolTab(QWidget):
                     self.comment_lbl.append(QLabel("특기사항"))
                     self.comment_le.append(QLineEdit())
 
-                for j in range(len(result) + self.cnt):
+                for j in range(len(result) + self.no_del_cnt):
                     for i in range(len(self.schWidget)):
                         if i == 0:
-                            self.schlay.addWidget(self.schWidget[i][j], 0 + 7 * j, 0)
+                            self.lay.addWidget(self.schWidget[i][j], 0 + 7 * j, 0)
                         elif i % 2 == 0:
-                            self.schlay.addWidget(self.schWidget[i][j], int(i / 2) + 7 * j, 0)
+                            self.lay.addWidget(self.schWidget[i][j], int(i / 2) + 7 * j, 0)
                         elif i % 2 == 1:
-                            self.schlay.addWidget(self.schWidget[i][j], int(i / 2) + 7 * j, 1)
+                            self.lay.addWidget(self.schWidget[i][j], int(i / 2) + 7 * j, 1)
                             if i % 7 == 6:
-                                self.schlay.addWidget(self.schAdd_btn, int(i / 2) + 7 * j, 2)
+                                self.lay.addWidget(self.add_btn, int(i / 2) + 7 * j, 2)
+                                if j < len(result):
+                                    self.lay.addWidget(self.del_btn[j], int(i / 2)-1 + 7 * j,2)
+                                    print(int(i / 2)-1 + 7 * j)
 
-                self.schlay.setRowStretch(self.schlay.rowCount(), 1)
+                self.lay.setRowStretch(self.lay.rowCount(), 1)
+                self.no_del_cnt+=1
                 self.cnt += 1
 
             else:
-                QMessageBox.information(self, "경고", "4번 이상 등록하실 수 없습니다.")
-
-    def updateSchoolLayout(self):
-        # Add the widgets to the layout similar to addSchoolInfo
-        for j in range(self.cnt):
-            for i in range(len(self.schWidget)):
-                if i % 2 == 0:
-                    self.schlay.addWidget(self.schWidget[i][j], int(i / 2) + 7 * j, 0)
-                elif i % 2 == 1:
-                    self.schlay.addWidget(self.schWidget[i][j], int(i / 2) + 7 * j, 1)
-
-        self.schlay.setRowStretch(self.schlay.rowCount(), 1)
-        rightmost_column_index = len(self.schWidget) - 1
-        self.schlay.setColumnStretch(rightmost_column_index, 1)       
+                QMessageBox.information(self, "경고", "4번 이상 등록하실 수 없습니다.")    
 
     
     def setData(self,emp_num):
@@ -636,44 +714,90 @@ class SchoolTab(QWidget):
         conn.close()
         return result
     
+    # 231218 변경된 데이터 저장, 기존에 등록된 정보가 있을 경우 UPDATE, 없으면 INSERT
     def saveSchool(self, emp_num, cur, conn):
         result = self.setData(emp_num)
-        row = len(result)
-
-        if result:
-            for i in range(row):
-                if self.schname_le[i].text() == '':
-                    return
-
-                sAdmit = self.scheadmit_de[i].date().toString("yyyy-MM-dd")
-                sGrad = self.schgrad_de[i].date().toString("yyyy-MM-dd")
-                sName = self.schname_le[i].text()
-                sLoc = self.schloc_le[i].text()
-                sMajor = self.schmajor_le[i].text()
-                sSubMajor = self.schsubmajor_le[i].text()
-                sComment = self.comment_le[i].text()
-
+        # 저장된 정보가 없고 첫 라인에디트가 비어있으면 리턴
+        if not result and self.fName_le[0].text() == '':
+            return
+        for i in range(len(self.scheadmit_lbl)):
+            sAdmit = self.scheadmit_de[i].date().toString("yyyy-MM-dd")
+            sGrad = self.schgrad_de[i].date().toString("yyyy-MM-dd")
+            sName = self.schname_le[i].text()
+            sLoc = self.schloc_le[i].text()
+            sMajor = self.schmajor_le[i].text()
+            sSubMajor = self.schsubmajor_le[i].text()
+            sComment = self.comment_le[i].text()
+            
+            # 저장된 데이터가 있으면 UPDATE, 없으면 INSERT
+            query = "SELECT * FROM SCHOOL_EDUCATION WHERE EMP_NUM= %s AND DATE_ADMITION= %s AND NAME_SCHOOL= %s;"
+            cur.execute(query, (self.emp_num, sAdmit, sName,))
+            school_info = cur.fetchone()
+            if school_info:
                 query = "UPDATE SCHOOL_EDUCATION SET DATE_ADMITION = %s, DATE_GRADUATE = %s, NAME_SCHOOL = %s, LOCATION = %s, MAJOR = %s, SUB_MAJOR = %s, COMMENT = %s WHERE EMP_NUM = %s AND NAME_SCHOOL = %s;"
                 cur.execute(query, (sAdmit, sGrad, sName, sLoc, sMajor, sSubMajor, sComment, emp_num, sName,))
-                conn.commit()
-
-            self.cnt -= 1
-
-        for i in range(self.cnt):
-            if self.schname_le[i + row].text() == '':
-                return
-
-            sAdmit = self.scheadmit_de[i + row].date().toString("yyyy-MM-dd")
-            sGrad = self.schgrad_de[i + row].date().toString("yyyy-MM-dd")
-            sName = self.schname_le[i + row].text()
-            sLoc = self.schloc_le[i + row].text()
-            sMajor = self.schmajor_le[i + row].text()
-            sSubMajor = self.schsubmajor_le[i + row].text()
-            sComment = self.comment_le[i + row].text()
-
-            query = "INSERT INTO SCHOOL_EDUCATION VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
-            cur.execute(query, (emp_num, sAdmit, sGrad, sName, sLoc, sMajor, sSubMajor, sComment))
+            elif self.schname_le[i].text() != '':
+                query = "INSERT INTO SCHOOL_EDUCATION VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
+                cur.execute(query, (emp_num, sAdmit, sGrad, sName, sLoc, sMajor, sSubMajor, sComment))
             conn.commit()
+            
+            if self.del_name:
+                for i in range(len(self.del_name)):
+                    query = "DELETE FROM SCHOOL_EDUCATION WHERE EMP_NUM = %s AND DATE_ADMITION = %s AND NAME_SCHOOL = %s;"
+                    cur.execute(query, (emp_num, self.del_admitdate[i],self.del_name[i],))
+                    conn.commit() 
+
+    # 231217 UI에서 위젯 삭제 by 정현아    
+    def disappearSchool(self,index):
+        j=0
+        btn = self.btnGroup.button(index)
+        # 삭제할 위젯 행 찾기
+        for i in range(len(self.del_btn)):
+            if btn == self.del_btn[i]:
+                j = i
+        # 삭제할 위젯의 데이터 저장 
+        self.del_admitdate.append(self.scheadmit_de[j].date().toString("yyyy-MM-dd"))
+        self.del_name.append(self.schname_le[j].text())
+        # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
+        for i in range(len(self.scheadmit_lbl) - 1):
+            if i >= j:
+                # 현재 행을 j행으로 이동
+                self.scheadmit_de[i].setDate(self.scheadmit_de[i + 1].date())
+                self.schgrad_de[i].setDate(self.schgrad_de[i + 1].date())
+                self.schname_le[i].setText(self.schname_le[i + 1].text())
+                self.schloc_le[i].setText(self.schloc_le[i + 1].text())
+                self.schmajor_le[i].setText(self.schmajor_le[i + 1].text())
+                self.schsubmajor_le[i].setText(self.schsubmajor_le[i + 1].text())
+                self.comment_le[i].setText(self.comment_le[i + 1].text())
+        # 위젯이 하나 남기 전까지 위젯 삭제
+        if self.edit_num != 1:
+            # 위젯 한줄씩 삭제
+            for i in range(len(self.schWidget)):
+                self.lay.removeWidget(self.schWidget[i][self.edit_num-1])
+                self.schWidget[i].pop(self.edit_num-1)
+            self.lay.removeWidget(self.del_btn[self.edit_num-1])
+            self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
+            self.del_btn.pop(self.edit_num-1)  
+            self.cnt-=1
+        # 위젯이 하나 남을 경우 에디터 초기화
+        else : 
+            self.scheadmit_de[i].setDate(QDate(2000, 1, 1))
+            self.schgrad_de[i].setDate(QDate(2000, 1, 1))
+            self.schname_le[i].setText("")
+            self.schloc_le[i].setText("")
+            self.schmajor_le[i].setText("")
+            self.schsubmajor_le[i].setText("")
+            self.comment_le[i].setText("")
+        self.edit_num-=1
+        # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
+        if self.edit_num != 0:
+            self.lay.addWidget(self.add_btn, 6 + 7 * (len(self.scheadmit_lbl)-1), 2)
+        self.lay.setRowStretch(self.lay.rowCount(), 1)      
+        # 위젯이 전부 제거 되면 다시 입력창 생성
+        if self.cnt == 0:
+            self.editSchool()
+        self.ignored_result = True                   
+    
     
 class CertificationTab(QWidget):
     def __init__(self, emp_num, type):
