@@ -79,7 +79,7 @@ class FamilyTab(QWidget):
             fLive = self.fLive_cb[i].currentText()
             print(emp_num, fName, fYear, age, fRel, fLive)
             
-            query = "INSERT INTO FAMILY VALUES(%s, %s, %s, %s, %s, %s)"
+            query = "INSERT INTO FAMILY(EMP_NUM, NAME_FAMILY, BIRTH, AGE, REL, LIVE) VALUES(%s, %s, %s, %s, %s, %s)"
             cur.execute(query, (emp_num, fName, fYear, age, fRel, fLive))
             conn.commit()  
             
@@ -160,7 +160,7 @@ class ContactTab(QWidget):
             cCont = self.cCont_le[i].text()
             print(emp_num, cName, cRel, cCont)
             
-            query = "INSERT INTO CONTACT VALUES(%s, %s, %s, %s)"
+            query = "INSERT INTO CONTACT(EMP_NUM, NAME, REL, PHONE) VALUES(%s, %s, %s, %s)"
             cur.execute(query, (emp_num, cName, cRel, cCont))
             conn.commit()    
             
@@ -252,7 +252,7 @@ class SchoolTab(QWidget):
             schSubMajor = self.schsubmajor_le[i].text()
             schComment = self.comment_le[i].text()
             
-            query = "INSERT INTO SCHOOL_EDUCATION VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
+            query = "INSERT INTO SCHOOL_EDUCATION(EMP_NUM, DATE_ADMITION, DATE_GRADUATE, NAME_SCHOOL, LOCATION, MAJOR, SUB_MAJOR, COMMENT) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
             cur.execute(query, (emp_num, schAdmitDate, schGradDate, schName, schLoc, schMajor, schSubMajor, schComment))
             conn.commit()
             
@@ -320,7 +320,7 @@ class CertificationTab(QWidget):
             certName = self.certName_le[i].text()
             certDate = self.certDate_de[i].date().toString("yyyy-MM-dd")
                 
-            query = "INSERT INTO CERTIFICATE VALUES (%s, %s, %s)"
+            query = "INSERT INTO CERTIFICATE(EMP_NUM, NAME_LICENSE, DATE_ACQUI) VALUES(%s, %s, %s)"
             cur.execute(query, (emp_num, certName, certDate))
             conn.commit() 
             
@@ -409,7 +409,10 @@ class CareerTab(QWidget):
             finalrank = self.finalrank_le[i].text()
             workinfo = self.workinfo_le[i].text()
 
-            query = "INSERT INTO CAREER VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            query = """
+                    INSERT INTO CAREER (EMP_NUM, COMPANY, DEPARTMENT, DATE_JOIN, DATE_LEAVE, WORK_PERIOD, FINAL_RANK, WORK_INFO)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+                """
             cur.execute(query, (emp_num, company, dept, datejoin, dateleave, workperiod, finalrank, workinfo))
             conn.commit()
 
@@ -485,7 +488,7 @@ class TechnicalTab(QWidget):
             proficiency = self.pro_cb[i].currentText()
             note = self.note_le[i].text()
 
-            query = "INSERT INTO TECHNICAL VALUES (%s, %s, %s, %s)"
+            query = "INSERT INTO TECHNICAL (EMP_NUM, TEC_DETAIL, PROFICIENCY, NOTE) VALUES (%s, %s, %s, %s);"
             cur.execute(query, (emp_num, techDet, proficiency, note))
             conn.commit()
         
@@ -564,7 +567,7 @@ class RPTab(QWidget):
             rpDate = self.rpDate_de[i].date().toString("yyyy-MM-dd")
             rpNote = self.rpNote_le[i].text()
 
-            query = "INSERT INTO R_P VALUES (%s, %s, %s, %s, %s)"
+            query = "INSERT INTO R_P (EMP_NUM, NAME_REW_PUNI, SCORE, DATE_REW_PUNI, NOTE) VALUES (%s, %s, %s, %s, %s)"
             cur.execute(query, (emp_num, rpName, rpScore, rpDate, rpNote))
             conn.commit()
         
@@ -635,7 +638,7 @@ class RSTab(QWidget):
             rsSal = self.rsSal_le[i].text()
             rsDate = self.rsDate_de[i].date().toString("yyyy-MM-dd")
 
-            query = "INSERT INTO R_S VALUES (%s, %s, %s, %s)"
+            query = "INSERT INTO R_S (EMP_NUM, EMP_RANK, SALARY, DATE_JOIN) VALUES (%s, %s, %s, %s)"
             cur.execute(query, (emp_num, rsRANK, rsSal, rsDate))
             conn.commit()
             

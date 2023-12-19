@@ -873,8 +873,7 @@ class Emplist(QMainWindow, form_class):
                 return
             else:
                 self.w1.imgPath_textEdit.setText(self.path)
-                self.w1.hide()
-                self.w1.show()
+                return
 
     # 이미지 파일 사이즈 확인
     def getFileSize(self, file_path):
@@ -891,7 +890,7 @@ class Emplist(QMainWindow, form_class):
                 height = 150
                 resize_pixmap = self.pixmap.scaled(width,height)
                 self.w.w.pic.setPixmap(resize_pixmap)
-        self.w1.close()
+        self.w1.accept()
 
     # 231122 페이지 전환 함수 by정현아
     def showRegsit(self):

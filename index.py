@@ -48,8 +48,8 @@ class Index(QMainWindow, form_class):
         # 231125 메뉴바에 액션 추가
         self.toolhr = self.menuBar.addAction('인사')
         self.tooledu = self.menuBar.addAction('교육')
-        
-        
+        self.toolforum = self.menuBar.addAction('게시판')
+        self.toolqa = self.menuBar.addAction('Q&A')
         self.toolrc = self.menuBar.addAction('총무')
         self.toolbm = self.menuBar.addAction('사업관리')
         

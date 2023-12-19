@@ -576,7 +576,7 @@ class Login(QMainWindow, form_class):
         self.w1.searchbutton.clicked.connect(self.openImage)
         self.w1.savebtn.clicked.connect(self.save_img)
         self.w1.cnlBtn.clicked.connect(self.w1.accept)
-        result = self.w1.exec_()  
+        result = self.w1.exec_() 
     
     # 231130 이미지 선택하고 다이알로그 텍스트 라인 에디트에 파일경로 세팅 by 정현아
     def openImage(self):
@@ -593,8 +593,7 @@ class Login(QMainWindow, form_class):
                 return
             else:
                 self.w1.imgPath_textEdit.setText(self.path)
-                self.w1.hide()
-                self.w1.show()
+                return
 
     def getFileSize(self, file_path):
         return os.path.getsize(file_path), file_path
@@ -610,7 +609,7 @@ class Login(QMainWindow, form_class):
                 height = 150
                 resize_pixmap = self.pixmap.scaled(width,height)
                 self.w.w.w.pic.setPixmap(resize_pixmap)
-        self.w1.close()
+        self.w1.accept()
         
     def back(self):
         self.w.close()

@@ -421,9 +421,11 @@ class Regist(QMainWindow, form_class):
     def showAddImg(self):
         self.w = QDialog(self)
         addImg = uic.loadUi(resource_path('add_img.ui'), self.w)
+        self.w.searchbutton.clicked.connect(self.openImage)
         self.w.savebtn.clicked.connect(self.save_img)
         self.w.cnlBtn.clicked.connect(self.w.accept)
         result = self.w.exec_()  
+        print("Dialog result:", result)
     
     # 231130 이미지 선택하고 다이알로그 텍스트 라인 에디트에 파일경로 세팅 by 정현아
     def openImage(self):
@@ -440,8 +442,7 @@ class Regist(QMainWindow, form_class):
                 return
             else:
                 self.w.imgPath_textEdit.setText(self.path)
-                self.w.hide()
-                self.w.show()
+                return
 
     # 파일경로 및 사이즈 확인 by 정현아
     def getFileSize(self, file_path):
@@ -458,7 +459,7 @@ class Regist(QMainWindow, form_class):
                 height = 150
                 resize_pixmap = self.pixmap.scaled(width,height)
                 self.img_label.setPixmap(resize_pixmap)
-        self.w.close()
+        self.w.accept()
 
     # 231206 우편번호 찾기 팝업창 생성 by 정현아
     def searchPost(self):

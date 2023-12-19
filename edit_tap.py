@@ -42,7 +42,7 @@ class FamilyTab(QWidget):
             self.editFamilyMember()
             self.cnt = self.result_num
             self.edit_num = self.result_num
-            self.del_list = []
+            self.del_idx = []
             self.add_btn.clicked.connect(self.editFamilyMember)
             self.btnGroup.buttonClicked[int].connect(self.disappearFamily)
 
@@ -171,7 +171,7 @@ class FamilyTab(QWidget):
             else:
                 QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
             
-    def setData(self,emp_num):
+    def setData(self,emp_num, fName = None):
         conn = pymysql.connect(
                 host='localhost',
                 user='dev',
@@ -181,8 +181,12 @@ class FamilyTab(QWidget):
                 charset='utf8'
         )
         cur = conn.cursor()
-        query = "SELECT NAME_FAMILY, BIRTH, REL, LIVE FROM FAMILY WHERE EMP_NUM = %s;"
-        cur.execute(query,(emp_num,))
+        if fName is None:
+            query = "SELECT NAME_FAMILY, BIRTH, REL, LIVE FROM FAMILY WHERE EMP_NUM = %s;"
+            cur.execute(query,(emp_num,))
+        else : 
+            query = "SELECT IDX FROM FAMILY WHERE EMP_NUM = %s AND NAME_FAMILY =%s;"
+            cur.execute(query,(emp_num,fName))
         result = cur.fetchall()
         conn.close()
         return result
@@ -202,67 +206,71 @@ class FamilyTab(QWidget):
             age = int(birth.daysTo(QDate.currentDate())/365)
             fRel = self.fRel_cb[i].currentText()
             fLive = self.fLive_cb[i].currentText()
-            query = "SELECT * FROM FAMILY WHERE EMP_NUM = %s AND NAME_FAMILY = %s"
-            cur.execute(query, (self.emp_num, fName,))
-            family_info = cur.fetchone()
+            family_info = self.setData(self.emp_num, fName)
+            idx = family_info
             # 저장된 데이터가 있으면 UPDATE, 없으면 INSERT
             if family_info:
-                query = "UPDATE FAMILY SET NAME_FAMILY = %s, BIRTH = %s, AGE = %s, REL = %s, LIVE = %s WHERE EMP_NUM = %s AND NAME_FAMILY = %s;"
-                cur.execute(query, (fName, fYear, age, fRel, fLive, emp_num, fName,))
+                query = "UPDATE FAMILY SET NAME_FAMILY = %s, BIRTH = %s, AGE = %s, REL = %s, LIVE = %s WHERE IDX = %s;"
+                cur.execute(query, (fName, fYear, age, fRel, fLive, idx,))
             elif self.fName_le[i].text() != '':
-                query = "INSERT INTO FAMILY VALUES(%s, %s, %s, %s, %s, %s)"
+                query = "INSERT INTO FAMILY(EMP_NUM, NAME_FAMILY, BIRTH, AGE, REL, LIVE) VALUES(%s, %s, %s, %s, %s, %s)"
                 cur.execute(query, (emp_num, fName, fYear, age, fRel, fLive))
             conn.commit() 
         # 저장된 삭제리스트가 있으면 삭제
-        if self.del_list:
-            for del_name in self.del_list:
-                query = "DELETE FROM FAMILY WHERE EMP_NUM = %s AND NAME_FAMILY = %s;"
-                cur.execute(query, (emp_num, del_name,))
+        if self.del_idx:
+            for idx in self.del_idx:
+                query = "DELETE FROM FAMILY WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (emp_num, idx,))
                 conn.commit() 
 
     # 231217 UI에서 위젯 삭제 by 정현아    
     def disappearFamily(self,index):
-        j=0
-        btn = self.btnGroup.button(index)
-        # 삭제할 위젯 행 찾기
-        for i in range(len(self.del_btn)):
-            if btn == self.del_btn[i]:
-                j = i
-        # 삭제할 위젯의 데이터 저장 
-        self.del_list.append(self.fName_le[j].text())
-        # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
-        for i in range(len(self.fName_lbl) - 1):
-            if i >= j:
-                # 현재 행을 j행으로 이동
-                self.fName_le[i].setText(self.fName_le[i + 1].text())
-                self.fYear_de[i].setDate(self.fYear_de[i + 1].date())
-                self.fRel_cb[i].setCurrentText(self.fRel_cb[i + 1].currentText())
-                self.fLive_cb[i].setCurrentText(self.fLive_cb[i + 1].currentText())
-        # 위젯이 하나 남기 전까지 위젯 삭제
-        if self.edit_num != 1:
-            # 위젯 한줄씩 삭제
-            for i in range(len(self.familyWidget)):
-                self.lay.removeWidget(self.familyWidget[i][self.edit_num-1])
-                self.familyWidget[i].pop(self.edit_num-1)
-            self.lay.removeWidget(self.del_btn[self.edit_num-1])
-            self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
-            self.del_btn.pop(self.edit_num-1)  
-            self.cnt-=1
-        # 위젯이 하나 남을 경우 에디터 초기화
-        else : 
-            self.fName_le[i].setText("")
-            self.fYear_de[i].setDate(QDate(2000, 1, 1))
-            self.fRel_cb[i].setCurrentIndex(0)
-            self.fLive_cb[i].setCurrentIndex(0)
-        self.edit_num-=1
-        # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
-        if self.edit_num != 0:
-            self.lay.addWidget(self.add_btn, 3 + 4 * (len(self.fName_lbl)-1), 2)
-        self.lay.setRowStretch(self.lay.rowCount(), 1)      
-        # 위젯이 전부 제거 되면 다시 입력창 생성
-        if self.cnt == 0:
-            self.editFamilyMember()
-        self.ignored_result = True
+        reply = QMessageBox.question(self, '삭제 확인', '삭제하시겠습니까?\n삭제 후 저장버튼을 누르면 삭제됩니다.', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+        else:
+            j=0
+            btn = self.btnGroup.button(index)
+            # 삭제할 위젯 행 찾기
+            for i in range(len(self.del_btn)):
+                if btn == self.del_btn[i]:
+                    j = i
+            result = self.setData(self.emp_num, self.fName_le[j].text())
+            # 삭제할 위젯의 데이터 저장 
+            self.del_idx.append(result[0])
+            # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
+            for i in range(len(self.fName_lbl) - 1):
+                if i >= j:
+                    # 현재 행을 j행으로 이동
+                    self.fName_le[i].setText(self.fName_le[i + 1].text())
+                    self.fYear_de[i].setDate(self.fYear_de[i + 1].date())
+                    self.fRel_cb[i].setCurrentText(self.fRel_cb[i + 1].currentText())
+                    self.fLive_cb[i].setCurrentText(self.fLive_cb[i + 1].currentText())
+            # 위젯이 하나 남기 전까지 위젯 삭제
+            if self.edit_num != 1:
+                # 위젯 한줄씩 삭제
+                for i in range(len(self.familyWidget)):
+                    self.lay.removeWidget(self.familyWidget[i][self.edit_num-1])
+                    self.familyWidget[i].pop(self.edit_num-1)
+                self.lay.removeWidget(self.del_btn[self.edit_num-1])
+                self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
+                self.del_btn.pop(self.edit_num-1)  
+                self.cnt-=1
+            # 위젯이 하나 남을 경우 에디터 초기화
+            else : 
+                self.fName_le[i].setText("")
+                self.fYear_de[i].setDate(QDate(2000, 1, 1))
+                self.fRel_cb[i].setCurrentIndex(0)
+                self.fLive_cb[i].setCurrentIndex(0)
+            self.edit_num-=1
+            # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
+            if self.edit_num != 0:
+                self.lay.addWidget(self.add_btn, 3 + 4 * (len(self.fName_lbl)-1), 2)
+            self.lay.setRowStretch(self.lay.rowCount(), 1)      
+            # 위젯이 전부 제거 되면 다시 입력창 생성
+            if self.cnt == 0:
+                self.editFamilyMember()
+            self.ignored_result = True
         
 class ContactTab(QWidget):
     def __init__(self, emp_num, type):
@@ -459,7 +467,7 @@ class ContactTab(QWidget):
                 query = "UPDATE CONTACT SET NAME = %s, REL = %s, PHONE = %s WHERE EMP_NUM = %s AND NAME = %s AND PHONE = %s;"
                 cur.execute(query, (cName, cRel, cCont, emp_num, cName, cCont,))
             elif self.cName_le[i].text() != '':
-                query = "INSERT INTO CONTACT VALUES(%s, %s, %s, %s)"
+                query = "INSERT INTO CONTACT(EMP_NUM, NAME, REL, PHONE) VALUES(%s, %s, %s, %s)"
                 cur.execute(query, (emp_num, cName, cRel, cCont))
             conn.commit()
         # 삭제리스트가 있으면 삭제
@@ -470,48 +478,52 @@ class ContactTab(QWidget):
                 conn.commit() 
                 
     def disappearContact(self,index):
-        j=0
-        btn = self.btnGroup.button(index)
-        # 삭제할 위젯 행 찾기
-        for i in range(len(self.del_btn)):
-            if btn == self.del_btn[i]:
-                j = i
-        # 삭제할 위젯의 데이터 저장 
-        self.del_name.append(self.cName_le[j].text())
-        self.del_cont.append(self.cCont_le[j].text())
-        # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
-        for i in range(len(self.cName_lbl) - 1):
-            if i >= j:
-                # 현재 행을 j행으로 이동
-                self.cName_le[i].setText(self.cName_le[i + 1].text())
-                self.cRel_cb[i].setCurrentText(self.cRel_cb[i + 1].currentText())
-                self.cCont_le[i].setText(self.cCont_le[i + 1].text())
-        # 위젯이 하나 남기 전까지 위젯 삭제
-        if self.edit_num != 1:
-            # 위젯 한줄씩 삭제
-            for i in range(len(self.contactWidget)):
-                self.lay.removeWidget(self.contactWidget[i][self.edit_num-1])
-                self.contactWidget[i].pop(self.edit_num-1)
-            self.lay.removeWidget(self.del_btn[self.edit_num-1])
-            self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
-            self.del_btn.pop(self.edit_num-1)  
-            self.cnt-=1
-        # 위젯이 하나 남을 경우 에디터 초기화
-        else : 
-            self.cName_le[i].setText("")
-            self.cRel_cb[i].setCurrentIndex(0)
-            self.cCont_le[i].setText("")
-            self.cCont_le[i].setValidator(QIntValidator())
-            self.cCont_le[i].setMaxLength(11)
-        self.edit_num-=1
-        # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
-        if self.edit_num != 0:
-            self.lay.addWidget(self.add_btn, 2 + 3 * (len(self.cName_lbl)-1), 2)
-        self.lay.setRowStretch(self.lay.rowCount(), 1)      
-        # 위젯이 전부 제거 되면 다시 입력창 생성
-        if self.cnt == 0:
-            self.editContact()
-        self.ignored_result = True        
+        reply = QMessageBox.question(self, '삭제 확인', '삭제하시겠습니까?\n삭제 후 저장버튼을 누르면 삭제됩니다.', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+        else:
+            j=0
+            btn = self.btnGroup.button(index)
+            # 삭제할 위젯 행 찾기
+            for i in range(len(self.del_btn)):
+                if btn == self.del_btn[i]:
+                    j = i
+            # 삭제할 위젯의 데이터 저장 
+            self.del_name.append(self.cName_le[j].text())
+            self.del_cont.append(self.cCont_le[j].text())
+            # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
+            for i in range(len(self.cName_lbl) - 1):
+                if i >= j:
+                    # 현재 행을 j행으로 이동
+                    self.cName_le[i].setText(self.cName_le[i + 1].text())
+                    self.cRel_cb[i].setCurrentText(self.cRel_cb[i + 1].currentText())
+                    self.cCont_le[i].setText(self.cCont_le[i + 1].text())
+            # 위젯이 하나 남기 전까지 위젯 삭제
+            if self.edit_num != 1:
+                # 위젯 한줄씩 삭제
+                for i in range(len(self.contactWidget)):
+                    self.lay.removeWidget(self.contactWidget[i][self.edit_num-1])
+                    self.contactWidget[i].pop(self.edit_num-1)
+                self.lay.removeWidget(self.del_btn[self.edit_num-1])
+                self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
+                self.del_btn.pop(self.edit_num-1)  
+                self.cnt-=1
+            # 위젯이 하나 남을 경우 에디터 초기화
+            else : 
+                self.cName_le[i].setText("")
+                self.cRel_cb[i].setCurrentIndex(0)
+                self.cCont_le[i].setText("")
+                self.cCont_le[i].setValidator(QIntValidator())
+                self.cCont_le[i].setMaxLength(11)
+            self.edit_num-=1
+            # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
+            if self.edit_num != 0:
+                self.lay.addWidget(self.add_btn, 2 + 3 * (len(self.cName_lbl)-1), 2)
+            self.lay.setRowStretch(self.lay.rowCount(), 1)      
+            # 위젯이 전부 제거 되면 다시 입력창 생성
+            if self.cnt == 0:
+                self.editContact()
+            self.ignored_result = True        
             
     
 class SchoolTab(QWidget):
@@ -736,7 +748,7 @@ class SchoolTab(QWidget):
                 query = "UPDATE SCHOOL_EDUCATION SET DATE_ADMITION = %s, DATE_GRADUATE = %s, NAME_SCHOOL = %s, LOCATION = %s, MAJOR = %s, SUB_MAJOR = %s, COMMENT = %s WHERE EMP_NUM = %s AND NAME_SCHOOL = %s;"
                 cur.execute(query, (sAdmit, sGrad, sName, sLoc, sMajor, sSubMajor, sComment, emp_num, sName,))
             elif self.schname_le[i].text() != '':
-                query = "INSERT INTO SCHOOL_EDUCATION VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
+                query = "INSERT INTO SCHOOL_EDUCATION(EMP_NUM, DATE_ADMITION, DATE_GRADUATE, NAME_SCHOOL, LOCATION, MAJOR, SUB_MAJOR, COMMENT) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
                 cur.execute(query, (emp_num, sAdmit, sGrad, sName, sLoc, sMajor, sSubMajor, sComment))
             conn.commit()
             
@@ -748,54 +760,58 @@ class SchoolTab(QWidget):
 
     # 231217 UI에서 위젯 삭제 by 정현아    
     def disappearSchool(self,index):
-        j=0
-        btn = self.btnGroup.button(index)
-        # 삭제할 위젯 행 찾기
-        for i in range(len(self.del_btn)):
-            if btn == self.del_btn[i]:
-                j = i
-        # 삭제할 위젯의 데이터 저장 
-        self.del_admitdate.append(self.scheadmit_de[j].date().toString("yyyy-MM-dd"))
-        self.del_name.append(self.schname_le[j].text())
-        # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
-        for i in range(len(self.scheadmit_lbl) - 1):
-            if i >= j:
-                # 현재 행을 j행으로 이동
-                self.scheadmit_de[i].setDate(self.scheadmit_de[i + 1].date())
-                self.schgrad_de[i].setDate(self.schgrad_de[i + 1].date())
-                self.schname_le[i].setText(self.schname_le[i + 1].text())
-                self.schloc_le[i].setText(self.schloc_le[i + 1].text())
-                self.schmajor_le[i].setText(self.schmajor_le[i + 1].text())
-                self.schsubmajor_le[i].setText(self.schsubmajor_le[i + 1].text())
-                self.comment_le[i].setText(self.comment_le[i + 1].text())
-        # 위젯이 하나 남기 전까지 위젯 삭제
-        if self.edit_num != 1:
-            # 위젯 한줄씩 삭제
-            for i in range(len(self.schWidget)):
-                self.lay.removeWidget(self.schWidget[i][self.edit_num-1])
-                self.schWidget[i].pop(self.edit_num-1)
-            self.lay.removeWidget(self.del_btn[self.edit_num-1])
-            self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
-            self.del_btn.pop(self.edit_num-1)  
-            self.cnt-=1
-        # 위젯이 하나 남을 경우 에디터 초기화
-        else : 
-            self.scheadmit_de[i].setDate(QDate(2000, 1, 1))
-            self.schgrad_de[i].setDate(QDate(2000, 1, 1))
-            self.schname_le[i].setText("")
-            self.schloc_le[i].setText("")
-            self.schmajor_le[i].setText("")
-            self.schsubmajor_le[i].setText("")
-            self.comment_le[i].setText("")
-        self.edit_num-=1
-        # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
-        if self.edit_num != 0:
-            self.lay.addWidget(self.add_btn, 6 + 7 * (len(self.scheadmit_lbl)-1), 2)
-        self.lay.setRowStretch(self.lay.rowCount(), 1)      
-        # 위젯이 전부 제거 되면 다시 입력창 생성
-        if self.cnt == 0:
-            self.editSchool()
-        self.ignored_result = True                   
+        reply = QMessageBox.question(self, '삭제 확인', '삭제하시겠습니까?\n삭제 후 저장버튼을 누르면 삭제됩니다.', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+        else:
+            j=0
+            btn = self.btnGroup.button(index)
+            # 삭제할 위젯 행 찾기
+            for i in range(len(self.del_btn)):
+                if btn == self.del_btn[i]:
+                    j = i
+            # 삭제할 위젯의 데이터 저장 
+            self.del_admitdate.append(self.scheadmit_de[j].date().toString("yyyy-MM-dd"))
+            self.del_name.append(self.schname_le[j].text())
+            # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
+            for i in range(len(self.scheadmit_lbl) - 1):
+                if i >= j:
+                    # 현재 행을 j행으로 이동
+                    self.scheadmit_de[i].setDate(self.scheadmit_de[i + 1].date())
+                    self.schgrad_de[i].setDate(self.schgrad_de[i + 1].date())
+                    self.schname_le[i].setText(self.schname_le[i + 1].text())
+                    self.schloc_le[i].setText(self.schloc_le[i + 1].text())
+                    self.schmajor_le[i].setText(self.schmajor_le[i + 1].text())
+                    self.schsubmajor_le[i].setText(self.schsubmajor_le[i + 1].text())
+                    self.comment_le[i].setText(self.comment_le[i + 1].text())
+            # 위젯이 하나 남기 전까지 위젯 삭제
+            if self.edit_num != 1:
+                # 위젯 한줄씩 삭제
+                for i in range(len(self.schWidget)):
+                    self.lay.removeWidget(self.schWidget[i][self.edit_num-1])
+                    self.schWidget[i].pop(self.edit_num-1)
+                self.lay.removeWidget(self.del_btn[self.edit_num-1])
+                self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
+                self.del_btn.pop(self.edit_num-1)  
+                self.cnt-=1
+            # 위젯이 하나 남을 경우 에디터 초기화
+            else : 
+                self.scheadmit_de[i].setDate(QDate(2000, 1, 1))
+                self.schgrad_de[i].setDate(QDate(2000, 1, 1))
+                self.schname_le[i].setText("")
+                self.schloc_le[i].setText("")
+                self.schmajor_le[i].setText("")
+                self.schsubmajor_le[i].setText("")
+                self.comment_le[i].setText("")
+            self.edit_num-=1
+            # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
+            if self.edit_num != 0:
+                self.lay.addWidget(self.add_btn, 6 + 7 * (len(self.scheadmit_lbl)-1), 2)
+            self.lay.setRowStretch(self.lay.rowCount(), 1)      
+            # 위젯이 전부 제거 되면 다시 입력창 생성
+            if self.cnt == 0:
+                self.editSchool()
+            self.ignored_result = True                   
     
     
 class CertificationTab(QWidget):
@@ -912,7 +928,7 @@ class CertificationTab(QWidget):
                         elif i % 2 == 0:
                             self.lay.addWidget(self.certwidget[i][j], int(i / 2) + 2 * j, 0)
                             if j < len(result):
-                                self.lay.addWidget(self.del_btn[j], int(i/2)-1 + 3 * j,2)
+                                self.lay.addWidget(self.del_btn[j], int(i/2)-1 + 2 * j,2)
                         elif i % 2 == 1:
                             self.lay.addWidget(self.certwidget[i][j], int(i / 2) + 2 * j, 1)
                             self.lay.addWidget(self.add_btn, int(i / 2) + 2 * j, 2)
@@ -958,7 +974,7 @@ class CertificationTab(QWidget):
                 cur.execute(query, (certName, certDate, emp_num, certName))
                 conn.commit()
             else:
-                query = "INSERT INTO CERTIFICATE VALUES(%s, %s, %s)"
+                query = "INSERT INTO CERTIFICATE(EMP_NUM, NAME_LICENSE, DATE_ACQUI) VALUES(%s, %s, %s)"
                 cur.execute(query, (emp_num, certName, certDate))
             conn.commit()
         if self.del_name:
@@ -968,43 +984,47 @@ class CertificationTab(QWidget):
                 conn.commit()         
 
     def disappearCertification(self,index):
-        j=0
-        btn = self.btnGroup.button(index)
-        # 삭제할 위젯 행 찾기
-        for i in range(len(self.del_btn)):
-            if btn == self.del_btn[i]:
-                j = i
-        # 삭제할 위젯의 데이터 저장 
-        self.del_name.append(self.certName_le[j].text())
-        # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
-        for i in range(len(self.certName_lbl) - 1):
-            if i >= j:
-                # 현재 행을 j행으로 이동
-                self.certName_le[i].setText(self.certName_le[i + 1].text())
-                self.certDate_de[i].setDate(self.certDate_de[i + 1].date())
-        # 위젯이 하나 남기 전까지 위젯 삭제
-        if self.edit_num != 1:
-            # 위젯 한줄씩 삭제
-            for i in range(len(self.certwidget)):
-                self.lay.removeWidget(self.certwidget[i][self.edit_num-1])
-                self.certwidget[i].pop(self.edit_num-1)
-            self.lay.removeWidget(self.del_btn[self.edit_num-1])
-            self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
-            self.del_btn.pop(self.edit_num-1)  
-            self.cnt-=1
-        # 위젯이 하나 남을 경우 에디터 초기화
-        else : 
-            self.certName_le[i].setText("")
-            self.certDate_de[i].setDate(QDate(2000, 1, 1))
-        self.edit_num-=1
-        # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
-        if self.edit_num != 0:
-            self.lay.addWidget(self.add_btn, 1 + 2 * (len(self.certName_lbl)-1), 2)
-        self.lay.setRowStretch(self.lay.rowCount(), 1)      
-        # 위젯이 전부 제거 되면 다시 입력창 생성
-        if self.cnt == 0:
-            self.editContact()
-        self.ignored_result = True    
+        reply = QMessageBox.question(self, '삭제 확인', '삭제하시겠습니까?\n삭제 후 저장버튼을 누르면 삭제됩니다.', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+        else:
+            j=0
+            btn = self.btnGroup.button(index)
+            # 삭제할 위젯 행 찾기
+            for i in range(len(self.del_btn)):
+                if btn == self.del_btn[i]:
+                    j = i
+            # 삭제할 위젯의 데이터 저장 
+            self.del_name.append(self.certName_le[j].text())
+            # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
+            for i in range(len(self.certName_lbl) - 1):
+                if i >= j:
+                    # 현재 행을 j행으로 이동
+                    self.certName_le[i].setText(self.certName_le[i + 1].text())
+                    self.certDate_de[i].setDate(self.certDate_de[i + 1].date())
+            # 위젯이 하나 남기 전까지 위젯 삭제
+            if self.edit_num != 1:
+                # 위젯 한줄씩 삭제
+                for i in range(len(self.certwidget)):
+                    self.lay.removeWidget(self.certwidget[i][self.edit_num-1])
+                    self.certwidget[i].pop(self.edit_num-1)
+                self.lay.removeWidget(self.del_btn[self.edit_num-1])
+                self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
+                self.del_btn.pop(self.edit_num-1)  
+                self.cnt-=1
+            # 위젯이 하나 남을 경우 에디터 초기화
+            else : 
+                self.certName_le[i].setText("")
+                self.certDate_de[i].setDate(QDate(2000, 1, 1))
+            self.edit_num-=1
+            # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
+            if self.edit_num != 0:
+                self.lay.addWidget(self.add_btn, 1 + 2 * (len(self.certName_lbl)-1), 2)
+            self.lay.setRowStretch(self.lay.rowCount(), 1)      
+            # 위젯이 전부 제거 되면 다시 입력창 생성
+            if self.cnt == 0:
+                self.editContact()
+            self.ignored_result = True    
 
 class CareerTab(QWidget):
     def __init__(self, emp_num, type):
@@ -1239,52 +1259,56 @@ class CareerTab(QWidget):
                     conn.commit() 
 
     def disappearCareer(self,index):
-        j=0
-        btn = self.btnGroup.button(index)
-        # 삭제할 위젯 행 찾기
-        for i in range(len(self.del_btn)):
-            if btn == self.del_btn[i]:
-                j = i
-        # 삭제할 위젯의 데이터 저장 
-        self.del_name.append(self.company_le[j].text())
-        self.del_dept.append(self.dept_le[j].text())
-        # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
-        for i in range(len(self.company_lbl) - 1):
-            if i >= j:
-                # 현재 행을 j행으로 이동
-                self.company_le[i].setDate(self.company_le[i + 1].text())
-                self.dept_le[i].setText(self.dept_le[i + 1].text())
-                self.datejoin_de[i].setText(self.datejoin_de[i + 1].date())
-                self.dateleave_de[i].setDate(self.dateleave_de[i + 1].date())
-                self.finalrank_le[i].setDate(self.finalrank_le[i + 1].text())
-                self.workinfo_le[i].setText(self.workinfo_le[i + 1].text())
-        # 위젯이 하나 남기 전까지 위젯 삭제
-        if self.edit_num != 1:
-            # 위젯 한줄씩 삭제
-            for i in range(len(self.widget)):
-                self.lay.removeWidget(self.widget[i][self.edit_num-1])
-                self.widget[i].pop(self.edit_num-1)
-            self.lay.removeWidget(self.del_btn[self.edit_num-1])
-            self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
-            self.del_btn.pop(self.edit_num-1)  
-            self.cnt-=1
-        # 위젯이 하나 남을 경우 에디터 초기화
-        else : 
-            self.company_le[i].setText("")
-            self.dept_le[i].setText("")
-            self.datejoin_de[i].setDate(QDate(2000, 1, 1))
-            self.dateleave_de[i].setDate(QDate(2000, 1, 1))
-            self.finalrank_le[i].setText("")
-            self.workinfo_le[i].setText("")
-        self.edit_num-=1
-        # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
-        if self.edit_num != 0:
-            self.lay.addWidget(self.add_btn, 6 + 7 * (len(self.company_lbl)-1), 2)
-        self.lay.setRowStretch(self.lay.rowCount(), 1)      
-        # 위젯이 전부 제거 되면 다시 입력창 생성
-        if self.cnt == 0:
-            self.editCareerInfo()
-        self.ignored_result = True  
+        reply = QMessageBox.question(self, '삭제 확인', '삭제하시겠습니까?\n삭제 후 저장버튼을 누르면 삭제됩니다.', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+        else:
+            j=0
+            btn = self.btnGroup.button(index)
+            # 삭제할 위젯 행 찾기
+            for i in range(len(self.del_btn)):
+                if btn == self.del_btn[i]:
+                    j = i
+            # 삭제할 위젯의 데이터 저장 
+            self.del_name.append(self.company_le[j].text())
+            self.del_dept.append(self.dept_le[j].text())
+            # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
+            for i in range(len(self.company_lbl) - 1):
+                if i >= j:
+                    # 현재 행을 j행으로 이동
+                    self.company_le[i].setDate(self.company_le[i + 1].text())
+                    self.dept_le[i].setText(self.dept_le[i + 1].text())
+                    self.datejoin_de[i].setText(self.datejoin_de[i + 1].date())
+                    self.dateleave_de[i].setDate(self.dateleave_de[i + 1].date())
+                    self.finalrank_le[i].setDate(self.finalrank_le[i + 1].text())
+                    self.workinfo_le[i].setText(self.workinfo_le[i + 1].text())
+            # 위젯이 하나 남기 전까지 위젯 삭제
+            if self.edit_num != 1:
+                # 위젯 한줄씩 삭제
+                for i in range(len(self.widget)):
+                    self.lay.removeWidget(self.widget[i][self.edit_num-1])
+                    self.widget[i].pop(self.edit_num-1)
+                self.lay.removeWidget(self.del_btn[self.edit_num-1])
+                self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
+                self.del_btn.pop(self.edit_num-1)  
+                self.cnt-=1
+            # 위젯이 하나 남을 경우 에디터 초기화
+            else : 
+                self.company_le[i].setText("")
+                self.dept_le[i].setText("")
+                self.datejoin_de[i].setDate(QDate(2000, 1, 1))
+                self.dateleave_de[i].setDate(QDate(2000, 1, 1))
+                self.finalrank_le[i].setText("")
+                self.workinfo_le[i].setText("")
+            self.edit_num-=1
+            # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
+            if self.edit_num != 0:
+                self.lay.addWidget(self.add_btn, 6 + 7 * (len(self.company_lbl)-1), 2)
+            self.lay.setRowStretch(self.lay.rowCount(), 1)      
+            # 위젯이 전부 제거 되면 다시 입력창 생성
+            if self.cnt == 0:
+                self.editCareerInfo()
+            self.ignored_result = True  
     
 class TechnicalTab(QWidget):
     def __init__(self, emp_num, type):
@@ -1468,7 +1492,7 @@ class TechnicalTab(QWidget):
                 query = "UPDATE TECHNICAL SET TEC_DETAIL = %s, PROFICIENCY = %s, NOTE = %s WHERE EMP_NUM = %s AND TEC_DETAIL = %s;"
                 cur.execute(query, (techDet, proficiency, note, emp_num, techDet))
             else:
-                query = "INSERT INTO TECHNICAL VALUES (%s, %s, %s, %s);"
+                query = "INSERT INTO TECHNICAL (EMP_NUM, TEC_DETAIL, PROFICIENCY, NOTE) VALUES (%s, %s, %s, %s);"
                 cur.execute(query, (emp_num, techDet, proficiency, note))
             conn.commit()
         # 삭제리스트가 있으면 삭제
@@ -1479,45 +1503,49 @@ class TechnicalTab(QWidget):
                 conn.commit() 
 
     def disappearTech(self,index):
-        j=0
-        btn = self.btnGroup.button(index)
-        # 삭제할 위젯 행 찾기
-        for i in range(len(self.del_btn)):
-            if btn == self.del_btn[i]:
-                j = i
-        # 삭제할 위젯의 데이터 저장 
-        self.del_name.append(self.techDet_le[j].text())
-        # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
-        for i in range(len(self.techDet_lbl) - 1):
-            if i >= j:
-                # 현재 행을 j행으로 이동
-                self.techDet_le[i].setText(self.techDet_le[i + 1].text())
-                self.pro_cb[i].setCurrentText(self.pro_cb[i + 1].currentText())
-                self.note_le[i].setText(self.note_le[i + 1].text())
-        # 위젯이 하나 남기 전까지 위젯 삭제
-        if self.edit_num != 1:
-            # 위젯 한줄씩 삭제
-            for i in range(len(self.widget)):
-                self.lay.removeWidget(self.widget[i][self.edit_num-1])
-                self.widget[i].pop(self.edit_num-1)
-            self.lay.removeWidget(self.del_btn[self.edit_num-1])
-            self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
-            self.del_btn.pop(self.edit_num-1)  
-            self.cnt-=1
-        # 위젯이 하나 남을 경우 에디터 초기화
-        else : 
-            self.techDet_le[i].setText("")
-            self.pro_cb[i].setCurrentIndex(0)
-            self.note_le[i].setText("")
-        self.edit_num-=1
-        # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
-        if self.edit_num != 0:
-            self.lay.addWidget(self.add_btn, 2 + 3 * (len(self.techDet_lbl)-1), 2)
-        self.lay.setRowStretch(self.lay.rowCount(), 1)      
-        # 위젯이 전부 제거 되면 다시 입력창 생성
-        if self.cnt == 0:
-            self.editTechMember()
-        self.ignored_result = True   
+        reply = QMessageBox.question(self, '삭제 확인', '삭제하시겠습니까?\n삭제 후 저장버튼을 누르면 삭제됩니다.', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+        else:
+            j=0
+            btn = self.btnGroup.button(index)
+            # 삭제할 위젯 행 찾기
+            for i in range(len(self.del_btn)):
+                if btn == self.del_btn[i]:
+                    j = i
+            # 삭제할 위젯의 데이터 저장 
+            self.del_name.append(self.techDet_le[j].text())
+            # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
+            for i in range(len(self.techDet_lbl) - 1):
+                if i >= j:
+                    # 현재 행을 j행으로 이동
+                    self.techDet_le[i].setText(self.techDet_le[i + 1].text())
+                    self.pro_cb[i].setCurrentText(self.pro_cb[i + 1].currentText())
+                    self.note_le[i].setText(self.note_le[i + 1].text())
+            # 위젯이 하나 남기 전까지 위젯 삭제
+            if self.edit_num != 1:
+                # 위젯 한줄씩 삭제
+                for i in range(len(self.widget)):
+                    self.lay.removeWidget(self.widget[i][self.edit_num-1])
+                    self.widget[i].pop(self.edit_num-1)
+                self.lay.removeWidget(self.del_btn[self.edit_num-1])
+                self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
+                self.del_btn.pop(self.edit_num-1)  
+                self.cnt-=1
+            # 위젯이 하나 남을 경우 에디터 초기화
+            else : 
+                self.techDet_le[i].setText("")
+                self.pro_cb[i].setCurrentIndex(0)
+                self.note_le[i].setText("")
+            self.edit_num-=1
+            # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
+            if self.edit_num != 0:
+                self.lay.addWidget(self.add_btn, 2 + 3 * (len(self.techDet_lbl)-1), 2)
+            self.lay.setRowStretch(self.lay.rowCount(), 1)      
+            # 위젯이 전부 제거 되면 다시 입력창 생성
+            if self.cnt == 0:
+                self.editTechMember()
+            self.ignored_result = True   
     
 class RPTab(QWidget):
     def __init__(self, emp_num, type):
@@ -1713,7 +1741,7 @@ class RPTab(QWidget):
                 query = "UPDATE R_P SET NAME_REW_PUNI = %s, SCORE = %s, DATE_REW_PUNI = %s, NOTE = %s WHERE EMP_NUM = %s AND NAME_REW_PUNI = %s AND DATE_REW_PUNI = %s;"
                 cur.execute(query, (rpName, rpScore, rpDate, rpNote, emp_num, rpName, rpDate,))
             else:
-                query = "INSERT INTO R_P VALUES (%s, %s, %s, %s, %s)"
+                query = "INSERT INTO R_P (EMP_NUM, NAME_REW_PUNI, SCORE, DATE_REW_PUNI, NOTE) VALUES (%s, %s, %s, %s, %s)"
                 cur.execute(query, (emp_num, rpName, rpScore, rpDate, rpNote))
             conn.commit()
         if self.del_name:
@@ -1723,49 +1751,53 @@ class RPTab(QWidget):
                 conn.commit() 
 
     def disappearRP(self,index):
-        j=0
-        btn = self.btnGroup.button(index)
-        # 삭제할 위젯 행 찾기
-        for i in range(len(self.del_btn)):
-            if btn == self.del_btn[i]:
-                j = i
-        # 삭제할 위젯의 데이터 저장 
-        self.del_name.append(self.rpName_le[j].text())
-        self.del_date.append(self.rpDate_de[j].date().toString("yyyy-MM-dd"))
-        # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
-        for i in range(len(self.rpName_lbl) - 1):
-            if i >= j:
-                # 현재 행을 j행으로 이동
-                self.rpName_le[i].setText(self.rpName_le[i + 1].text())
-                self.rpScore_le[i].setText(self.rpScore_le[i + 1].text())
-                self.rpDate_de[i].setDate(self.rpDate_de[i + 1].date())
-                self.rpNote_le[i].setText(self.rpNote_le[i + 1].text())
-        # 위젯이 하나 남기 전까지 위젯 삭제
-        if self.edit_num != 1:
-            # 위젯 한줄씩 삭제
-            for i in range(len(self.widget)):
-                self.lay.removeWidget(self.widget[i][self.edit_num-1])
-                self.widget[i].pop(self.edit_num-1)
-            self.lay.removeWidget(self.del_btn[self.edit_num-1])
-            self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
-            self.del_btn.pop(self.edit_num-1)  
-            self.cnt-=1
-        # 위젯이 하나 남을 경우 에디터 초기화
-        else : 
-            self.rpName_le[i].setText("")
-            self.rpScore_le[i].setText("")
-            self.rpDate_de[i].setDate(QDate(2000, 1, 1))
-            self.rpNote_le[i].setText("")
-            self.rpScore_le[i].setValidator(QIntValidator())
-        self.edit_num-=1
-        # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
-        if self.edit_num != 0:
-            self.lay.addWidget(self.add_btn, 2 + 3 * (len(self.rpName_lbl)-1), 2)
-        self.lay.setRowStretch(self.lay.rowCount(), 1)      
-        # 위젯이 전부 제거 되면 다시 입력창 생성
-        if self.cnt == 0:
-            self.editRPMember()
-        self.ignored_result = True     
+        reply = QMessageBox.question(self, '삭제 확인', '삭제하시겠습니까?\n삭제 후 저장버튼을 누르면 삭제됩니다.', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+        else:
+            j=0
+            btn = self.btnGroup.button(index)
+            # 삭제할 위젯 행 찾기
+            for i in range(len(self.del_btn)):
+                if btn == self.del_btn[i]:
+                    j = i
+            # 삭제할 위젯의 데이터 저장 
+            self.del_name.append(self.rpName_le[j].text())
+            self.del_date.append(self.rpDate_de[j].date().toString("yyyy-MM-dd"))
+            # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
+            for i in range(len(self.rpName_lbl) - 1):
+                if i >= j:
+                    # 현재 행을 j행으로 이동
+                    self.rpName_le[i].setText(self.rpName_le[i + 1].text())
+                    self.rpScore_le[i].setText(self.rpScore_le[i + 1].text())
+                    self.rpDate_de[i].setDate(self.rpDate_de[i + 1].date())
+                    self.rpNote_le[i].setText(self.rpNote_le[i + 1].text())
+            # 위젯이 하나 남기 전까지 위젯 삭제
+            if self.edit_num != 1:
+                # 위젯 한줄씩 삭제
+                for i in range(len(self.widget)):
+                    self.lay.removeWidget(self.widget[i][self.edit_num-1])
+                    self.widget[i].pop(self.edit_num-1)
+                self.lay.removeWidget(self.del_btn[self.edit_num-1])
+                self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
+                self.del_btn.pop(self.edit_num-1)  
+                self.cnt-=1
+            # 위젯이 하나 남을 경우 에디터 초기화
+            else : 
+                self.rpName_le[i].setText("")
+                self.rpScore_le[i].setText("")
+                self.rpDate_de[i].setDate(QDate(2000, 1, 1))
+                self.rpNote_le[i].setText("")
+                self.rpScore_le[i].setValidator(QIntValidator())
+            self.edit_num-=1
+            # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
+            if self.edit_num != 0:
+                self.lay.addWidget(self.add_btn, 2 + 3 * (len(self.rpName_lbl)-1), 2)
+            self.lay.setRowStretch(self.lay.rowCount(), 1)      
+            # 위젯이 전부 제거 되면 다시 입력창 생성
+            if self.cnt == 0:
+                self.editRPMember()
+            self.ignored_result = True     
     
 class RSTab(QWidget):
     def __init__(self, emp_num, type):
@@ -1940,7 +1972,7 @@ class RSTab(QWidget):
                 query = "UPDATE R_S SET EMP_RANK = %s, SALARY = %s, DATE_JOIN = %s WHERE EMP_NUM = %s AND EMP_RANK = %s;"
                 cur.execute(query, (rsRANK, rsSal, rsDate, emp_num, rsRANK))
             else:
-                query = "INSERT INTO R_S VALUES (%s, %s, %s, %s)"
+                query = "INSERT INTO R_S (EMP_NUM, EMP_RANK, SALARY, DATE_JOIN) VALUES (%s, %s, %s, %s)"
                 cur.execute(query, (emp_num, rsRANK, rsSal, rsDate))
             conn.commit()
         if self.del_rank:
@@ -1950,42 +1982,46 @@ class RSTab(QWidget):
                 conn.commit() 
 
     def disappearRS(self,index):
-        j=0
-        btn = self.btnGroup.button(index)
-        # 삭제할 위젯 행 찾기
-        for i in range(len(self.del_btn)):
-            if btn == self.del_btn[i]:
-                j = i
-        # 삭제할 위젯의 데이터 저장 
-        self.del_rank.append(self.rsRANK_le[j].text())
-        # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
-        for i in range(len(self.rsRANK_lbl) - 1):
-            if i >= j:
-                # 현재 행을 j행으로 이동
-                self.rsRANK_le[i].setText(self.rsRANK_le[i + 1].text())
-                self.rsSal_le[i].setText(self.rsSal_le[i + 1].text())
-                self.rsDate_de[i].setDate(self.rsDate_de[i + 1].date())
-        # 위젯이 하나 남기 전까지 위젯 삭제
-        if self.edit_num != 1:
-            # 위젯 한줄씩 삭제
-            for i in range(len(self.widget)):
-                self.lay.removeWidget(self.widget[i][self.edit_num-1])
-                self.widget[i].pop(self.edit_num-1)
-            self.lay.removeWidget(self.del_btn[self.edit_num-1])
-            self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
-            self.del_btn.pop(self.edit_num-1)  
-            self.cnt-=1
-        # 위젯이 하나 남을 경우 에디터 초기화
-        else : 
-            self.rsRANK_le[i].setText("")
-            self.rsSal_le[i].setText("")
-            self.rsDate_de[i].setDate(QDate(2000, 1, 1))
-        self.edit_num-=1
-        # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
-        if self.edit_num != 0:
-            self.lay.addWidget(self.add_btn, 2 + 3 * (len(self.rsRANK_lbl)-1), 2)
-        self.lay.setRowStretch(self.lay.rowCount(), 1)      
-        # 위젯이 전부 제거 되면 다시 입력창 생성
-        if self.cnt == 0:
-            self.editRSMember()
-        self.ignored_result = True 
+        reply = QMessageBox.question(self, '삭제 확인', '삭제하시겠습니까?\n삭제 후 저장버튼을 누르면 삭제됩니다.', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.No:
+            return
+        else:
+            j=0
+            btn = self.btnGroup.button(index)
+            # 삭제할 위젯 행 찾기
+            for i in range(len(self.del_btn)):
+                if btn == self.del_btn[i]:
+                    j = i
+            # 삭제할 위젯의 데이터 저장 
+            self.del_rank.append(self.rsRANK_le[j].text())
+            # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
+            for i in range(len(self.rsRANK_lbl) - 1):
+                if i >= j:
+                    # 현재 행을 j행으로 이동
+                    self.rsRANK_le[i].setText(self.rsRANK_le[i + 1].text())
+                    self.rsSal_le[i].setText(self.rsSal_le[i + 1].text())
+                    self.rsDate_de[i].setDate(self.rsDate_de[i + 1].date())
+            # 위젯이 하나 남기 전까지 위젯 삭제
+            if self.edit_num != 1:
+                # 위젯 한줄씩 삭제
+                for i in range(len(self.widget)):
+                    self.lay.removeWidget(self.widget[i][self.edit_num-1])
+                    self.widget[i].pop(self.edit_num-1)
+                self.lay.removeWidget(self.del_btn[self.edit_num-1])
+                self.btnGroup.removeButton(self.del_btn[self.edit_num-1])
+                self.del_btn.pop(self.edit_num-1)  
+                self.cnt-=1
+            # 위젯이 하나 남을 경우 에디터 초기화
+            else : 
+                self.rsRANK_le[i].setText("")
+                self.rsSal_le[i].setText("")
+                self.rsDate_de[i].setDate(QDate(2000, 1, 1))
+            self.edit_num-=1
+            # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
+            if self.edit_num != 0:
+                self.lay.addWidget(self.add_btn, 2 + 3 * (len(self.rsRANK_lbl)-1), 2)
+            self.lay.setRowStretch(self.lay.rowCount(), 1)      
+            # 위젯이 전부 제거 되면 다시 입력창 생성
+            if self.cnt == 0:
+                self.editRSMember()
+            self.ignored_result = True 
