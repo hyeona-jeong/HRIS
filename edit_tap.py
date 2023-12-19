@@ -39,6 +39,7 @@ class FamilyTab(QWidget):
             self.add_btn = QPushButton("추가")
             self.btnGroup = QButtonGroup(self)
             self.del_btn = []
+            self.idx_list = []
             self.editFamilyMember()
             self.cnt = self.result_num
             self.edit_num = self.result_num
@@ -135,6 +136,7 @@ class FamilyTab(QWidget):
                         self.fLive_cb[i].setCurrentText(result[i][3])
                         self.del_btn.append(QPushButton("삭제",self))
                         self.btnGroup.addButton(self.del_btn[i])
+                        self.idx_list.append(result[i][4])
                         
                 elif self.no_del_cnt != 0:
                     self.fName_lbl.append(QLabel("가족성명"))
@@ -171,7 +173,7 @@ class FamilyTab(QWidget):
             else:
                 QMessageBox.information(self,"경고","5번 이상 등록하실 수 없습니다.")
             
-    def setData(self,emp_num, fName = None):
+    def setData(self,emp_num):
         conn = pymysql.connect(
                 host='localhost',
                 user='dev',
@@ -181,12 +183,8 @@ class FamilyTab(QWidget):
                 charset='utf8'
         )
         cur = conn.cursor()
-        if fName is None:
-            query = "SELECT NAME_FAMILY, BIRTH, REL, LIVE FROM FAMILY WHERE EMP_NUM = %s;"
-            cur.execute(query,(emp_num,))
-        else : 
-            query = "SELECT IDX FROM FAMILY WHERE EMP_NUM = %s AND NAME_FAMILY =%s;"
-            cur.execute(query,(emp_num,fName))
+        query = "SELECT NAME_FAMILY, BIRTH, REL, LIVE, IDX FROM FAMILY WHERE EMP_NUM = %s;"
+        cur.execute(query,(emp_num,))
         result = cur.fetchall()
         conn.close()
         return result
@@ -199,17 +197,15 @@ class FamilyTab(QWidget):
         if not result and self.fName_le[0].text() == '':
             return
         for i in range(len(self.fName_lbl)):
-            family_info = False
             fName = self.fName_le[i].text()
             fYear = self.fYear_de[i].date().toString("yyyy-MM-dd")
             birth = self.fYear_de[i].date()
             age = int(birth.daysTo(QDate.currentDate())/365)
             fRel = self.fRel_cb[i].currentText()
             fLive = self.fLive_cb[i].currentText()
-            family_info = self.setData(self.emp_num, fName)
-            idx = family_info
             # 저장된 데이터가 있으면 UPDATE, 없으면 INSERT
-            if family_info:
+            if i < len(self.idx_list):
+                idx = self.idx_list[i]
                 query = "UPDATE FAMILY SET NAME_FAMILY = %s, BIRTH = %s, AGE = %s, REL = %s, LIVE = %s WHERE IDX = %s;"
                 cur.execute(query, (fName, fYear, age, fRel, fLive, idx,))
             elif self.fName_le[i].text() != '':
@@ -235,9 +231,9 @@ class FamilyTab(QWidget):
             for i in range(len(self.del_btn)):
                 if btn == self.del_btn[i]:
                     j = i
-            result = self.setData(self.emp_num, self.fName_le[j].text())
-            # 삭제할 위젯의 데이터 저장 
-            self.del_idx.append(result[0])
+            # 삭제할 위젯의 인덱스 저장 
+            del_item = self.idx_list.pop(j)
+            self.del_idx.append(del_item)
             # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
             for i in range(len(self.fName_lbl) - 1):
                 if i >= j:
@@ -304,11 +300,11 @@ class ContactTab(QWidget):
             self.add_btn = QPushButton("추가")
             self.btnGroup = QButtonGroup(self)
             self.del_btn = []
+            self.idx_list = []
             self.editContact()
             self.cnt = self.result_num
             self.edit_num = self.result_num
-            self.del_name = []
-            self.del_cont = []
+            self.del_idx = []
             self.add_btn.clicked.connect(self.editContact)
             self.btnGroup.buttonClicked[int].connect(self.disappearContact)
             
@@ -394,6 +390,7 @@ class ContactTab(QWidget):
                         self.cCont_le.append(QLineEdit(result[i][2]))
                         self.del_btn.append(QPushButton("삭제",self))
                         self.btnGroup.addButton(self.del_btn[i])
+                        self.idx_list.append(result[i][3])
                         
                 elif self.no_del_cnt != 0:
                     self.cName_lbl.append(QLabel("성명"))
@@ -442,7 +439,7 @@ class ContactTab(QWidget):
                 charset='utf8'
         )
         cur = conn.cursor()
-        query = "SELECT NAME, REL, PHONE FROM CONTACT WHERE EMP_NUM = %s;"
+        query = "SELECT NAME, REL, PHONE, IDX FROM CONTACT WHERE EMP_NUM = %s;"
         cur.execute(query,(emp_num,))
         result = cur.fetchall()
         conn.close()
@@ -460,21 +457,19 @@ class ContactTab(QWidget):
             cRel = self.cRel_cb[i].currentText()
             cCont = self.cCont_le[i].text()
             # 저장된 데이터가 있으면 UPDATE, 없으면 INSERT
-            query = "SELECT * FROM CONTACT WHERE EMP_NUM = %s AND NAME = %s AND PHONE = %s;"
-            cur.execute(query, (self.emp_num, cName, cCont,))
-            contact_info = cur.fetchone()
-            if contact_info:
-                query = "UPDATE CONTACT SET NAME = %s, REL = %s, PHONE = %s WHERE EMP_NUM = %s AND NAME = %s AND PHONE = %s;"
-                cur.execute(query, (cName, cRel, cCont, emp_num, cName, cCont,))
+            if i < len(self.idx_list):
+                idx = self.idx_list[i]
+                query = "UPDATE CONTACT SET NAME = %s, REL = %s, PHONE = %s WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (cName, cRel, cCont, emp_num, idx,))
             elif self.cName_le[i].text() != '':
                 query = "INSERT INTO CONTACT(EMP_NUM, NAME, REL, PHONE) VALUES(%s, %s, %s, %s)"
                 cur.execute(query, (emp_num, cName, cRel, cCont))
             conn.commit()
         # 삭제리스트가 있으면 삭제
-        if self.del_name:
-            for i in range(len(self.del_name)):
-                query = "DELETE FROM CONTACT WHERE EMP_NUM = %s AND NAME = %s AND PHONE = %s;"
-                cur.execute(query, (emp_num, self.del_name[i], self.del_cont[i],))
+        if self.del_idx:
+            for idx in self.del_idx:
+                query = "DELETE FROM CONTACT WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (emp_num, idx,))
                 conn.commit() 
                 
     def disappearContact(self,index):
@@ -488,9 +483,9 @@ class ContactTab(QWidget):
             for i in range(len(self.del_btn)):
                 if btn == self.del_btn[i]:
                     j = i
-            # 삭제할 위젯의 데이터 저장 
-            self.del_name.append(self.cName_le[j].text())
-            self.del_cont.append(self.cCont_le[j].text())
+            # 삭제할 위젯의  저장 
+            del_item = self.idx_list.pop(j)
+            self.del_idx.append(del_item)
             # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
             for i in range(len(self.cName_lbl) - 1):
                 if i >= j:
@@ -568,11 +563,11 @@ class SchoolTab(QWidget):
             self.add_btn = QPushButton("추가")
             self.btnGroup = QButtonGroup(self)
             self.del_btn = []
+            self.idx_list = []
             self.editSchool()
             self.cnt = self.result_num
             self.edit_num = self.result_num
-            self.del_admitdate = []
-            self.del_name = []
+            self.del_idx = []
             self.add_btn.clicked.connect(self.editSchool)
             self.btnGroup.buttonClicked[int].connect(self.disappearSchool)
 
@@ -670,6 +665,7 @@ class SchoolTab(QWidget):
                         self.comment_le.append(QLineEdit(result[i][6]))
                         self.del_btn.append(QPushButton("삭제",self))
                         self.btnGroup.addButton(self.del_btn[i])
+                        self.idx_list.append(result[i][7])
 
                 elif self.no_del_cnt != 0:
                     self.scheadmit_lbl.append(QLabel("입학일"))
@@ -719,7 +715,7 @@ class SchoolTab(QWidget):
                 charset='utf8'
         )
         cur = conn.cursor()
-        query = "SELECT DATE_ADMITION, DATE_GRADUATE, NAME_SCHOOL, LOCATION, MAJOR, SUB_MAJOR, COMMENT FROM SCHOOL_EDUCATION WHERE EMP_NUM = %s;"
+        query = "SELECT DATE_ADMITION, DATE_GRADUATE, NAME_SCHOOL, LOCATION, MAJOR, SUB_MAJOR, COMMENT, IDX FROM SCHOOL_EDUCATION WHERE EMP_NUM = %s;"
         cur.execute(query,(emp_num,))
         result = cur.fetchall()
         conn.close()
@@ -729,7 +725,7 @@ class SchoolTab(QWidget):
     def saveSchool(self, emp_num, cur, conn):
         result = self.setData(emp_num)
         # 저장된 정보가 없고 첫 라인에디트가 비어있으면 리턴
-        if not result and self.fName_le[0].text() == '':
+        if not result and self.schname_le[0].text() == '':
             return
         for i in range(len(self.scheadmit_lbl)):
             sAdmit = self.scheadmit_de[i].date().toString("yyyy-MM-dd")
@@ -741,22 +737,20 @@ class SchoolTab(QWidget):
             sComment = self.comment_le[i].text()
             
             # 저장된 데이터가 있으면 UPDATE, 없으면 INSERT
-            query = "SELECT * FROM SCHOOL_EDUCATION WHERE EMP_NUM= %s AND DATE_ADMITION= %s AND NAME_SCHOOL= %s;"
-            cur.execute(query, (self.emp_num, sAdmit, sName,))
-            school_info = cur.fetchone()
-            if school_info:
-                query = "UPDATE SCHOOL_EDUCATION SET DATE_ADMITION = %s, DATE_GRADUATE = %s, NAME_SCHOOL = %s, LOCATION = %s, MAJOR = %s, SUB_MAJOR = %s, COMMENT = %s WHERE EMP_NUM = %s AND NAME_SCHOOL = %s;"
-                cur.execute(query, (sAdmit, sGrad, sName, sLoc, sMajor, sSubMajor, sComment, emp_num, sName,))
+            if i < len(self.idx_list):
+                idx = self.idx_list[i]
+                query = "UPDATE SCHOOL_EDUCATION SET DATE_ADMITION = %s, DATE_GRADUATE = %s, NAME_SCHOOL = %s, LOCATION = %s, MAJOR = %s, SUB_MAJOR = %s, COMMENT = %s WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (sAdmit, sGrad, sName, sLoc, sMajor, sSubMajor, sComment, emp_num, idx,))
             elif self.schname_le[i].text() != '':
                 query = "INSERT INTO SCHOOL_EDUCATION(EMP_NUM, DATE_ADMITION, DATE_GRADUATE, NAME_SCHOOL, LOCATION, MAJOR, SUB_MAJOR, COMMENT) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"
                 cur.execute(query, (emp_num, sAdmit, sGrad, sName, sLoc, sMajor, sSubMajor, sComment))
             conn.commit()
             
-            if self.del_name:
-                for i in range(len(self.del_name)):
-                    query = "DELETE FROM SCHOOL_EDUCATION WHERE EMP_NUM = %s AND DATE_ADMITION = %s AND NAME_SCHOOL = %s;"
-                    cur.execute(query, (emp_num, self.del_admitdate[i],self.del_name[i],))
-                    conn.commit() 
+        if self.del_idx:
+            for idx in self.del_idx:
+                query = "DELETE FROM SCHOOL_EDUCATION WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (emp_num, idx,))
+                conn.commit() 
 
     # 231217 UI에서 위젯 삭제 by 정현아    
     def disappearSchool(self,index):
@@ -771,8 +765,8 @@ class SchoolTab(QWidget):
                 if btn == self.del_btn[i]:
                     j = i
             # 삭제할 위젯의 데이터 저장 
-            self.del_admitdate.append(self.scheadmit_de[j].date().toString("yyyy-MM-dd"))
-            self.del_name.append(self.schname_le[j].text())
+            del_item = self.idx_list.pop(j) 
+            self.del_idx.append(del_item)
             # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
             for i in range(len(self.scheadmit_lbl) - 1):
                 if i >= j:
@@ -845,10 +839,11 @@ class CertificationTab(QWidget):
             self.add_btn = QPushButton("추가")   
             self.btnGroup = QButtonGroup(self)
             self.del_btn = []
+            self.idx_list = []
             self.editCertification()
             self.cnt = self.result_num
             self.edit_num = self.result_num
-            self.del_name = []
+            self.del_idx = []
             self.add_btn.clicked.connect(self.editCertification)
             self.btnGroup.buttonClicked[int].connect(self.disappearCertification)
 
@@ -914,6 +909,7 @@ class CertificationTab(QWidget):
                         self.certDate_de.append(QDateEdit(QDate.fromString(result[i][1].strftime("%Y-%m-%d"), "yyyy-MM-dd")))
                         self.del_btn.append(QPushButton("삭제",self))
                         self.btnGroup.addButton(self.del_btn[i])
+                        self.idx_list.append(result[i][2])
                 
                 elif self.no_del_cnt != 0:
                     self.certName_lbl.append(QLabel("자격증명"))
@@ -949,7 +945,7 @@ class CertificationTab(QWidget):
                 charset='utf8'
         )
         cur = conn.cursor()
-        query = "SELECT NAME_LICENSE, DATE_ACQUI FROM CERTIFICATE WHERE EMP_NUM = %s;"
+        query = "SELECT NAME_LICENSE, DATE_ACQUI, IDX FROM CERTIFICATE WHERE EMP_NUM = %s;"
         cur.execute(query,(emp_num,))
         result = cur.fetchall()
         conn.close()
@@ -959,28 +955,25 @@ class CertificationTab(QWidget):
         # 저장된 정보를 가져옴
         result = self.setData(self.emp_num)
         # 저장된 정보가 없고 첫 라인에디트가 비어있으면 리턴
-        if not result and self.cName_le[0].text() == '':
+        if not result and self.certName_le[0].text() == '':
             return
         for i in range(len(self.certName_lbl)):
-            cert_info = False
             certName = self.certName_le[i].text()
             certDate = self.certDate_de[i].date().toString("yyyy-MM-dd")
             # 저장된 데이터가 있으면 UPDATE, 없으면 INSERT
-            query = "SELECT * FROM CERTIFICATE WHERE EMP_NUM = %s AND NAME_LICENSE = %s;"
-            cur.execute(query, (self.emp_num, certName, ))
-            cert_info = cur.fetchone()
-            if cert_info:
-                query = "UPDATE CERTIFICATE SET NAME_LICENSE = %s, DATE_ACQUI = %s WHERE EMP_NUM = %s AND NAME_LICENSE = %s;"
-                cur.execute(query, (certName, certDate, emp_num, certName))
+            if i < len(self.idx_list):
+                idx = self.idx_list[i]
+                query = "UPDATE CERTIFICATE SET NAME_LICENSE = %s, DATE_ACQUI = %s WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (certName, certDate, emp_num, idx,))
                 conn.commit()
             else:
                 query = "INSERT INTO CERTIFICATE(EMP_NUM, NAME_LICENSE, DATE_ACQUI) VALUES(%s, %s, %s)"
                 cur.execute(query, (emp_num, certName, certDate))
             conn.commit()
-        if self.del_name:
-            for name in self.del_name:
-                query = "DELETE FROM CERTIFICATE WHERE EMP_NUM = %s AND NAME_LICENSE = %s;"
-                cur.execute(query, (emp_num, name,))
+        if self.del_idx:
+            for idx in self.del_idx:
+                query = "DELETE FROM CERTIFICATE WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (emp_num, idx,))
                 conn.commit()         
 
     def disappearCertification(self,index):
@@ -995,7 +988,8 @@ class CertificationTab(QWidget):
                 if btn == self.del_btn[i]:
                     j = i
             # 삭제할 위젯의 데이터 저장 
-            self.del_name.append(self.certName_le[j].text())
+            del_item = self.idx_list.pop(j)
+            self.del_idx.append(del_item)
             # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
             for i in range(len(self.certName_lbl) - 1):
                 if i >= j:
@@ -1066,11 +1060,11 @@ class CareerTab(QWidget):
             self.add_btn = QPushButton("추가")
             self.btnGroup = QButtonGroup(self)
             self.del_btn = []
+            self.idx_list = []
             self.editCareerInfo()
             self.cnt = self.result_num
             self.edit_num = self.result_num
-            self.del_name = []
-            self.del_dept = []
+            self.del_idx = []
             self.add_btn.clicked.connect(self.editCareerInfo)
             self.btnGroup.buttonClicked[int].connect(self.disappearCareer)
 
@@ -1162,6 +1156,7 @@ class CareerTab(QWidget):
                         self.workinfo_le.append(QLineEdit(result[i][5]))
                         self.del_btn.append(QPushButton("삭제",self))
                         self.btnGroup.addButton(self.del_btn[i])
+                        self.idx_list.append(result[i][6])
 
                 elif self.no_del_cnt != 0:
                     self.company_lbl.append(QLabel("근무회사"))
@@ -1207,7 +1202,7 @@ class CareerTab(QWidget):
                 charset='utf8'
         )
         cur = conn.cursor()
-        query = "SELECT COMPANY, DEPARTMENT, DATE_JOIN, DATE_LEAVE, FINAL_RANK, WORK_INFO FROM CAREER WHERE EMP_NUM = %s;"
+        query = "SELECT COMPANY, DEPARTMENT, DATE_JOIN, DATE_LEAVE, FINAL_RANK, WORK_INFO, IDX FROM CAREER WHERE EMP_NUM = %s;"
         cur.execute(query,(emp_num,))
         result = cur.fetchall()
         conn.close()
@@ -1219,7 +1214,6 @@ class CareerTab(QWidget):
         if not result and self.company_le[0].text() == '':
             return
         for i in range(len(self.company_lbl)):
-            career_info = False
             company = self.company_le[i].text()
             dept = self.dept_le[i].text()
             datejoin = self.datejoin_de[i].date().toString("yyyy-MM-dd")
@@ -1232,16 +1226,14 @@ class CareerTab(QWidget):
             workinfo = self.workinfo_le[i].text()
             
             # 저장된 데이터가 있으면 UPDATE, 없으면 INSERT
-            query = "SELECT * FROM CAREER WHERE EMP_NUM = %s AND COMPANY = %s AND DEPARTMENT = %s"
-            cur.execute(query, (self.emp_num, company, dept,))
-            career_info = cur.fetchone()
-            if career_info:
+            if i < len(self.idx_list):
+                idx = self.idx_list[i]
                 query = """
                     UPDATE CAREER
                     SET COMPANY = %s, DEPARTMENT = %s, DATE_JOIN = %s, DATE_LEAVE = %s, WORK_PERIOD = %s, FINAL_RANK = %s, WORK_INFO = %s
-                    WHERE EMP_NUM = %s AND COMPANY = %s  AND DEPARTMENT = %s;
+                    WHERE EMP_NUM = %s AND IDX = %s;
                 """
-                values = (company, dept, datejoin, dateleave, workperiod, finalrank, workinfo, emp_num, company, dept,)
+                values = (company, dept, datejoin, dateleave, workperiod, finalrank, workinfo, emp_num, idx,)
                 cur.execute(query, values)
             elif self.company_le[i].text() != '':
                 query = """
@@ -1252,11 +1244,11 @@ class CareerTab(QWidget):
                 cur.execute(query, values)
             conn.commit()
 
-            if self.del_name:
-                for i in range(len(self.del_name)):
-                    query = "DELETE FROM CAREER WHERE EMP_NUM = %s AND COMPANY = %s AND DEPARTMENT = %s;"
-                    cur.execute(query, (emp_num, self.del_name[i],self.del_dept[i],))
-                    conn.commit() 
+        if self.del_idx:
+            for idx in self.del_idx:
+                query = "DELETE FROM CAREER WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (emp_num, idx,))
+                conn.commit() 
 
     def disappearCareer(self,index):
         reply = QMessageBox.question(self, '삭제 확인', '삭제하시겠습니까?\n삭제 후 저장버튼을 누르면 삭제됩니다.', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
@@ -1269,18 +1261,18 @@ class CareerTab(QWidget):
             for i in range(len(self.del_btn)):
                 if btn == self.del_btn[i]:
                     j = i
-            # 삭제할 위젯의 데이터 저장 
-            self.del_name.append(self.company_le[j].text())
-            self.del_dept.append(self.dept_le[j].text())
+            # 삭제할 위젯의 인덱스 저장 
+            del_item = self.idx_list.pop(j)
+            self.del_idx.append(del_item)
             # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
             for i in range(len(self.company_lbl) - 1):
                 if i >= j:
                     # 현재 행을 j행으로 이동
-                    self.company_le[i].setDate(self.company_le[i + 1].text())
+                    self.company_le[i].setText(self.company_le[i + 1].text())
                     self.dept_le[i].setText(self.dept_le[i + 1].text())
-                    self.datejoin_de[i].setText(self.datejoin_de[i + 1].date())
+                    self.datejoin_de[i].setDate(self.datejoin_de[i + 1].date())
                     self.dateleave_de[i].setDate(self.dateleave_de[i + 1].date())
-                    self.finalrank_le[i].setDate(self.finalrank_le[i + 1].text())
+                    self.finalrank_le[i].setText(self.finalrank_le[i + 1].text())
                     self.workinfo_le[i].setText(self.workinfo_le[i + 1].text())
             # 위젯이 하나 남기 전까지 위젯 삭제
             if self.edit_num != 1:
@@ -1303,7 +1295,7 @@ class CareerTab(QWidget):
             self.edit_num-=1
             # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
             if self.edit_num != 0:
-                self.lay.addWidget(self.add_btn, 6 + 7 * (len(self.company_lbl)-1), 2)
+                self.lay.addWidget(self.add_btn, 5 + 6 * (len(self.company_lbl)-1), 2)
             self.lay.setRowStretch(self.lay.rowCount(), 1)      
             # 위젯이 전부 제거 되면 다시 입력창 생성
             if self.cnt == 0:
@@ -1343,10 +1335,11 @@ class TechnicalTab(QWidget):
             self.add_btn = QPushButton("추가")
             self.btnGroup = QButtonGroup(self)
             self.del_btn = []
+            self.idx_list = []
             self.editTechMember()
             self.cnt = self.result_num
             self.edit_num = self.result_num
-            self.del_name = []
+            self.del_idx = []
             self.add_btn.clicked.connect(self.editTechMember)
             self.btnGroup.buttonClicked[int].connect(self.disappearTech)
 
@@ -1426,6 +1419,7 @@ class TechnicalTab(QWidget):
                         self.note_le.append(QLineEdit(result[i][2]))
                         self.del_btn.append(QPushButton("삭제",self))
                         self.btnGroup.addButton(self.del_btn[i])
+                        self.idx_list.append(result[i][3])
 
                 elif self.no_del_cnt != 0:
                     self.techDet_lbl.append(QLabel("기술사항"))
@@ -1468,7 +1462,7 @@ class TechnicalTab(QWidget):
                 charset='utf8'
         )
         cur = conn.cursor()
-        query = "SELECT TEC_DETAIL, PROFICIENCY,NOTE FROM TECHNICAL WHERE EMP_NUM = %s;"
+        query = "SELECT TEC_DETAIL, PROFICIENCY, NOTE, IDX FROM TECHNICAL WHERE EMP_NUM = %s;"
         cur.execute(query,(emp_num,))
         result = cur.fetchall()
         conn.close()
@@ -1480,26 +1474,23 @@ class TechnicalTab(QWidget):
         if not result and self.techDet_le[0].text() == '':
             return
         for i in range(len(self.techDet_lbl)):
-            tech_info = False
             techDet = self.techDet_le[i].text()
             proficiency = self.pro_cb[i].currentText()
             note = self.note_le[i].text()
             # 저장된 데이터가 있으면 UPDATE, 없으면 INSERT
-            query = "SELECT * FROM TECHNICAL WHERE EMP_NUM = %s AND TEC_DETAIL = %s;"
-            cur.execute(query, (self.emp_num, techDet,))
-            tech_info = cur.fetchone()
-            if tech_info:
-                query = "UPDATE TECHNICAL SET TEC_DETAIL = %s, PROFICIENCY = %s, NOTE = %s WHERE EMP_NUM = %s AND TEC_DETAIL = %s;"
-                cur.execute(query, (techDet, proficiency, note, emp_num, techDet))
+            if i < len(self.idx_list):
+                idx = self.idx_list[i]
+                query = "UPDATE TECHNICAL SET TEC_DETAIL = %s, PROFICIENCY = %s, NOTE = %s WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (techDet, proficiency, note, emp_num, idx,))
             else:
                 query = "INSERT INTO TECHNICAL (EMP_NUM, TEC_DETAIL, PROFICIENCY, NOTE) VALUES (%s, %s, %s, %s);"
                 cur.execute(query, (emp_num, techDet, proficiency, note))
             conn.commit()
         # 삭제리스트가 있으면 삭제
-        if self.del_name:
-            for name in self.del_name:
-                query = "DELETE FROM TECHNICAL WHERE EMP_NUM = %s AND TEC_DETAIL = %s;"
-                cur.execute(query, (emp_num, name,))
+        if self.del_idx:
+            for idx in self.del_idx:
+                query = "DELETE FROM TECHNICAL WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (emp_num, idx,))
                 conn.commit() 
 
     def disappearTech(self,index):
@@ -1513,8 +1504,9 @@ class TechnicalTab(QWidget):
             for i in range(len(self.del_btn)):
                 if btn == self.del_btn[i]:
                     j = i
-            # 삭제할 위젯의 데이터 저장 
-            self.del_name.append(self.techDet_le[j].text())
+            # 삭제할 위젯의 인덱스 저장 
+            del_item = self.idx_list.pop(j)
+            self.del_idx.append(del_item)
             # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
             for i in range(len(self.techDet_lbl) - 1):
                 if i >= j:
@@ -1582,11 +1574,11 @@ class RPTab(QWidget):
             self.add_btn = QPushButton("추가")
             self.btnGroup = QButtonGroup(self)
             self.del_btn = []
+            self.idx_list = []
             self.editRPMember()
             self.cnt = self.result_num
             self.edit_num = self.result_num
-            self.del_name = []
-            self.del_date = []
+            self.del_idx = []
             self.add_btn.clicked.connect(self.editRPMember)            
             self.btnGroup.buttonClicked[int].connect(self.disappearRP)
 
@@ -1669,7 +1661,8 @@ class RPTab(QWidget):
                         self.rpNote_lbl.append(QLabel("상벌내용:"))
                         self.rpNote_le.append(QLineEdit(result[i][3]))    
                         self.del_btn.append(QPushButton("삭제",self))
-                        self.btnGroup.addButton(self.del_btn[i])                    
+                        self.btnGroup.addButton(self.del_btn[i])
+                        self.idx_list.append(result[i][4])                    
                         
                 elif self.no_del_cnt != 0:    
                     for i in range(len(result)):
@@ -1715,7 +1708,7 @@ class RPTab(QWidget):
                 charset='utf8'
         )
         cur = conn.cursor()
-        query = "SELECT NAME_REW_PUNI, SCORE, DATE_REW_PUNI, NOTE PROFICIENCY,NOTE FROM R_P WHERE EMP_NUM = %s;"
+        query = "SELECT NAME_REW_PUNI, SCORE, DATE_REW_PUNI, NOTE, IDX FROM R_P WHERE EMP_NUM = %s;"
         cur.execute(query,(emp_num,))
         result = cur.fetchall()
         conn.close()
@@ -1724,30 +1717,28 @@ class RPTab(QWidget):
     def saveRP(self, emp_num, cur, conn):
         result = self.setData(self.emp_num)
         # 저장된 정보가 있으면 update 없으면 insert
-        if not result and self.fName_le[0].text() == '':
+        if not result and self.rpName_le[0].text() == '':
             return
         for i in range(len(self.rpName_lbl)):
-            rp_info = False
             rpName = self.rpName_le[i].text()
             rpScore = int(self.rpScore_le[i].text())
             rpDate = self.rpDate_de[i].date().toString("yyyy-MM-dd")
             rpNote = self.rpNote_le[i].text()
 
-            query = "SELECT * FROM R_P WHERE EMP_NUM = %s AND NAME_REW_PUNI = %s AND DATE_REW_PUNI = %s"
-            cur.execute(query, (self.emp_num, rpName, rpDate,))
-            rp_info = cur.fetchone()
             # 저장된 데이터가 있으면 UPDATE, 없으면 INSERT
-            if rp_info:
-                query = "UPDATE R_P SET NAME_REW_PUNI = %s, SCORE = %s, DATE_REW_PUNI = %s, NOTE = %s WHERE EMP_NUM = %s AND NAME_REW_PUNI = %s AND DATE_REW_PUNI = %s;"
-                cur.execute(query, (rpName, rpScore, rpDate, rpNote, emp_num, rpName, rpDate,))
+            if i < len(self.idx_list):
+                idx = self.idx_list[i]
+                query = "UPDATE R_P SET NAME_REW_PUNI = %s, SCORE = %s, DATE_REW_PUNI = %s, NOTE = %s WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (rpName, rpScore, rpDate, rpNote, emp_num, idx))
             else:
                 query = "INSERT INTO R_P (EMP_NUM, NAME_REW_PUNI, SCORE, DATE_REW_PUNI, NOTE) VALUES (%s, %s, %s, %s, %s)"
                 cur.execute(query, (emp_num, rpName, rpScore, rpDate, rpNote))
             conn.commit()
-        if self.del_name:
-            for i in range(len(self.del_name)):
-                query = "DELETE FROM R_P WHERE EMP_NUM = %s AND NAME_REW_PUNI = %s AND DATE_REW_PUNI = %s;"
-                cur.execute(query, (emp_num, self.del_name[i], self.del_date[i],))
+        # 저장된 삭제리스트가 있으면 삭제
+        if self.del_idx:
+            for idx in self.del_idx:
+                query = "DELETE FROM R_P WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (emp_num, idx,))
                 conn.commit() 
 
     def disappearRP(self,index):
@@ -1761,9 +1752,9 @@ class RPTab(QWidget):
             for i in range(len(self.del_btn)):
                 if btn == self.del_btn[i]:
                     j = i
-            # 삭제할 위젯의 데이터 저장 
-            self.del_name.append(self.rpName_le[j].text())
-            self.del_date.append(self.rpDate_de[j].date().toString("yyyy-MM-dd"))
+            # 삭제할 위젯의 인덱스 저장 
+            del_item = self.idx_list.pop(j)
+            self.del_idx.append(del_item)
             # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
             for i in range(len(self.rpName_lbl) - 1):
                 if i >= j:
@@ -1792,7 +1783,7 @@ class RPTab(QWidget):
             self.edit_num-=1
             # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
             if self.edit_num != 0:
-                self.lay.addWidget(self.add_btn, 2 + 3 * (len(self.rpName_lbl)-1), 2)
+                self.lay.addWidget(self.add_btn, 3 + 4 * (len(self.rpName_lbl)-1), 2)
             self.lay.setRowStretch(self.lay.rowCount(), 1)      
             # 위젯이 전부 제거 되면 다시 입력창 생성
             if self.cnt == 0:
@@ -1832,10 +1823,11 @@ class RSTab(QWidget):
             self.add_btn = QPushButton("추가")
             self.btnGroup = QButtonGroup(self)
             self.del_btn = []
+            self.idx_list = []
             self.editRSMember()
             self.cnt = self.result_num
             self.edit_num = self.result_num
-            self.del_rank = []
+            self.del_idx = []
             self.add_btn.clicked.connect(self.editRSMember)
             self.btnGroup.buttonClicked[int].connect(self.disappearRS)
 
@@ -1910,6 +1902,7 @@ class RSTab(QWidget):
                         self.rsDate_de.append(QDateEdit(QDate.fromString(result[i][2].strftime("%Y-%m-%d"), "yyyy-MM-dd")))
                         self.del_btn.append(QPushButton("삭제",self))
                         self.btnGroup.addButton(self.del_btn[i])
+                        self.idx_list.append(result[i][3])
                 
                 elif self.no_del_cnt != 0:
                     self.rsRANK_lbl.append(QLabel("직급"))
@@ -1922,15 +1915,15 @@ class RSTab(QWidget):
                 for j in range(len(result) + self.no_del_cnt):
                     for i in range(len(self.widget)):
                         if i == 0:
-                            self.lay.addWidget(self.widget[i][j], 0 + 4 * j, 0)
+                            self.lay.addWidget(self.widget[i][j], 0 + 3 * j, 0)
                         elif i % 2 == 0:
-                            self.lay.addWidget(self.widget[i][j], int(i / 2) + 4 * j, 0)
+                            self.lay.addWidget(self.widget[i][j], int(i / 2) + 3 * j, 0)
                             if j < len(result):
-                                self.lay.addWidget(self.del_btn[j], int(i / 2) + 4 * j-1,2)
+                                self.lay.addWidget(self.del_btn[j], int(i / 2) + 3 * j-1,2)
                         elif i % 2 == 1:
-                            self.lay.addWidget(self.widget[i][j], int(i / 2) + 4 * j, 1)
+                            self.lay.addWidget(self.widget[i][j], int(i / 2) + 3 * j, 1)
                             if i % 3 == 2:
-                                self.lay.addWidget(self.add_btn, int(i / 2) + 4 * j, 2)
+                                self.lay.addWidget(self.add_btn, int(i / 2) + 3 * j, 2)
 
                 self.lay.setRowStretch((self.lay.rowCount()*(4-self.no_del_cnt)),1)
                 self.no_del_cnt+=1
@@ -1948,7 +1941,7 @@ class RSTab(QWidget):
                 charset='utf8'
         )
         cur = conn.cursor()
-        query = "SELECT EMP_RANK, SALARY, DATE_JOIN FROM R_S WHERE EMP_NUM = %s;"
+        query = "SELECT EMP_RANK, SALARY, DATE_JOIN, IDX FROM R_S WHERE EMP_NUM = %s;"
         cur.execute(query,(emp_num,))
         result = cur.fetchall()
         conn.close()
@@ -1960,25 +1953,22 @@ class RSTab(QWidget):
         if not result and self.rsRANK_le[0].text() == '':
             return
         for i in range(len(self.rsRANK_lbl)):
-            rs_info = False
             rsRANK = self.rsRANK_le[i].text()
             rsSal = self.rsSal_le[i].text()
             rsDate = self.rsDate_de[i].date().toString("yyyy-MM-dd")
-            query = "SELECT * FROM R_S WHERE EMP_NUM = %s AND EMP_RANK = %s;"
-            cur.execute(query, (self.emp_num, rsRANK,))
-            rs_info = cur.fetchone()
             # 저장된 데이터가 있으면 UPDATE, 없으면 INSERT
-            if rs_info:
-                query = "UPDATE R_S SET EMP_RANK = %s, SALARY = %s, DATE_JOIN = %s WHERE EMP_NUM = %s AND EMP_RANK = %s;"
-                cur.execute(query, (rsRANK, rsSal, rsDate, emp_num, rsRANK))
+            if i < len(self.idx_list):
+                idx = self.idx_list[i]
+                query = "UPDATE R_S SET EMP_RANK = %s, SALARY = %s, DATE_JOIN = %s WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (rsRANK, rsSal, rsDate, emp_num, idx))
             else:
                 query = "INSERT INTO R_S (EMP_NUM, EMP_RANK, SALARY, DATE_JOIN) VALUES (%s, %s, %s, %s)"
                 cur.execute(query, (emp_num, rsRANK, rsSal, rsDate))
             conn.commit()
-        if self.del_rank:
-            for rank in self.del_rank:
-                query = "DELETE FROM R_S WHERE EMP_NUM = %s AND EMP_RANK = %s;"
-                cur.execute(query, (emp_num, rank,))
+        if self.del_idx:
+            for idx in self.del_idx:
+                query = "DELETE FROM R_S WHERE EMP_NUM = %s AND IDX = %s;"
+                cur.execute(query, (emp_num, idx,))
                 conn.commit() 
 
     def disappearRS(self,index):
@@ -1992,8 +1982,9 @@ class RSTab(QWidget):
             for i in range(len(self.del_btn)):
                 if btn == self.del_btn[i]:
                     j = i
-            # 삭제할 위젯의 데이터 저장 
-            self.del_rank.append(self.rsRANK_le[j].text())
+            # 삭제할 위젯의 인덱스 저장 
+            del_item = self.idx_list.pop(j)
+            self.del_idx.append(del_item)
             # j번째 행의 값을 뺀 후, 그 다음 행의 값을 해당 위치로 이동
             for i in range(len(self.rsRANK_lbl) - 1):
                 if i >= j:
@@ -2019,6 +2010,7 @@ class RSTab(QWidget):
             self.edit_num-=1
             # 위젯이 전부 제거되기 전까지만 추가 버튼 위치 변경
             if self.edit_num != 0:
+                print(2 + 3 * (len(self.rsRANK_lbl)-1))
                 self.lay.addWidget(self.add_btn, 2 + 3 * (len(self.rsRANK_lbl)-1), 2)
             self.lay.setRowStretch(self.lay.rowCount(), 1)      
             # 위젯이 전부 제거 되면 다시 입력창 생성
