@@ -1,35 +1,24 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QComboBox, QVBoxLayout, QWidget
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QTextBlockFormat
+from PyQt5.QtWidgets import QApplication, QTextEdit
 
-class TableComboBoxExample(QMainWindow):
-    def __init__(self):
-        super().__init__()
+app = QApplication([])
 
-        self.central_widget = QWidget(self)
-        self.setCentralWidget(self.central_widget)
+textEdit = QTextEdit()
+textEdit.setPlainText("This is a sample text.")
 
-        self.layout = QVBoxLayout(self.central_widget)
+# QTextCursor를 이용하여 현재 커서의 위치에 대한 정보를 가져옴
+cursor = QTextEdit().textCursor()
 
-        self.table = QTableWidget(self)
-        self.layout.addWidget(self.table)
+# QTextBlockFormat 객체를 생성하고 정렬 설정
+blockFormat = QTextBlockFormat()
+blockFormat.setAlignment(Qt.AlignCenter)  # 예시로 가운데 정렬을 설정
 
-        self.table.setColumnCount(2)
-        self.table.setRowCount(3)
+# QTextCursor를 통해 설정한 QTextBlockFormat을 적용
+cursor.setBlockFormat(blockFormat)
 
-        for row in range(3):
-            for col in range(2):
-                combo_box = QComboBox(self)
-                combo_box.addItem("Option 1")
-                combo_box.addItem("Option 2")
-                combo_box.addItem("Option 3")
+# 텍스트 편집기에 설정된 커서를 업데이트
+textEdit.setTextCursor(cursor)
 
-                self.table.setCellWidget(row, col, combo_box)
-
-        self.setWindowTitle("Table with ComboBox Example")
-
-if __name__ == '__main__':
-    import sys
-
-    app = QApplication(sys.argv)
-    window = TableComboBoxExample()
-    window.show()
-    sys.exit(app.exec_())
+textEdit.show()
+app.exec_()

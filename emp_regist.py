@@ -9,7 +9,7 @@ from PyQt5 import uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from bs4 import BeautifulSoup
-from regist_tap import *
+from regist_tab import *
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))

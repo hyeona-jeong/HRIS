@@ -453,25 +453,35 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string/>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>windowicon.jpg</normaloff>windowicon.jpg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="4" column="1">
+     <widget class="QTextEdit" name="contents_te"/>
+    </item>
     <item row="1" column="1">
-     <widget class="QLineEdit" name="lineEdit"/>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>카테고리</string>
+     <widget class="QComboBox" name="category_combo">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>28</height>
+       </size>
       </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>28</height>
+       </size>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QComboBox" name="comboBox">
+      <property name="styleSheet">
+       <string notr="true">border: 1px solid #414141;
+</string>
+      </property>
       <item>
        <property name="text">
         <string>자유게시판</string>
@@ -489,10 +499,107 @@
       </item>
      </widget>
     </item>
-    <item row="2" column="1">
-     <widget class="QTextBrowser" name="textBrowser"/>
+    <item row="9" column="1">
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
     </item>
-    <item row="3" column="1">
+    <item row="1" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;카테고리&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" alignment="Qt::AlignTop">
+     <widget class="QLabel" name="label_4">
+      <property name="minimumSize">
+       <size>
+        <width>60</width>
+        <height>28</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>60</width>
+        <height>28</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;내용&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="2">
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="6" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QPushButton" name="file_btn">
+        <property name="minimumSize">
+         <size>
+          <width>93</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>93</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>파일선택</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>파일명,</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="7" column="1">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <spacer name="horizontalSpacer">
@@ -508,7 +615,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="submitBtn">
         <property name="minimumSize">
          <size>
           <width>93</width>
@@ -527,7 +634,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="cnlBtn">
         <property name="minimumSize">
          <size>
           <width>93</width>
@@ -560,12 +667,455 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>제목</string>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="title_le">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>28</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>28</height>
+       </size>
       </property>
      </widget>
+    </item>
+    <item row="0" column="1">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="0" alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="label_2">
+      <property name="minimumSize">
+       <size>
+        <width>60</width>
+        <height>28</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>60</width>
+        <height>28</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;제목&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QComboBox" name="font_combo">
+        <property name="minimumSize">
+         <size>
+          <width>150</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>150</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;글자크기&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 1px solid #414141;
+</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>맑은고딕</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>돋움</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>돋움체</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>굴림</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>굴림체</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>바탕</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>바탕체</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>궁서</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Arial</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tahoma</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Times New Roman</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Verdana</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Comic Sans MS</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Georgia</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="font_size_combo">
+        <property name="minimumSize">
+         <size>
+          <width>93</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>93</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;글자크기&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 1px solid #414141;
+</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>6pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>8pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>9pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>10pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>11pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>12pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>14pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>16pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>18pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>20pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>22pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>24pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>26pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>28pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>36pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>48pt</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>72pt</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="align_combo">
+        <property name="minimumSize">
+         <size>
+          <width>93</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>93</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="palette">
+         <palette>
+          <active/>
+          <inactive/>
+          <disabled/>
+         </palette>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;정렬&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 1px solid #414141;
+</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>왼쪽</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>image/left.png</normaloff>image/left.png</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>가운데</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>image/center.png</normaloff>image/center.png</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>오른쪽</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>image/right.png</normaloff>image/right.png</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>양쪽맞춤</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>image/justify.png</normaloff>image/justify.png</iconset>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="bold_btn">
+        <property name="minimumSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;굵게&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">font-weight: bold;
+border: 1px solid #414141;
+</string>
+        </property>
+        <property name="text">
+         <string>B</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="italic_btn">
+        <property name="minimumSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:normal;&quot;&gt;기울임꼴&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">font-style:oblique;
+border: none;
+border: 1px solid #414141;
+</string>
+        </property>
+        <property name="text">
+         <string>I</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="underline_btn">
+        <property name="minimumSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;밑줄&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">text-decoration: underline;
+border: none;
+border: 1px solid #414141;
+</string>
+        </property>
+        <property name="text">
+         <string>U</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="image_btn">
+        <property name="minimumSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>28</width>
+          <height>28</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;이미지 첨부&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">text-decoration: underline;
+border: none;
+border: 1px solid #414141;
+</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>image/image.png</normaloff>image/image.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>

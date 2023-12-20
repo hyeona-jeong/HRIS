@@ -10,7 +10,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from emp_regist import Regist
 from emp_info import EmpInfo
-from edit_tap import *
+from edit_tab import *
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))

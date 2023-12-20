@@ -9,7 +9,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from index import Index
 from find import Find
-from edit_tap import *
+from edit_tab import *
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -618,9 +618,9 @@ class Login(QMainWindow, form_class):
         
     def showFind(self):
         self.w = Find()
-        result = self.w.exec_()
         self.w.cnlBtn.clicked.connect(self.w.accept)
         self.w.cnlBtn_2.clicked.connect(self.w.accept)
+        result = self.w.exec_()
     
     # 231127 패스워드 변경 페이지 호출 by 정현아
     def showChPw(self):
