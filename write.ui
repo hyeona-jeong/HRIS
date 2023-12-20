@@ -925,13 +925,13 @@
        <widget class="QComboBox" name="align_combo">
         <property name="minimumSize">
          <size>
-          <width>93</width>
+          <width>100</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>93</width>
+          <width>100</width>
           <height>28</height>
          </size>
         </property>
@@ -1001,6 +1001,13 @@
           <height>28</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <family>Georgia</family>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;굵게&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
@@ -1027,6 +1034,14 @@ border: 1px solid #414141;
           <width>28</width>
           <height>28</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>Georgia</family>
+          <weight>50</weight>
+          <italic>true</italic>
+          <bold>false</bold>
+         </font>
         </property>
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:normal;&quot;&gt;기울임꼴&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -1055,6 +1070,12 @@ border: 1px solid #414141;
           <width>28</width>
           <height>28</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>Georgia</family>
+          <underline>true</underline>
+         </font>
         </property>
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;밑줄&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

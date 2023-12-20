@@ -22,9 +22,8 @@ class Write(QMainWindow, form_class):
     def __init__(self):
         super( ).__init__( )
         self.setupUi(self)
-        font_family = "Malgun Gothic"
-        font_size = 9
-        self.font = QFont(font_family, font_size)
+        self.title_le.setFocus()
+        self.font = QFont("Malgun Gothic", 9)
         self.charFormat = QTextCharFormat()
         self.charFormat.setFont(self.font)
         
@@ -43,12 +42,12 @@ class Write(QMainWindow, form_class):
         self.italic_btn.clicked.connect(self.italic)
         self.underline_btn.clicked.connect(self.underline)
         self.submitBtn.clicked.connect(lambda: self.submit(emp_num=16120105))
+        self.image_btn.clicked.connect(self.insert_image)
         
     def submit(self, emp_num = 16120105):
         category = self.category_combo.currentText()
         title = self.title_le.text()
         contents = self.contents_te.toHtml()
-        print(emp_num)
         conn = pymysql.connect(
                 host='localhost',
                 user='dev',
@@ -133,6 +132,28 @@ class Write(QMainWindow, form_class):
         self.charFormat.setFontUnderline(self.underline_btn.isChecked())
         self.contents_te.setCurrentCharFormat(self.charFormat)
 
+    def insert_image(self):
+        # 231220 File dialog로 이미지 파일을 선택하고 선택한 파일 정보를 읽어옴 by 정현아
+        fname, _ = QFileDialog.getOpenFileName(self, '이미지 파일 추가', 'C:/Program Files', '이미지 파일(*.jpg *.gif, *.png)')
+        if fname:
+            max_file_size_mb = 1
+            max_file_size_bytes = max_file_size_mb * 1024 * 1024
+            
+            size, path = self.getFileSize(fname)
+            if size >= max_file_size_bytes:
+                QMessageBox.warning(self,'사진등록실패','사진 사이즈가 1MB를 초과하였습니다.')
+                return
+            else:
+                cursor = self.contents_te.textCursor()
+
+                image_format = QTextImageFormat()
+                image_format.setName(path)
+
+                cursor.insertImage(image_format)
+
+    # 231220 파일 정보에서 크기와 경로를 추출
+    def getFileSize(self, file_path):
+        return os.path.getsize(file_path), file_path
 
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
