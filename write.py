@@ -155,10 +155,12 @@ class Write(QMainWindow, form_class):
         # 231220 File dialog로 이미지 파일을 선택하고 선택한 파일 정보를 읽어옴 by 정현아
         fname,_ = QFileDialog.getOpenFileName(self, '이미지 파일 추가', 'C:/Program Files', '이미지 파일(*.jpg *.gif, *.png)')
         
-        self.img_path.append(fname)
-        img_format = QTextImageFormat()
-        img_format.setName(fname)
-        self.cursor.insertImage(img_format)
+        if fname:
+            self.img_path.append(fname)
+            img_format = QTextImageFormat()
+            img_format.setName(fname)
+            self.cursor.insertImage(img_format)
+            self.contents_te.setFocus()
         
     def attach_file(self):
         fname,_ = QFileDialog.getOpenFileName(self, '이미지 파일 추가', 'C:/Program Files', '모든(*.*)')

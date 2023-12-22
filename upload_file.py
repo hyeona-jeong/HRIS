@@ -18,7 +18,7 @@ class UploadFile():
         if res:
             file_id = res.get("id")
             
-            # 파일을 공유 가능하도록 설정
+            # 파일을 공유 가능하도록 권한설정
             self.drive.permissions().create(
                 fileId = file_id,
                 body={'type': 'anyone', 'role':'reader'}

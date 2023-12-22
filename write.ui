@@ -1043,7 +1043,7 @@ border: 1px solid #414141;
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="file_lbl">
         <property name="minimumSize">
          <size>
           <width>0</width>
