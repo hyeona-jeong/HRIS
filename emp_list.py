@@ -57,11 +57,6 @@ class Emplist(QMainWindow, form_class):
         self.table.setColumnCount(len(self.header))
         self.table.setHorizontalHeaderLabels(self.header)
 
-        chk_bx_header = QTableWidgetItem()
-        chk_bx_header.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-        chk_bx_header.setCheckState(Qt.Unchecked)
-        self.table.setHorizontalHeaderItem(0, chk_bx_header)
-
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self.conn = pymysql.connect(
@@ -86,7 +81,6 @@ class Emplist(QMainWindow, form_class):
         countQuery = "SELECT COUNT(*) FROM MAIN_TABLE;"
         self.cur.execute(countQuery)
         count = self.cur.fetchone()[0]
-        page = math.ceil(count/15)
         self.countLabel.setText("총 ("+ str(count) + ")건")
         
         # 체크박스와 메일은 컬럼 내용에 맞게 사이즈 설정, 그외 컬럼은 stretch로 설정 by 정현아
@@ -427,7 +421,7 @@ class Emplist(QMainWindow, form_class):
             self.hide()
             self.showInfo(self.emp_num)
             self.w.showedEdit.connect(self.showEdit)
-            self.w.cnlBtn.clicked.connect(self.back)
+            self.w.closed.connect(lambda: self.show() or self.show_list())
             
     # 개인정보조회 화면 출력 by 정현아
     def showInfo(self, emp):
@@ -894,15 +888,21 @@ class Emplist(QMainWindow, form_class):
 
     # 231122 페이지 전환 함수 by정현아
     def showRegsit(self):
-        self.w = Regist()
+        self.w = Regist(self.conn, self.cur)
         self.w.show()
         self.hide()
-        self.w.cnlBtn.clicked.connect(self.back)
-        self.w.closed.connect(self.show)
-
-    def back(self):
-        self.w.hide()
-        self.show()
+        self.w.closed.connect(lambda: self.show() or self.show_list())
+        
+    def show_list(self):
+        self.setTables(self.main_query)
+        self.gBtn[0].setChecked(True)
+        self.gBtn[0].setStyleSheet(
+                    "QToolButton { border: None; color : black; font-weight: bold; }"
+                )
+        countQuery = "SELECT COUNT(*) FROM FORUM;"
+        self.cur.execute(countQuery)
+        count = self.cur.fetchone()[0]
+        self.countLabel.setText("총 ("+ str(count) + ")건")
 
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):

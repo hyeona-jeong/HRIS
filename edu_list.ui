@@ -465,7 +465,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>                          </string>
+   <string/>
   </property>
   <widget class="QWidget" name="eduList">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1159,6 +1159,9 @@ background-color:white;</string>
             </property>
             <property name="contextMenuPolicy">
              <enum>Qt::PreventContextMenu</enum>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;교육명 교육기관 이수여부 셀 더블 클릭하여 값 변경 후 저장을 누르시면 값이 변경됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="showGrid">
              <bool>false</bool>

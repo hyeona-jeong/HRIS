@@ -43,12 +43,12 @@ class Login(QMainWindow, form_class):
         self.findBtn.clicked.connect(self.showFind)
         
         self.conn = pymysql.connect(
-                host='localhost',
-                user='dev',
-                password='nori1234',
-                db='dev',
-                port=3306,
-                charset='utf8'
+            host='localhost',
+            user='dev',
+            password='nori1234',
+            db='dev',
+            port=3306,
+            charset='utf8'
         )
         self.cur = self.conn.cursor()
 
@@ -90,7 +90,14 @@ class Login(QMainWindow, form_class):
     
     # 231122 인덱스 페이지 by정현아
     def showIndex(self):
-        self.w = Index()
+        # 사원정보를 가져옴 by 정현아
+        query = 'SELECT ID, PIC, MAIN_TABLE.EMP_NUM FROM LOGIN_DATA, MAIN_TABLE WHERE LOGIN_DATA.EMP_NUM = MAIN_TABLE.EMP_NUM AND ID = %s'
+        self.cur.execute(query,(self.id))
+        result = self.cur.fetchone()
+        self.emp_num = result[2]
+        data = result[1]
+        
+        self.w = Index(self.emp_num)
         self.w.show()
         regist_action = None
 
@@ -104,16 +111,12 @@ class Login(QMainWindow, form_class):
         if self.result_pass[2] == 'Regular' :
             self.w.showedList.connect(self.controlEmpListBtn)
             self.w.listToInfo.connect(self.controlEmpListBtn)
+            self.w.indexToForum.connect(self.controlWrite)
 
         self.w.showedInfo.connect(self.showMyInfo)
         self.w.showedEdit.connect(self.showEdit)
         
         # 231128 인덱스 페이지에 DB를 가져와 사원 사진 출력 by 정현아
-        query = 'SELECT ID, PIC, MAIN_TABLE.EMP_NUM FROM LOGIN_DATA, MAIN_TABLE WHERE LOGIN_DATA.EMP_NUM = MAIN_TABLE.EMP_NUM AND ID = %s'
-        self.cur.execute(query,(self.id))
-        result = self.cur.fetchone()
-        self.emp_num = result[2]
-        data = result[1]
         self.img = QPixmap()
         self.img.loadFromData(data, 'PNG')
         icon = QIcon(self.img)        
@@ -136,6 +139,11 @@ class Login(QMainWindow, form_class):
         self.w.w.table.setColumnHidden(0,True)
         if self.w.w.w is not None:
             self.w.w.w.listChgbtn.setVisible(False)
+    
+    # 231224 사원권한이 regular일 경우 삭제 버튼, 체크박스가 안보이게 하기 by 정현아
+    def controlWrite(self):
+        self.w.w.table.setColumnHidden(0,True)
+        self.w.w.listDelBtn.setVisible(False)
 
     # 231201 개인정보조회/편집 화면 데이터 바인딩    
     def showMyInfo(self):

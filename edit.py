@@ -15,10 +15,13 @@ def resource_path(relative_path):
 form = resource_path('write.ui')
 form_class = uic.loadUiType(form)[0]
 
-class Write(QMainWindow, form_class):
+class Edit(QMainWindow, form_class):
     closed = pyqtSignal()
 
-    def __init__(self, emp_num = 23098098, conn=None, cur=None):
+    def __init__(self, conn=None, cur=None, idx = None):
+        if not idx:
+            QMessageBox.warning(self, "게시글 없음", "삭제된 게시글 입니다.")
+            return
         super( ).__init__( )
         self.setupUi(self)
         self.img_path = []
@@ -45,12 +48,26 @@ class Write(QMainWindow, form_class):
         self.bold_btn.clicked.connect(self.bold)
         self.italic_btn.clicked.connect(self.italic)
         self.underline_btn.clicked.connect(self.underline)
-        self.submitBtn.clicked.connect(lambda: self.submit(emp_num, conn, cur))
+        self.submitBtn.clicked.connect(lambda: self.submit(conn, cur, idx))
         self.image_btn.clicked.connect(self.insert_image)
         self.file_btn.clicked.connect(self.attach_file)
         self.cnlBtn.clicked.connect(self.close)
         
-    def submit(self, emp_num, conn, cur):
+        self.submitBtn.setText("저장")
+        
+        # 231225 저장된 정보 각 에디터에 세팅
+        query = "SELECT CATEGORY, TITLE, CONTENTS FROM FORUM WHERE IDX = %s"
+        cur.execute(query, idx)
+        result = cur.fetchone()
+        category = result[0]
+        title = result[1]
+        contents = result[2] 
+        
+        self.category_combo.setCurrentText(category)
+        self.title_le.setText(title)
+        self.contents_te.setHtml(contents)
+        
+    def submit(self, conn, cur, idx):
         imgs_path = None
         files_path = None
         uploader = UploadFile()
@@ -72,12 +89,9 @@ class Write(QMainWindow, form_class):
         category = self.category_combo.currentText()
         title = self.title_le.text()
         contents = self.contents_te.toHtml()
-        query = "SELECT NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM = %s"
-        cur.execute(query,(emp_num))
-        name = cur.fetchone()
         
-        query = "INSERT INTO FORUM(WRITER, TITLE, CATEGORY, CONTENTS, EMP_NUM, ATCH_IMG_PATH, ATCH_FILE_PATH, ATCH_FILE_NAME) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
-        cur.execute(query, (name, title,category,contents,emp_num, imgs_path, files_path, self.atch_files))
+        query = "UPDATE FORUM SET CATEGORY = %s, TITLE = %s, CONTENTS = %s WHERE IDX = %s;"
+        cur.execute(query, (category, title, contents, idx ))
         conn.commit()
         self.close()
         
@@ -171,6 +185,6 @@ class Write(QMainWindow, form_class):
         
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
-    myWindow = Write() 
+    myWindow = Edit() 
     myWindow.show() 
     app.exec_() 

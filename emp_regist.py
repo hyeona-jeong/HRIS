@@ -22,7 +22,7 @@ form_class = uic.loadUiType(form)[0]
 class Regist(QMainWindow, form_class):
     closed = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, conn = None, cur = None):
         super( ).__init__( )
         self.setupUi(self)
 
@@ -92,21 +92,24 @@ class Regist(QMainWindow, form_class):
         self.BS = ['경영지원','']
         self.group_combo.addItems(self.TSP)
         self.biz_combo.activated[str].connect(self.changeGroup)
-
-        self.conn = pymysql.connect(
-                host='localhost',
-                user='dev',
-                password='nori1234',
-                db='dev',
-                port=3306,
-                charset='utf8'
-        )
-        self.cur = self.conn.cursor()        
+        
+        self.conn = conn
+        self.cur = cur
+        if self.conn is None:
+            self.conn = pymysql.connect(
+                    host='localhost',
+                    user='dev',
+                    password='nori1234',
+                    db='dev',
+                    port=3306,
+                    charset='utf8'
+            )
+            self.cur = self.conn.cursor()        
 
         self.addImgBtn.clicked.connect(self.showAddImg)
         self.saveBtn.clicked.connect(self.saveEmp)
         self.searchAddress.clicked.connect(self.searchPost)  
-
+        self.cnlBtn.clicked.connect(self.close)
         
     # 231130 한글성명입력제한 함수 by 정현아
     def setValKor(self):
@@ -425,7 +428,6 @@ class Regist(QMainWindow, form_class):
         self.w.savebtn.clicked.connect(self.save_img)
         self.w.cnlBtn.clicked.connect(self.w.accept)
         result = self.w.exec_()  
-        print("Dialog result:", result)
     
     # 231130 이미지 선택하고 다이알로그 텍스트 라인 에디트에 파일경로 세팅 by 정현아
     def openImage(self):

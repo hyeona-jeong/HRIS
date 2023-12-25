@@ -12,6 +12,7 @@ from emp_regist import Regist
 from edu_list import EduList
 from sign_up import SignUp
 from user_auth import UserAuth
+from forum_list import Forum
 
 
 def resource_path(relative_path):
@@ -28,12 +29,14 @@ class Index(QMainWindow, form_class):
     showedRegist = pyqtSignal()
     showedEdit = pyqtSignal()
     listToInfo = pyqtSignal()
+    indexToForum = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, emp_num):
         super().__init__()
         self.setupUi(self)
         self.auth = None
         self.w = None
+        self.emp_num = emp_num
 
         self.index.setStyleSheet(stylesheet)
 
@@ -48,8 +51,8 @@ class Index(QMainWindow, form_class):
         # 231125 메뉴바에 액션 추가
         self.toolhr = self.menuBar.addAction('인사')
         self.tooledu = self.menuBar.addAction('교육')
-        self.toolforum = self.menuBar.addAction('게시판')
-        self.toolqa = self.menuBar.addAction('Q&A')
+        self.toolforum = self.menuBar.addAction('게시판',self.showPage)
+        self.toolqa = self.menuBar.addAction('Q&&A')
         self.toolrc = self.menuBar.addAction('총무')
         self.toolbm = self.menuBar.addAction('사업관리')
         
@@ -80,7 +83,6 @@ class Index(QMainWindow, form_class):
         sender = self.sender().text()
 
         if sender == '사원정보검색' or sender == '인사':
-            print(self.empBtn.receivers(self.empBtn.clicked))
             self.w = Emplist()
             self.showedList.emit()
             self.w.listToInfo.connect(self.listToInfo.emit)
@@ -88,7 +90,7 @@ class Index(QMainWindow, form_class):
         elif sender == '개인정보조회/편집': 
             self.w = EmpInfo()
             self.showedInfo.emit()
-            self.w.showedEdit.connect(self.sendLogin)
+            self.w.showedEdit.connect(self.showedEdit.emit)
             
         elif sender == '사원정보등록':
             self.w = Regist()
@@ -99,6 +101,12 @@ class Index(QMainWindow, form_class):
             
         elif sender == '사용자권한관리':
             self.w = UserAuth()
+        
+        elif sender == '게시판':
+            self.w = Forum(self.emp_num)
+            self.indexToForum.emit()
+            self.w.forumToWrite.connect(self.indexToForum.emit)
+            self.w.forumToRead.connect(self.indexToForum.emit)
             
         self.w.show()
         self.hide()
@@ -109,9 +117,6 @@ class Index(QMainWindow, form_class):
         self.w = SignUp()
         self.w.cnlBtn.clicked.connect(self.w.accept)
         result = self.w.exec_()  
-    
-    def sendLogin(self):
-        self.showedEdit.emit()
 
     def closeEvent(self, e):
         self.closed.emit()
