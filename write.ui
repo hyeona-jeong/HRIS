@@ -1022,7 +1022,7 @@ border: 1px solid #414141;
      </widget>
     </item>
     <item row="6" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="fileLay">
       <item>
        <widget class="QPushButton" name="file_btn">
         <property name="minimumSize">
@@ -1060,6 +1060,19 @@ border: 1px solid #414141;
          <string>파일명,</string>
         </property>
        </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </item>

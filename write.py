@@ -1,6 +1,6 @@
 import os
 import sys
-import pymysql
+import re
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -21,13 +21,17 @@ class Write(QMainWindow, form_class):
     def __init__(self, emp_num = 23098098, conn=None, cur=None):
         super( ).__init__( )
         self.setupUi(self)
-        self.img_path = []
-        self.file_path = []
+        self.file_path_list = []
+        self.del_btn_list = []
+        self.file_lbl_list = [self.file_lbl]
+        self.cnt = 0
+        
         self.atch_files = ''
         self.font = QFont("Malgun Gothic", 9)
         self.charFormat = QTextCharFormat()
         self.charFormat.setFont(self.font)
         self.cursor = self.contents_te.textCursor()
+        self.file_lbl.setText("파일은 최대 5개까지 첨부가능합니다.")
         
         self.title_le.setFocus()
         
@@ -51,24 +55,6 @@ class Write(QMainWindow, form_class):
         self.cnlBtn.clicked.connect(self.close)
         
     def submit(self, emp_num, conn, cur):
-        imgs_path = None
-        files_path = None
-        uploader = UploadFile()
-        # 구글드라이브에 이미지 파일 업로드 by 정현아
-        if self.img_path:
-            imgs_path = ''
-            for path in self.img_path:
-                img_url = uploader.upload_file(path)
-                imgs_path += img_url 
-                imgs_path += "," 
-        if self.file_path:
-            files_path = ''
-            for path in self.file_path:
-                file_url = uploader.upload_file(path)
-                files_path += file_url
-                files_path += ","
-        if self.atch_files == '':
-            self.atch_files = None
         category = self.category_combo.currentText()
         title = self.title_le.text()
         contents = self.contents_te.toHtml()
@@ -76,8 +62,45 @@ class Write(QMainWindow, form_class):
         cur.execute(query,(emp_num))
         name = cur.fetchone()
         
-        query = "INSERT INTO FORUM(WRITER, TITLE, CATEGORY, CONTENTS, EMP_NUM, ATCH_IMG_PATH, ATCH_FILE_PATH, ATCH_FILE_NAME) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
-        cur.execute(query, (name, title,category,contents,emp_num, imgs_path, files_path, self.atch_files))
+        img_path_list = re.findall(r'<img\s+src="([^"]+)"[^>]*>', contents)
+        files_path = None
+        local_imgs_path = None
+        local_files_path = None
+        uploader = UploadFile()
+        
+        # 구글드라이브에 이미지 파일 업로드 by 정현아
+        if img_path_list:
+            imgs_path = ''
+            local_imgs_path = ''
+            for path in img_path_list:
+                img_url = uploader.upload_file(path)
+                imgs_path += img_url  
+                local_imgs_path += path
+                imgs_path += ","
+                local_imgs_path += "," 
+                
+        # 구글드라이브에 첨부 파일 업로드 by 정현아
+        if self.file_path_list:
+            files_path = ''
+            local_files_path = ''
+            for path in self.file_path_list:
+                file_url = uploader.upload_file(path)
+                files_path += file_url
+                files_path += ","
+                local_files_path += path
+                local_files_path += ","
+        
+        # 첨부파일 목록 저장 by 정현아
+        for lbl in self.file_lbl_list:
+            if lbl.text() == "":
+                break
+            self.atch_files += lbl.text()
+            self.atch_files += ","
+        if self.atch_files == "" :
+            self.atch_files = None
+
+        query = "INSERT INTO FORUM(WRITER, TITLE, CATEGORY, CONTENTS, EMP_NUM, ATCH_IMG_PATH, ATCH_FILE_PATH, ATCH_FILE_NAME, ATCH_IMG_LOCAL_PATH, ATCH_FILE_LOCAL_PATH) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
+        cur.execute(query, (name, title,category,contents, emp_num, imgs_path, files_path, self.atch_files, local_imgs_path, local_files_path))
         conn.commit()
         self.close()
         
@@ -150,7 +173,6 @@ class Write(QMainWindow, form_class):
         fname,_ = QFileDialog.getOpenFileName(self, '이미지 파일 추가', 'C:/Program Files', '이미지 파일(*.jpg *.gif, *.png)')
         
         if fname:
-            self.img_path.append(fname)
             img_format = QTextImageFormat()
             img_format.setName(fname)
             self.cursor.insertImage(img_format)
@@ -158,16 +180,72 @@ class Write(QMainWindow, form_class):
     
     # 231222 추가한 첨부 파일 정보 저장 by 정현아
     def attach_file(self):
-        fname,_ = QFileDialog.getOpenFileName(self, '첨부 파일 추가', 'C:/Program Files', '모든(*.*)')
-        self.file_path.append(fname)
+        fname,_ = QFileDialog.getOpenFileName(self, '첨부 파일 추가', 'C:/Program Files', '모든 파일(*.*)')
+        self.file_path_list.append(fname)
         attach_file = os.path.basename(fname)
-        self.atch_files += attach_file
-        self.atch_files += ", "
-        self.file_lbl.setText(self.atch_files)
+
+        # 231227 카운트가 0일 경우 기존에 존재하는 라벨의 텍스트만 변경
+        if self.cnt == 0 :
+            self.file_lbl.setText(attach_file)
+            self.del_btn_list.append(QPushButton('X'))
+            self.del_btn_list[self.cnt].setFixedSize(28, 28)
+            self.fileLay.insertWidget(2,self.del_btn_list[self.cnt])
+            
+        # 231227 카운트가 1이상이면 리스트에 값을 추가하고 레이아웃에 라벨 추가
+        elif 0 < self.cnt < 5 and len(self.file_lbl_list) < 5:
+            self.file_lbl_list.append(QLabel(attach_file))
+            self.del_btn_list.append(QPushButton('X'))
+            self.del_btn_list[self.cnt].setFixedSize(28, 28)
+            
+            self.fileLay.insertWidget(2*self.cnt+1,self.file_lbl_list[self.cnt])
+            self.fileLay.insertWidget(2*(self.cnt+1),self.del_btn_list[self.cnt])
         
-    def closeEvent(self, e):
+        elif 0 < self.cnt <5 and len(self.file_lbl_list) ==5:
+            self.file_lbl_list[self.cnt].setText(attach_file)
+            self.del_btn_list[self.cnt].setVisible(True)
+            
+        # 첨부파일이 5개 이상일 경우 경고
+        elif self.cnt >= 5:
+            QMessageBox.warning(self,"파일 첨부 실패","파일을 5개이상 추가하실 수 없습니다.")
+            return
+
+        self.del_btn_list[self.cnt].clicked.connect(lambda idx=self.cnt: self.del_attach_file(idx))
+        self.cnt +=1
+    # 첨부파일 제거 by 정현아
+    def del_attach_file(self,index):
+        # 첨부된 파일 목록에서 제거
+        del self.file_path_list[index]
+        
+        if self.cnt == 1 :
+            # 남아있는 라벨에 문구 설정
+            self.file_lbl_list[0].setText("파일은 최대 5개까지 첨부 가능합니다.")
+
+            # 삭제버튼 제거
+            self.del_btn_list[0].setVisible(False)
+            
+        else:
+            # 중간 항목을 앞으로 당김
+            for i in range(index, self.cnt - 1):
+                self.file_lbl_list[i].setText(self.file_lbl_list[i + 1].text())
+            
+            # 마지막 항목 제거
+            last_index = self.cnt - 1
+            self.file_lbl_list[last_index].setText("")
+            self.del_btn_list[last_index].setVisible(False)
+            
+        self.cnt -= 1
+                    
+    def closeEvent(self, e): 
         self.closed.emit()
         super().closeEvent(e)
+
+stylesheet = """
+    QPushButton{
+        border-radius: 5px;
+        color: #868686; 
+        font-weight: bold;
+    }
+"""
         
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
