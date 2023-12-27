@@ -74,8 +74,8 @@ class Edit(QMainWindow, form_class):
         img_path_list = re.findall(r'<img\s+src="([^"]+)"[^>]*>', contents)
         imgs_path = None
         files_path = None
-        local_imgs_path = ",".join(img_path_list) + ","
-        local_files_path = ",".join(self.file_path) + ","
+        local_imgs_path = ",".join(img_path_list) 
+        local_files_path = ",".join(self.file_path) 
         uploader = UploadFile()
         
         if data[3] != local_imgs_path:
@@ -85,9 +85,7 @@ class Edit(QMainWindow, form_class):
                 for path in img_path_list:
                     img_url = uploader.upload_file(path)
                     imgs_path += img_url  
-                    local_imgs_path += path
                     imgs_path += ","
-                    local_imgs_path += "," 
         
         if data[4] != local_files_path:   
             # 구글드라이브에 첨부 파일 업로드 by 정현아     
@@ -97,8 +95,6 @@ class Edit(QMainWindow, form_class):
                     file_url = uploader.upload_file(path)
                     files_path += file_url
                     files_path += ","
-                    local_files_path += path
-                    local_files_path += ","
                 
             # 첨부파일명 목록 저장 by 정현아
             for lbl in self.file_lbl_list:
