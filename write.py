@@ -64,31 +64,25 @@ class Write(QMainWindow, form_class):
         
         img_path_list = re.findall(r'<img\s+src="([^"]+)"[^>]*>', contents)
         files_path = None
-        local_imgs_path = None
-        local_files_path = None
+        local_imgs_path = ",".join(img_path_list)
+        local_files_path = ",".join(self.file_path) 
         uploader = UploadFile()
         
         # 구글드라이브에 이미지 파일 업로드 by 정현아
         if img_path_list:
             imgs_path = ''
-            local_imgs_path = ''
             for path in img_path_list:
                 img_url = uploader.upload_file(path)
                 imgs_path += img_url  
-                local_imgs_path += path
                 imgs_path += ","
-                local_imgs_path += "," 
                 
         # 구글드라이브에 첨부 파일 업로드 by 정현아
         if self.file_path_list:
             files_path = ''
-            local_files_path = ''
             for path in self.file_path_list:
                 file_url = uploader.upload_file(path)
                 files_path += file_url
                 files_path += ","
-                local_files_path += path
-                local_files_path += ","
         
         # 첨부파일 목록 저장 by 정현아
         for lbl in self.file_lbl_list:
