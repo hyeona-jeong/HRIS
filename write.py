@@ -25,8 +25,8 @@ class Write(QMainWindow, form_class):
         self.del_btn_list = []
         self.file_lbl_list = [self.file_lbl]
         self.cnt = 0
-        
         self.atch_files = ''
+        
         self.font = QFont("Malgun Gothic", 9)
         self.charFormat = QTextCharFormat()
         self.charFormat.setFont(self.font)
@@ -55,6 +55,7 @@ class Write(QMainWindow, form_class):
         self.cnlBtn.clicked.connect(self.close)
         
     def submit(self, emp_num, conn, cur):
+        self.setLoadingCursor(True)
         category = self.category_combo.currentText()
         title = self.title_le.text()
         contents = self.contents_te.toHtml()
@@ -65,7 +66,7 @@ class Write(QMainWindow, form_class):
         img_path_list = re.findall(r'<img\s+src="([^"]+)"[^>]*>', contents)
         files_path = None
         local_imgs_path = ",".join(img_path_list)
-        local_files_path = ",".join(self.file_path) 
+        local_files_path = ",".join(self.file_path_list) 
         uploader = UploadFile()
         
         # 구글드라이브에 이미지 파일 업로드 by 정현아
@@ -96,6 +97,7 @@ class Write(QMainWindow, form_class):
         query = "INSERT INTO FORUM(WRITER, TITLE, CATEGORY, CONTENTS, EMP_NUM, ATCH_IMG_PATH, ATCH_FILE_PATH, ATCH_FILE_NAME, ATCH_IMG_LOCAL_PATH, ATCH_FILE_LOCAL_PATH) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
         cur.execute(query, (name, title,category,contents, emp_num, imgs_path, files_path, self.atch_files, local_imgs_path, local_files_path))
         conn.commit()
+        self.setLoadingCursor(False)
         self.close()
         
     # 231220 글씨체 변경 by 정현아
@@ -228,6 +230,12 @@ class Write(QMainWindow, form_class):
             self.del_btn_list[last_index].setVisible(False)
             
         self.cnt -= 1
+        
+    def setLoadingCursor(self, loading):
+        if loading:
+            QApplication.setOverrideCursor(Qt.WaitCursor)
+        else:
+            QApplication.restoreOverrideCursor()
                     
     def closeEvent(self, e): 
         self.closed.emit()

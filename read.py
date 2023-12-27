@@ -34,6 +34,7 @@ class Read(QMainWindow, form_class):
                 charset='utf8'
         )
         self.cur = self.conn.cursor()
+        self.downlaod_btn_list = []
         
         self.load_post(idx)
             
@@ -52,7 +53,7 @@ class Read(QMainWindow, form_class):
         self.contents_webview = QWebEngineView()
         self.verticalLayout.addWidget(self.contents_webview)
         
-        query = "SELECT WRITER, TITLE, CONTENTS, EDIT_DATE, ATCH_IMG_PATH, ATCH_FILE_PATH, ATCH_FILE_NAME FROM FORUM WHERE IDX = '%s'"
+        query = "SELECT WRITER, TITLE, CONTENTS, EDIT_DATE, ATCH_IMG_PATH, ATCH_FILE_PATH, ATCH_FILE_NAME, SUBMIT_DATE FROM FORUM WHERE IDX = '%s'"
         self.cur.execute(query,(idx))
         self.result = self.cur.fetchone()
         
@@ -60,17 +61,33 @@ class Read(QMainWindow, form_class):
         if self.result:
             post_wirter = self.result[0] 
             title = self.result[1]
+            submit_date = self.result[7].strftime("%Y-%m-%d %H:%M")
             edit_date = self.result[3].strftime("%Y-%m-%d %H:%M")
             atch_imgs = self.result[4]
+            set_timestamp = submit_date + r" (최종 수정시간 : " + edit_date + r")"
             
             self.title_lbl.setText(title)
-            self.last_timestamp.setText(edit_date)
+            self.last_timestamp.setText(set_timestamp)
             self.writer_lbl.setText(post_wirter)
             contents = self.result[2]
             if atch_imgs:
                 contents = self.load_img()
             self.contents_webview.setHtml(contents)
-            self.file_lbl.setText(self.result[6])
+            
+            # 231227 첨부파일 이름대로 푸쉬버튼 생성
+            self.file_name_list = self.result[6].split(",")
+            del self.file_name_list[-1]
+            i = 0
+            for atch_file_name in self.file_name_list:
+                self.downlaod_btn_list.append(QPushButton(atch_file_name))
+                self.downlaod_btn_list[i].setStyleSheet("border: none;")
+                self.fileLay.insertWidget(i+1,self.downlaod_btn_list[i])
+                self.downlaod_btn_list[i].installEventFilter(self)
+                self.downlaod_btn_list[i].clicked[str].connect(self.download_file)
+                i+=1
+    def download_file(self,file_name):
+        index = self.file_name_list.index(file_name)
+        pass
     
     # 231222 이미지 태그 경로를 로컬에서 구글드라이브 경로로 변경 by 정현아
     def load_img(self):
@@ -106,6 +123,15 @@ class Read(QMainWindow, form_class):
         self.w.show()
         self.hide()
         self.w.closed.connect(lambda: (self.show(), self.load_post(idx)))
+
+    # 231127 첨부파일 위에 위치시 커서 이미지 변경 by정현아 
+    def eventFilter(self, object, event):
+        if event.type() == QEvent.HoverEnter:
+            QApplication.setOverrideCursor(Qt.PointingHandCursor)
+            return True
+        elif event.type() == QEvent.HoverLeave:
+            QApplication.restoreOverrideCursor()
+        return False
     
     def closeEvent(self, e):
         self.closed.emit()
