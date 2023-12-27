@@ -765,7 +765,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>image/left.png</normaloff>image/left.png</iconset>
+           <normaloff>left.png</normaloff>left.png</iconset>
          </property>
         </item>
         <item>
@@ -774,7 +774,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>image/center.png</normaloff>image/center.png</iconset>
+           <normaloff>center.png</normaloff>center.png</iconset>
          </property>
         </item>
         <item>
@@ -783,7 +783,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>image/right.png</normaloff>image/right.png</iconset>
+           <normaloff>right.png</normaloff>right.png</iconset>
          </property>
         </item>
         <item>
@@ -792,7 +792,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>image/justify.png</normaloff>image/justify.png</iconset>
+           <normaloff>justify.png</normaloff>justify.png</iconset>
          </property>
         </item>
        </widget>
@@ -929,7 +929,7 @@ border: 1px solid #414141;
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>image/image.png</normaloff>image/image.png</iconset>
+          <normaloff>image.png</normaloff>image.png</iconset>
         </property>
        </widget>
       </item>

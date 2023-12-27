@@ -13,6 +13,9 @@ ui = [('login.ui', '.'),
        ('sign_up.ui', '.'),
        ('search_post.ui', '.'),
        ('user_auth.ui', '.'),
+       ('write.ui', '.'),
+       ('read.ui', '.'),
+       ('forum_list.ui', '.'),
        ('rc1.png', '.'),
        ('peo.png', '.'),
        ('logout.png', '.'),
@@ -26,7 +29,13 @@ ui = [('login.ui', '.'),
        ('nori.gif', '.'),
        ('unknown.png', '.'),
        ('busi1.png', '.'),
-       ('windowicon.jpg', '.')  
+       ('windowicon.jpg', '.'),
+       ('center.png', '.'),
+       ('image.png', '.'),
+       ('justify.png', '.'),
+       ('left.png', '.'),
+       ('right.png', '.')
+  
 ]
 
 a = Analysis(
