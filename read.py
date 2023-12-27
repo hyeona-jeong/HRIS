@@ -85,6 +85,7 @@ class Read(QMainWindow, form_class):
                 self.downlaod_btn_list[i].installEventFilter(self)
                 self.downlaod_btn_list[i].clicked[str].connect(self.download_file)
                 i+=1
+                
     def download_file(self,file_name):
         index = self.file_name_list.index(file_name)
         pass
