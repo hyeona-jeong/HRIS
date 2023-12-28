@@ -47,6 +47,8 @@ class SignUp(QDialog, form_class):
         self.chkBtn.setCheckable(True)
         self.chkBtn.clicked.connect(self.chkId)
         self.submitBtn.clicked.connect(self.userSignUp)
+        # 231228 ID변경시 중복체크 버튼 클릭상태 해제
+        self.id_lineEdit.textChanged.connect(self.chgStateBtn)
     
     # 231123 회원가입시 입력정보 확인 by 정현아    
     def userSignUp(self):
@@ -115,7 +117,6 @@ class SignUp(QDialog, form_class):
                                 
                                 # 로딩 중에 WaitCursor로 변경
                                     
-                                                           
                                 self.initSignUp()  
                                 # 231206 등록된 메일로 ID, 임시 비밀번호 전송
                                 smtp = smtplib.SMTP('smtp.gmail.com',587)
@@ -163,6 +164,10 @@ class SignUp(QDialog, form_class):
         self.id_lineEdit.clear()
         self.authCombo.setCurrentIndex(1)
         self.name_lineEdit.setFocus()
+        self.chkBtn.setChecked(False)
+    
+    # 231228 ID변경시 중복체크 버튼 클릭상태 해제
+    def chgStateBtn(self):
         self.chkBtn.setChecked(False)
         
     # 로딩시 커서 변경

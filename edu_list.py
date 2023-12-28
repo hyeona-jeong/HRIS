@@ -415,7 +415,7 @@ class EduList(QMainWindow, form_class):
         self.gBtn[0].setStyleSheet(
                     "QToolButton { border: None; color : black; font-weight: bold; }"
                 )
-        self.w.accept() 
+        self.w.close()
 
     def delChk(self, state, row):
         if state == Qt.Checked:
@@ -467,15 +467,12 @@ class EduList(QMainWindow, form_class):
                     row[1].value,
                     row[2].value,
                     row[3].value,
-                    row[4].value,
-                    row[5].value,
-                    row[6].value
                 ])
 
             self.w = DialogClass()
             self.w.addT.setRowCount(len(data)-1)
             for r in range(1,len(data)):
-                for c in range(0,7):
+                for c in range(0,4):
                     self.w.addT.setItem(r-1,c,QTableWidgetItem(str(data[r][c])))
             self.w.show()
         else: pass

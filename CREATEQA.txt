@@ -1,0 +1,22 @@
+CREATE TABLE `Q_A` (
+  `idx` int NOT NULL AUTO_INCREMENT,
+  `writer` varchar(8) NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `category` varchar(20) NOT NULL,
+  `contents` text NOT NULL,
+  `submit_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `edit_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `emp_num` int NOT NULL,
+  `atch_img_path` text,
+  `atch_img_name` text,
+  `atch_file_path` text,
+  `atch_file_name` text,
+  `view_cnt` int NOT NULL DEFAULT '1',
+  `atch_img_local_path` text,
+  `atch_file_local_path` text,
+  PRIMARY KEY (`idx`),
+  KEY `q_A_ibfk_2_idx` (`emp_num`),
+  KEY `q_A_ibfk_1` (`writer`),
+  CONSTRAINT `q_a_ibfk_1` FOREIGN KEY (`writer`) REFERENCES `main_table` (`name_kor`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `q_A_ibfk_2` FOREIGN KEY (`emp_num`) REFERENCES `main_table` (`emp_num`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

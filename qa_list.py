@@ -27,6 +27,7 @@ class Q_A(QMainWindow, form_class):
         super( ).__init__( )
         self.setupUi(self)
         self.setStyleSheet(stylesheet)
+        self.label_2.setText(r"Q&A")
 
         # 231202 체크박스 체크된 ROWW저장 리스트, 사업부검색 콤보박스, 이름검색 라인에딧초기화 by 정현아
         self.delRowList = list()

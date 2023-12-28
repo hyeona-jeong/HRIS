@@ -465,7 +465,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string/>
+   <string>           </string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -2066,7 +2066,7 @@ color white;</string>
                    </size>
                   </property>
                   <property name="text">
-                   <string>   신장</string>
+                   <string>   신장(cm)</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -2132,7 +2132,7 @@ color white;</string>
                    </size>
                   </property>
                   <property name="text">
-                   <string>   체중</string>
+                   <string>   체중(kg)</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

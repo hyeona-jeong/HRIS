@@ -1,34 +1,18 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
+from googleapiclient.discovery import build
+from httplib2 import Http
+from oauth2client import file, client, tools
 
-class HTMLLabelExample(QWidget):
-    def __init__(self):
-        super().__init__()
+scopes = 'https://www.googleapis.com/auth/drive.file'
+store = file.Storage('storage.json')
+creds = store.get()
 
-        self.init_ui()
+try :
+    import argparse
+    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+except ImportError:
+    flags = None
 
-    def init_ui(self):
-        # QLabel을 사용하여 HTML 포맷의 텍스트 표시
-        label = QLabel()
-        html_text = """
-        <html>
-            <body>
-                <h1>This is a heading</h1>
-                <p>This is a paragraph with <b>bold</b> text.</p>
-                <img src="path/to/your/image.png" alt="Image">
-            </body>
-        </html>
-        """
-        label.setText(html_text)
-
-        # 레이아웃 설정
-        layout = QVBoxLayout()
-        layout.addWidget(label)
-        self.setLayout(layout)
-
-if __name__ == '__main__':
-    import sys
-
-    app = QApplication(sys.argv)
-    window = HTMLLabelExample()
-    window.show()
-    sys.exit(app.exec_())
+if not creds or creds.invalid:
+    print('make new cred')
+    flow = client.flow_from_clientsecrets('credentials.json', scopes)
+    creds = tools.run_flow(flow, store, flags) if flags else tools.run_flow(flow, store)

@@ -27,6 +27,7 @@ class Edit(QMainWindow, form_class):
         self.file_path_list = []
         self.del_btn_list = []
         self.file_lbl_list = [self.file_lbl]
+        self.cnt = 0
         
         self.font = QFont("Malgun Gothic", 9)
         self.charFormat = QTextCharFormat()

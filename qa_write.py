@@ -92,13 +92,14 @@ class Write(QMainWindow, form_class):
                 files_path += ","
         
         # 첨부파일 목록 저장 by 정현아
-        for lbl in self.file_lbl_list:
-            if lbl.text() == "":
-                break
-            self.atch_files += lbl.text()
-            self.atch_files += ","
-        if self.atch_files == "" :
-            self.atch_files = None
+        if self.cnt != 0:
+            for lbl in self.file_lbl_list:
+                if lbl.text() == "":
+                    break
+                self.atch_files += lbl.text()
+                self.atch_files += ","
+            if self.atch_files == "" :
+                self.atch_files = None
 
         query = "INSERT INTO Q_A(WRITER, TITLE, CATEGORY, CONTENTS, EMP_NUM, ATCH_IMG_PATH, ATCH_FILE_PATH, ATCH_FILE_NAME, ATCH_IMG_LOCAL_PATH, ATCH_FILE_LOCAL_PATH) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"
         cur.execute(query, (name, title,category,contents, emp_num, imgs_path, files_path, self.atch_files, local_imgs_path, local_files_path))

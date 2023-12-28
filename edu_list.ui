@@ -465,7 +465,11 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string/>
+   <string>         </string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>windowicon.jpg</normaloff>windowicon.jpg</iconset>
   </property>
   <widget class="QWidget" name="eduList">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -490,7 +494,7 @@
 colorL white;</string>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt; 교육이수정보 입력/조회&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt; 교육이수정보 조회&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
