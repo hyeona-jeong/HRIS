@@ -2,13 +2,14 @@ import os
 import sys
 import pymysql
 import re
+import gdown
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from edit import Edit
+from forum_edit import Edit
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -75,20 +76,26 @@ class Read(QMainWindow, form_class):
             self.contents_webview.setHtml(contents)
             
             # 231227 첨부파일 이름대로 푸쉬버튼 생성
-            self.file_name_list = self.result[6].split(",")
-            del self.file_name_list[-1]
-            i = 0
-            for atch_file_name in self.file_name_list:
-                self.downlaod_btn_list.append(QPushButton(atch_file_name))
-                self.downlaod_btn_list[i].setStyleSheet("border: none;")
-                self.fileLay.insertWidget(i+1,self.downlaod_btn_list[i])
-                self.downlaod_btn_list[i].installEventFilter(self)
-                self.downlaod_btn_list[i].clicked[str].connect(self.download_file)
-                i+=1
-                
+            if self.result[6]:
+                self.file_name_list = self.result[6].split(",")
+                del self.file_name_list[-1]
+                i = 0
+                for atch_file_name in self.file_name_list:
+                    self.downlaod_btn_list.append(QPushButton(atch_file_name))
+                    self.downlaod_btn_list[i].setStyleSheet("border: none;")
+                    self.fileLay.insertWidget(i+1,self.downlaod_btn_list[i])
+                    self.downlaod_btn_list[i].installEventFilter(self)
+                    self.downlaod_btn_list[i].clicked.connect(lambda _, file_name=atch_file_name: self.download_file(file_name))
+                    i+=1
+    
+    # 231228 파일 다운로드 by 정현아            
     def download_file(self,file_name):
         index = self.file_name_list.index(file_name)
-        pass
+        web_path = self.result[5].split(",")
+        reply = QMessageBox.question(self, '저장 확인', '현재 폴더에 저장하시겠습니까??', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            gdown.download(web_path[index],self.file_name_list[index],quiet=False)
+            QMessageBox.information(self,"저장 완료", "저장되었습니다.")
     
     # 231222 이미지 태그 경로를 로컬에서 구글드라이브 경로로 변경 by 정현아
     def load_img(self):

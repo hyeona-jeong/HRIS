@@ -1,4 +1,4 @@
-# -*- mode: python ; coding: utf-8 -*-
+# -- mode python ; coding utf-8 --
 ui = [('login.ui', '.'),
        ('find.ui', '.'),
        ('index.ui', '.'),

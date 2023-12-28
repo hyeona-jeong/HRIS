@@ -97,7 +97,7 @@ class Login(QMainWindow, form_class):
         self.emp_num = result[2]
         data = result[1]
         
-        self.w = Index(self.emp_num)
+        self.w = Index(self.emp_num, self.result_pass[2])
         self.w.show()
         regist_action = None
 
@@ -112,6 +112,7 @@ class Login(QMainWindow, form_class):
             self.w.showedList.connect(self.controlEmpListBtn)
             self.w.listToInfo.connect(self.controlEmpListBtn)
             self.w.indexToForum.connect(self.controlWrite)
+            self.w.indextToQA.connect(self.controlQA)
 
         self.w.showedInfo.connect(self.showMyInfo)
         self.w.showedEdit.connect(self.showEdit)
@@ -142,6 +143,10 @@ class Login(QMainWindow, form_class):
     
     # 231224 사원권한이 regular일 경우 삭제 버튼, 체크박스가 안보이게 하기 by 정현아
     def controlWrite(self):
+        self.w.w.table.setColumnHidden(0,True)
+        self.w.w.listDelBtn.setVisible(False)
+        
+    def controlQA(self):
         self.w.w.table.setColumnHidden(0,True)
         self.w.w.listDelBtn.setVisible(False)
 

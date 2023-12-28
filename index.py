@@ -13,6 +13,7 @@ from edu_list import EduList
 from sign_up import SignUp
 from user_auth import UserAuth
 from forum_list import Forum
+from qa_list import Q_A
 
 
 def resource_path(relative_path):
@@ -30,14 +31,16 @@ class Index(QMainWindow, form_class):
     showedEdit = pyqtSignal()
     listToInfo = pyqtSignal()
     indexToForum = pyqtSignal()
+    indextToQA = pyqtSignal()
 
-    def __init__(self, emp_num):
+    def __init__(self, emp_num, auth):
         super().__init__()
         self.setupUi(self)
         self.auth = None
         self.w = None
         self.emp_num = emp_num
-
+        self.auth = auth
+        
         self.index.setStyleSheet(stylesheet)
 
         # 메뉴바 생성
@@ -52,9 +55,10 @@ class Index(QMainWindow, form_class):
         self.toolhr = self.menuBar.addAction('인사')
         self.tooledu = self.menuBar.addAction('교육')
         self.toolforum = self.menuBar.addAction('게시판',self.showPage)
-        self.toolqa = self.menuBar.addAction('Q&&A')
-        self.toolrc = self.menuBar.addAction('총무')
+        self.toolqa = self.menuBar.addAction('Q&&A',self.showPage)
+        self.toolrc = self.menuBar.addAction('채용')
         self.toolbm = self.menuBar.addAction('사업관리')
+        self.toolga = self.menuBar.addAction('총무')
         
         
         # 231125 메뉴바에 메뉴 추가 
@@ -107,6 +111,12 @@ class Index(QMainWindow, form_class):
             self.indexToForum.emit()
             self.w.forumToWrite.connect(self.indexToForum.emit)
             self.w.forumToRead.connect(self.indexToForum.emit)
+        
+        elif sender == 'Q&&A':
+            self.w = Q_A(self.emp_num, self.auth)
+            self.indextToQA.emit()
+            self.w.qaToWrite.connect(self.indextToQA.emit)
+            self.w.qaToRead.connect(self.indextToQA.emit)
             
         self.w.show()
         self.hide()

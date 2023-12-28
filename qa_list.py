@@ -8,8 +8,8 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from forum_write import Write
-from forum_read import Read
+from qa_write import Write
+from qa_read import Read
 
 def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
@@ -18,12 +18,12 @@ def resource_path(relative_path):
 form = resource_path('forum_list.ui')
 form_class = uic.loadUiType(form)[0]
 
-class Forum(QMainWindow, form_class):
+class Q_A(QMainWindow, form_class):
     closed = pyqtSignal()
-    forumToWrite = pyqtSignal()
-    forumToRead = pyqtSignal()
+    qaToWrite = pyqtSignal()
+    qaToRead = pyqtSignal()
 
-    def __init__(self, emp_num):
+    def __init__(self, emp_num, auth):
         super( ).__init__( )
         self.setupUi(self)
         self.setStyleSheet(stylesheet)
@@ -34,6 +34,7 @@ class Forum(QMainWindow, form_class):
         self.search_word = ''
         self.w = None
         self.user = emp_num
+        self.auth = auth
         self.emp_num = []
         self.result = None
         self.gBtn = []
@@ -62,7 +63,7 @@ class Forum(QMainWindow, form_class):
 
         self.cur = self.conn.cursor()
         # 231224 테이블 세팅 by 정현아
-        self.main_query = "SELECT IDX, CATEGORY, TITLE, WRITER, SUBMIT_DATE, VIEW_CNT, EMP_NUM FROM FORUM"
+        self.main_query = "SELECT IDX, CATEGORY, TITLE, WRITER, SUBMIT_DATE, VIEW_CNT, EMP_NUM FROM Q_A"
         self.setTables(self.main_query)
         self.gBtn[0].setChecked(True)
         self.gBtn[0].setStyleSheet(
@@ -70,7 +71,7 @@ class Forum(QMainWindow, form_class):
                 )
 
         # 231202 사원전체 수 라벨에 세팅 by 정현아
-        countQuery = "SELECT COUNT(*) FROM FORUM;"
+        countQuery = "SELECT COUNT(*) FROM Q_A;"
         self.cur.execute(countQuery)
         count = self.cur.fetchone()[0]
         self.countLabel.setText("총 ("+ str(count) + ")건")
@@ -333,7 +334,7 @@ class Forum(QMainWindow, form_class):
                 idx = int(self.table.item(i,1).text())
                 delData.append(idx)
 
-        query = 'DELETE FROM FORUM WHERE IDX = %s ;'
+        query = 'DELETE FROM Q_A WHERE IDX = %s ;'
         reply = QMessageBox.question(self, '삭제 확인', '삭제된 정보는 복구할 수 없습니다.\n삭제하시겠습니까?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             try:
@@ -363,20 +364,20 @@ class Forum(QMainWindow, form_class):
             if self.search_field == '':
                 query = f"""SELECT 
                 IDX, CATEGORY, TITLE, WRITER, SUBMIT_DATE, VIEW_CNT, EMP_NUM 
-                FROM FORUM 
+                FROM Q_A 
                 WHERE TITLE LIKE '%{self.search_word}%' OR CONTENTS LIKE '%{self.search_word}%' OR WRITER LIKE '%{self.search_word}%' OR CATEGORY LIKE '%{self.search_word}%'"""
                 self.setTables(query)
-                countQuery = f"SELECT COUNT(*) FROM FORUM WHERE TITLE LIKE '%{self.search_word}%' OR CONTENTS LIKE '%{self.search_word}%' OR WRITER LIKE '%{self.search_word}%' OR CATEGORY LIKE '%{self.search_word}%'"
+                countQuery = f"SELECT COUNT(*) FROM Q_A WHERE TITLE LIKE '%{self.search_word}%' OR CONTENTS LIKE '%{self.search_word}%' OR WRITER LIKE '%{self.search_word}%' OR CATEGORY LIKE '%{self.search_word}%'"
                 self.cur.execute(countQuery)
                 count = self.cur.fetchone()[0]
                 self.countLabel.setText("총 ("+ str(count) + ")건")
             else :
                 query = f"""SELECT 
                 IDX, CATEGORY, TITLE, WRITER, SUBMIT_DATE, VIEW_CNT, EMP_NUM 
-                FROM FORUM 
+                FROM Q_A 
                 WHERE {self.search_field} LIKE '%{self.search_word}%'"""
                 self.setTables(query)
-                countQuery = f"SELECT COUNT(*) FROM FORUM WHERE {self.search_field} LIKE '%{self.search_word}%'"
+                countQuery = f"SELECT COUNT(*) FROM Q_A WHERE {self.search_field} LIKE '%{self.search_word}%'"
                 self.cur.execute(countQuery)
                 count = self.cur.fetchone()[0]
                 self.countLabel.setText("총 ("+ str(count) + ")건")
@@ -386,7 +387,7 @@ class Forum(QMainWindow, form_class):
             self.gBtn[0].setStyleSheet(
                         "QToolButton { border: None; color : black; font-weight: bold; }"
                     )
-            countQuery = "SELECT COUNT(*) FROM FORUM;"
+            countQuery = "SELECT COUNT(*) FROM Q_A;"
             self.cur.execute(countQuery)
             count = self.cur.fetchone()[0]
             self.countLabel.setText("총 ("+ str(count) + ")건")
@@ -395,7 +396,7 @@ class Forum(QMainWindow, form_class):
     # 글쓰기 화면 불러오기 by 정현아
     def writePost(self, emp_num):
         self.w = Write(emp_num,self.conn,self.cur)
-        self.forumToWrite.emit()
+        self.qaToWrite.emit()
         self.w.show()
         self.hide()
         self.w.closed.connect(lambda: (self.show(), self.show_list()))
@@ -403,28 +404,29 @@ class Forum(QMainWindow, form_class):
     # 231224 게시글 읽기
     def readPost(self, row, col):
         idx = int(self.table.item(row,1).text())
-        query = "SELECT VIEW_CNT FROM FORUM WHERE IDX = %s"
+        query = "SELECT VIEW_CNT FROM Q_A WHERE IDX = %s"
         self.cur.execute(query, idx)
         result = self.cur.fetchone()[0]
         if not result:
             QMessageBox.warning(self, "게시글 없음", "삭제된 게시글 입니다.")
             return
         result += 1
-        query = "UPDATE FORUM SET VIEW_CNT =%s WHERE IDX = %s"
+        query = "UPDATE Q_A SET VIEW_CNT =%s WHERE IDX = %s"
         self.cur.execute(query, (result, idx))
         self.conn.commit()
         
         self.w1 = Read(idx)
-        if self.user != self.emp_num[row]:
-            self.w1.editBtn.setVisible(False)
-            self.w1.delBtn.setVisible(False)
-        self.forumToRead.emit()
+        if not (self.user == self.emp_num[row] or self.auth == "Master"):
+            QMessageBox.warning(self,"권한 부적합","QA 내용은 작성자와 관리자만 확인가능합니다.")
+            return
+
+        self.qaToRead.emit()
         self.w1.show()
         self.hide()
         self.w1.closed.connect(lambda: (self.show(), self.show_list()))
         
     def show_list(self):
-        query = "SELECT * FROM FORUM"
+        query = "SELECT * FROM Q_A"
         self.cur.execute(query)
         result = self.cur.fetchall()
         self.setTables(self.main_query)
@@ -432,7 +434,7 @@ class Forum(QMainWindow, form_class):
         self.gBtn[0].setStyleSheet(
                     "QToolButton { border: None; color : black; font-weight: bold; }"
                 )
-        countQuery = "SELECT COUNT(*) FROM FORUM;"
+        countQuery = "SELECT COUNT(*) FROM Q_A;"
         self.cur.execute(countQuery)
         count = self.cur.fetchone()[0]
         self.countLabel.setText("총 ("+ str(count) + ")건")
@@ -471,6 +473,6 @@ stylesheet = """
 """
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
-    myWindow = Forum() 
+    myWindow = Q_A() 
     myWindow.show() 
     app.exec_() 

@@ -59,6 +59,8 @@ class Write(QMainWindow, form_class):
         category = self.category_combo.currentText()
         title = self.title_le.text()
         contents = self.contents_te.toHtml()
+        imgs_path = None
+        files_path = None
         query = "SELECT NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM = %s"
         cur.execute(query,(emp_num))
         name = cur.fetchone()
