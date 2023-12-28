@@ -19,4 +19,4 @@ CREATE TABLE `Q_A` (
   KEY `q_A_ibfk_1` (`writer`),
   CONSTRAINT `q_a_ibfk_1` FOREIGN KEY (`writer`) REFERENCES `main_table` (`name_kor`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `q_A_ibfk_2` FOREIGN KEY (`emp_num`) REFERENCES `main_table` (`emp_num`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

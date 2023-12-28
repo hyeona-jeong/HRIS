@@ -38,6 +38,9 @@ class Read(QMainWindow, form_class):
         self.downlaod_btn_list = []
         
         self.load_post(idx)
+        self.replyBtn = QPushButton("답변")
+        self.replyBtn.setFixedSize(93, 28) 
+        self.horizontalLayout.insertWidget(1,self.replyBtn)
             
         self.editBtn.clicked.connect(lambda: self.edit_post(self.conn, self.cur, idx))
         self.delBtn.clicked.connect(lambda: self.delete_post(idx))

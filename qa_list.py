@@ -27,7 +27,8 @@ class Q_A(QMainWindow, form_class):
         super( ).__init__( )
         self.setupUi(self)
         self.setStyleSheet(stylesheet)
-        self.label_2.setText(r"Q&A")
+        self.label_2.setText(r" Q&A")
+        self.label_2.setStyleSheet("background-color: #ff5500; color: white;  font-size:18pt; font-weight:600;")
 
         # 231202 체크박스 체크된 ROWW저장 리스트, 사업부검색 콤보박스, 이름검색 라인에딧초기화 by 정현아
         self.delRowList = list()
@@ -287,6 +288,10 @@ class Q_A(QMainWindow, form_class):
             for col, data in enumerate(row_data):
                 if col == 6:
                     self.emp_num.append(data)
+                elif col == 2:
+                    item = QTableWidgetItem("🔒" + str(data))
+                    item.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+                    self.table.setItem(row % 15, col + 1, item)
                 else:
                     item = QTableWidgetItem(str(data))
                     item.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
@@ -420,7 +425,10 @@ class Q_A(QMainWindow, form_class):
         if not (self.user == self.emp_num[row] or self.auth == "Master"):
             QMessageBox.warning(self,"권한 부적합","QA 내용은 작성자와 관리자만 확인가능합니다.")
             return
-
+        
+        if self.auth != "Master":
+            self.w1.replyBtn.setVisible(False)
+        
         self.qaToRead.emit()
         self.w1.show()
         self.hide()
