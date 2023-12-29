@@ -15,13 +15,13 @@ def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
-form = resource_path('read.ui')
+form = resource_path('qa_read.ui')
 form_class = uic.loadUiType(form)[0]
 
 class Read(QMainWindow, form_class):
     closed = pyqtSignal()
 
-    def __init__(self, idx):
+    def __init__(self, idx, emp_num):
         super( ).__init__( )
         self.setupUi(self)
         self.result = None
@@ -38,14 +38,12 @@ class Read(QMainWindow, form_class):
         self.downlaod_btn_list = []
         
         self.load_post(idx)
-        self.replyBtn = QPushButton("답변")
-        self.replyBtn.setFixedSize(93, 28) 
-        self.horizontalLayout.insertWidget(1,self.replyBtn)
-            
+        
+        self.co_subitBtn.clicked.connect(lambda: self.submit_comment(self.conn, self.cur, idx, emp_num))
         self.editBtn.clicked.connect(lambda: self.edit_post(self.conn, self.cur, idx))
         self.delBtn.clicked.connect(lambda: self.delete_post(idx))
         self.cnlBtn.clicked.connect(self.close)
-        
+                
     # 231222 DB 데이터 불러오기오고 라벨에 데이터 세팅 by 정현아
     def load_post(self, idx):
         # 이전에 저장된 값을 불러오지 않게 QWebEngineView 제거
@@ -55,7 +53,7 @@ class Read(QMainWindow, form_class):
 
         # 새로운 QWebEngineView 생성 및 레이아웃에 추가
         self.contents_webview = QWebEngineView()
-        self.verticalLayout.addWidget(self.contents_webview)
+        self.verticalLayout_2.addWidget(self.contents_webview)
         
         query = "SELECT WRITER, TITLE, CONTENTS, EDIT_DATE, ATCH_IMG_PATH, ATCH_FILE_PATH, ATCH_FILE_NAME, SUBMIT_DATE FROM Q_A WHERE IDX = '%s'"
         self.cur.execute(query,(idx))
@@ -129,6 +127,46 @@ class Read(QMainWindow, form_class):
                 QMessageBox.warning(self, "게시글 삭제 실패", "Error: " + str(e))
                 return       
             
+    # 231229 댓글 등록 메서드 by 정현아
+    def submit_comment(self, conn, cur, idx, emp_num):
+        content = self.co_te.toPlainText()
+        if content == "" :
+            QMessageBox.warning(self,"댓글 등록 실패","댓글을 입력해주세요.")
+            return
+        contents = self.co_te.toHtml()
+        fo_idx = idx
+        query = "SELECT NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM = %s"
+        cur.execute(query, emp_num)
+        co_writer = cur.fetchone()[0]
+        
+        query = "INSERT INTO QA_COMMENT (FO_IDX, WRITER, CONTENTS) VALUES (%s, %s, %s)"
+        cur.execute(query,(fo_idx,co_writer,contents))
+        conn.commit()
+        query = "SELECT IDX, WRITER, CONTENTS, SUBMIT_DATE, EDIT_DATE FROM QA_COMMENT WHERE FO_IDX = %s ORDER BY IDX DESC LIMIT 1"
+        cur.execute(query, idx)
+        result = cur.fetchone()
+        self.insert_comment(result)
+    
+    def insert_comment(self, data):
+        co_num = self.verticalLayout_9.count()-1
+        coBox = QHBoxLayout()
+        self.verticalLayout_9.insertLayout(co_num,coBox)
+        name_lbl = QLabel(data[1])
+        name_lbl.setMinimumWidth(50)
+        coBox.insertWidget(0,name_lbl)
+        con_lbl = QLabel(data[2])
+        coBox.insertWidget(1,con_lbl)
+        con_lbl.setAlignment(Qt.AlignLeft) 
+        con_lbl.setWordWrap(True)
+        edit_btn = QPushButton("수정")
+        edit_btn.setFixedSize(34,28)
+        coBox.insertWidget(2,edit_btn)
+        co_del_btn = QPushButton("삭제")
+        co_del_btn.setFixedSize(34,28)
+        coBox.insertWidget(3,co_del_btn)
+        self.co_te.setPlainText("")
+        
+        
     def edit_post(self, conn, cur, idx):
         self.w = Edit(conn, cur, idx)
         self.w.show()

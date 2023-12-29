@@ -421,13 +421,10 @@ class Q_A(QMainWindow, form_class):
         self.cur.execute(query, (result, idx))
         self.conn.commit()
         
-        self.w1 = Read(idx)
+        self.w1 = Read(idx, self.user)
         if not (self.user == self.emp_num[row] or self.auth == "Master"):
             QMessageBox.warning(self,"권한 부적합","QA 내용은 작성자와 관리자만 확인가능합니다.")
             return
-        
-        if self.auth != "Master":
-            self.w1.replyBtn.setVisible(False)
         
         self.qaToRead.emit()
         self.w1.show()

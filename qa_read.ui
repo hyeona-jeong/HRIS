@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1269</width>
-    <height>857</height>
+    <height>889</height>
    </rect>
   </property>
   <property name="palette">
@@ -453,7 +453,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string/>
+   <string>       </string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -480,30 +480,7 @@
       </property>
      </widget>
     </item>
-    <item row="7" column="2">
-     <spacer name="horizontalSpacer_3">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;제목&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-    </item>
-    <item row="9" column="1">
+    <item row="8" column="1">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <spacer name="horizontalSpacer">
@@ -590,63 +567,27 @@
       </item>
      </layout>
     </item>
-    <item row="0" column="1">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
+    <item row="1" column="1">
+     <widget class="QLabel" name="title_lbl">
+      <property name="minimumSize">
        <size>
-        <width>20</width>
-        <height>40</height>
+        <width>0</width>
+        <height>28</height>
        </size>
       </property>
-     </spacer>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>28</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>제목</string>
+      </property>
+     </widget>
     </item>
-    <item row="7" column="1">
-     <layout class="QHBoxLayout" name="fileLay">
-      <item alignment="Qt::AlignRight">
-       <widget class="QLabel" name="file_lbl">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;파일 명 클릭시 다운로드 됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>첨부파일: </string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="11" column="1">
-     <spacer name="verticalSpacer_2">
+    <item row="0" column="1">
+     <spacer name="verticalSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
@@ -699,24 +640,28 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="1">
-     <widget class="QLabel" name="title_lbl">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>28</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>28</height>
-       </size>
-      </property>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label">
       <property name="text">
-       <string>제목</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;제목&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
+    </item>
+    <item row="10" column="1">
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item row="3" column="0">
      <widget class="QLabel" name="label_6">
@@ -725,29 +670,21 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="1">
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="minimumSize">
+    <item row="7" column="2">
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
        <size>
-        <width>0</width>
-        <height>430</height>
+        <width>40</width>
+        <height>20</height>
        </size>
       </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>1137</width>
-         <height>428</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout"/>
-      </widget>
-     </widget>
+     </spacer>
     </item>
     <item row="3" column="1">
      <widget class="QLabel" name="writer_lbl">
@@ -768,66 +705,170 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item alignment="Qt::AlignHCenter">
-       <widget class="QLabel" name="label_5">
-        <property name="minimumSize">
-         <size>
-          <width>50</width>
-          <height>120</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>50</width>
-          <height>120</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">border: 1px solid black;</string>
-        </property>
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;댓글&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QTextEdit" name="textEdit_2">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>120</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>120</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton">
-        <property name="minimumSize">
-         <size>
-          <width>75</width>
-          <height>120</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>75</width>
-          <height>120</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>등록</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+    <item row="5" column="1">
+     <widget class="QScrollArea" name="scrollArea_2">
+      <property name="minimumSize">
+       <size>
+        <width>1139</width>
+        <height>615</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents_3">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1137</width>
+         <height>613</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_9">
+        <item>
+         <widget class="QScrollArea" name="scrollArea">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>480</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents_4">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>1117</width>
+             <height>478</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_2"/>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="fileLay_3">
+          <item alignment="Qt::AlignRight">
+           <widget class="QLabel" name="file_lbl_3">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;파일 명 클릭시 다운로드 됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>첨부파일: </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item alignment="Qt::AlignHCenter">
+           <widget class="QLabel" name="label_7">
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>50</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;댓글&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextEdit" name="co_te">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="co_subitBtn">
+            <property name="minimumSize">
+             <size>
+              <width>75</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>75</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="text">
+             <string>등록</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
