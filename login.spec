@@ -1,4 +1,4 @@
-# -- mode python ; coding utf-8 --
+# -*- mode: python ; coding: utf-8 -*-
 ui = [('login.ui', '.'),
        ('find.ui', '.'),
        ('index.ui', '.'),
@@ -34,8 +34,8 @@ ui = [('login.ui', '.'),
        ('image.png', '.'),
        ('justify.png', '.'),
        ('left.png', '.'),
-       ('right.png', '.')
-  
+       ('right.png', '.'),
+       ('unknown.png', '.')
 ]
 
 a = Analysis(
