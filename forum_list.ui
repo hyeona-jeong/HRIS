@@ -471,7 +471,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>        </string>
+   <string/>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -1011,7 +1011,7 @@ background-color:white;</string>
            <string notr="true">color: #404040;</string>
           </property>
           <property name="text">
-           <string>글쓰기</string>
+           <string>등록</string>
           </property>
          </widget>
         </item>

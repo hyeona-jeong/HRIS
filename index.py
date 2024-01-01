@@ -60,7 +60,6 @@ class Index(QMainWindow, form_class):
         self.toolbm = self.menuBar.addAction('사업관리')
         self.toolga = self.menuBar.addAction('총무')
         
-        
         # 231125 메뉴바에 메뉴 추가 
         self.menuHr = QMenu()
         self.menuHr.addAction('사원정보검색',self.showPage)

@@ -30,7 +30,7 @@ class Q_A(QMainWindow, form_class):
         self.label_2.setText(r" Q&A")
         self.label_2.setStyleSheet("background-color: #ff5500; color: white;  font-size:18pt; font-weight:600;")
 
-        # 231202 체크박스 체크된 ROWW저장 리스트, 사업부검색 콤보박스, 이름검색 라인에딧초기화 by 정현아
+        # 231202 체크박스 체크된 ROW저장 리스트, 사업부검색 콤보박스, 이름검색 라인에딧초기화 by 정현아
         self.delRowList = list()
         self.search_field = ''
         self.search_word = ''
@@ -65,7 +65,9 @@ class Q_A(QMainWindow, form_class):
 
         self.cur = self.conn.cursor()
         # 231224 테이블 세팅 by 정현아
-        self.main_query = "SELECT IDX, CATEGORY, TITLE, WRITER, SUBMIT_DATE, VIEW_CNT, EMP_NUM FROM Q_A"
+        self.main_query = "SELECT IDX, CATEGORY, TITLE, WRITER, SUBMIT_DATE, VIEW_CNT, EMP_NUM FROM Q_A "
+        if self.auth == "Regular":
+            self.main_query += f"WHERE WRITER = (SELECT NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM = {self.user}) "
         self.setTables(self.main_query)
         self.gBtn[0].setChecked(True)
         self.gBtn[0].setStyleSheet(
@@ -73,7 +75,9 @@ class Q_A(QMainWindow, form_class):
                 )
 
         # 231202 사원전체 수 라벨에 세팅 by 정현아
-        countQuery = "SELECT COUNT(*) FROM Q_A;"
+        countQuery = "SELECT COUNT(*) FROM Q_A "
+        if self.auth == "Regular":
+            countQuery += f"WHERE WRITER = (SELECT NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM = {self.user}) "
         self.cur.execute(countQuery)
         count = self.cur.fetchone()[0]
         self.countLabel.setText("총 ("+ str(count) + ")건")
@@ -267,6 +271,9 @@ class Q_A(QMainWindow, form_class):
                         "QToolButton { border: None; color : black; font-weight: bold; }"
                     )
         self.ignore_paging_btn = False
+        # 231229 QA답변여부 체크
+        check_query = "SELECT * FROM QA_COMMENT WHERE FO_IDX = %s"
+        
         # 테이블 내에 아이템 세팅 페이지당 row수 15개로 제한
         for row, row_data in enumerate(result):
             if row < 15 * (self.current_page-1) :
@@ -286,10 +293,16 @@ class Q_A(QMainWindow, form_class):
             self.table.setCellWidget(row % 15, 0, chk_widget)
             chk_bx.stateChanged.connect(lambda state, row=row % 15: self.delChk(state, row))
             for col, data in enumerate(row_data):
+                if col == 0:
+                    self.cur.execute(check_query, data)
+                    comment_yn = self.cur.fetchall
                 if col == 6:
                     self.emp_num.append(data)
                 elif col == 2:
-                    item = QTableWidgetItem("🔒" + str(data))
+                    title = "🔒" + str(data)
+                    if comment_yn:
+                        title += "☑️답변완료"
+                    item = QTableWidgetItem(title)
                     item.setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
                     self.table.setItem(row % 15, col + 1, item)
                 else:
@@ -371,9 +384,13 @@ class Q_A(QMainWindow, form_class):
                 query = f"""SELECT 
                 IDX, CATEGORY, TITLE, WRITER, SUBMIT_DATE, VIEW_CNT, EMP_NUM 
                 FROM Q_A 
-                WHERE TITLE LIKE '%{self.search_word}%' OR CONTENTS LIKE '%{self.search_word}%' OR WRITER LIKE '%{self.search_word}%' OR CATEGORY LIKE '%{self.search_word}%'"""
+                WHERE (TITLE LIKE '%{self.search_word}%' OR CONTENTS LIKE '%{self.search_word}%' OR WRITER LIKE '%{self.search_word}%' OR CATEGORY LIKE '%{self.search_word}%')"""
+                if self.auth == "Regular":
+                    query += f" AND WRITER = (SELECT NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM = {self.user}) "
                 self.setTables(query)
-                countQuery = f"SELECT COUNT(*) FROM Q_A WHERE TITLE LIKE '%{self.search_word}%' OR CONTENTS LIKE '%{self.search_word}%' OR WRITER LIKE '%{self.search_word}%' OR CATEGORY LIKE '%{self.search_word}%'"
+                countQuery = f"SELECT COUNT(*) FROM Q_A WHERE (TITLE LIKE '%{self.search_word}%' OR CONTENTS LIKE '%{self.search_word}%' OR WRITER LIKE '%{self.search_word}%' OR CATEGORY LIKE '%{self.search_word}%')"
+                if self.auth == "Regular":
+                    countQuery += f" AND WRITER = (SELECT NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM = {self.user}) "
                 self.cur.execute(countQuery)
                 count = self.cur.fetchone()[0]
                 self.countLabel.setText("총 ("+ str(count) + ")건")
@@ -382,8 +399,12 @@ class Q_A(QMainWindow, form_class):
                 IDX, CATEGORY, TITLE, WRITER, SUBMIT_DATE, VIEW_CNT, EMP_NUM 
                 FROM Q_A 
                 WHERE {self.search_field} LIKE '%{self.search_word}%'"""
+                if self.auth == "Regular":
+                    query += f" AND WRITER = (SELECT NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM = {self.user}) "
                 self.setTables(query)
                 countQuery = f"SELECT COUNT(*) FROM Q_A WHERE {self.search_field} LIKE '%{self.search_word}%'"
+                if self.auth == "Regular":
+                    countQuery += f" AND WRITER = (SELECT NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM = {self.user}) "
                 self.cur.execute(countQuery)
                 count = self.cur.fetchone()[0]
                 self.countLabel.setText("총 ("+ str(count) + ")건")
@@ -393,7 +414,9 @@ class Q_A(QMainWindow, form_class):
             self.gBtn[0].setStyleSheet(
                         "QToolButton { border: None; color : black; font-weight: bold; }"
                     )
-            countQuery = "SELECT COUNT(*) FROM Q_A;"
+            countQuery = "SELECT COUNT(*) FROM Q_A "
+            if self.auth == "Regular":
+                countQuery += f"WHERE WRITER = (SELECT NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM = {self.user}) "
             self.cur.execute(countQuery)
             count = self.cur.fetchone()[0]
             self.countLabel.setText("총 ("+ str(count) + ")건")
@@ -440,7 +463,9 @@ class Q_A(QMainWindow, form_class):
         self.gBtn[0].setStyleSheet(
                     "QToolButton { border: None; color : black; font-weight: bold; }"
                 )
-        countQuery = "SELECT COUNT(*) FROM Q_A;"
+        countQuery = "SELECT COUNT(*) FROM Q_A "
+        if self.auth == "Regular":
+            countQuery += f"WHERE WRITER = (SELECT NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM = {self.user}) "
         self.cur.execute(countQuery)
         count = self.cur.fetchone()[0]
         self.countLabel.setText("총 ("+ str(count) + ")건")

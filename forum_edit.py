@@ -19,10 +19,10 @@ class Edit(QMainWindow, form_class):
     closed = pyqtSignal()
 
     def __init__(self, conn=None, cur=None, idx = None):
+        super( ).__init__( )
         if not idx:
             QMessageBox.warning(self, "게시글 없음", "삭제된 게시글 입니다.")
             return
-        super( ).__init__( )
         self.setupUi(self)
         self.file_path_list = []
         self.del_btn_list = []
@@ -65,7 +65,8 @@ class Edit(QMainWindow, form_class):
         title = result[1]
         contents = result[2] 
         # 로컬링크를 리스트로 변환
-        self.file_path_list = result[4].split(",")
+        if result[4]:
+            self.file_path_list = result[4].split(",")
         self.atch_files = result[7]
         
         #231227 첨부파일명 라벨에 세팅 및 삭제 버튼 세팅
