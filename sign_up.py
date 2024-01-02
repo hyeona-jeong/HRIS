@@ -34,7 +34,7 @@ class SignUp(QDialog, form_class):
         self.authCombo.setCurrentIndex(1)
 
         self.conn = pymysql.connect(
-            host='localhost',
+            host='192.168.2.20',
             user='dev',
             password='nori1234',
             db='dev',

@@ -29,7 +29,7 @@ class Read(QMainWindow, form_class):
         self.idx = idx
         
         self.conn = pymysql.connect(
-                host='localhost',
+                host='192.168.2.20',
                 user='dev',
                 password='nori1234',
                 db='dev',

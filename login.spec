@@ -1,4 +1,4 @@
-# -*- mode: python ; coding: utf-8 -*-
+# -- mode python ; coding utf-8 --
 ui = [('login.ui', '.'),
        ('find.ui', '.'),
        ('index.ui', '.'),
@@ -15,6 +15,7 @@ ui = [('login.ui', '.'),
        ('user_auth.ui', '.'),
        ('write.ui', '.'),
        ('read.ui', '.'),
+       ('qa_read.ui', '.'),
        ('forum_list.ui', '.'),
        ('rc1.png', '.'),
        ('peo.png', '.'),
@@ -34,8 +35,8 @@ ui = [('login.ui', '.'),
        ('image.png', '.'),
        ('justify.png', '.'),
        ('left.png', '.'),
-       ('right.png', '.'),
-       ('unknown.png', '.')
+       ('right.png', '.')
+  
 ]
 
 a = Analysis(

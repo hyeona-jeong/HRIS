@@ -175,7 +175,7 @@ class FamilyTab(QWidget):
             
     def setData(self,emp_num):
         conn = pymysql.connect(
-                host='localhost',
+                host='192.168.2.20',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -431,7 +431,7 @@ class ContactTab(QWidget):
             
     def setData(self,emp_num):
         conn = pymysql.connect(
-                host='localhost',
+                host='192.168.2.20',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -707,7 +707,7 @@ class SchoolTab(QWidget):
     
     def setData(self,emp_num):
         conn = pymysql.connect(
-                host='localhost',
+                host='192.168.2.20',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -937,7 +937,7 @@ class CertificationTab(QWidget):
 
     def setData(self,emp_num):
         conn = pymysql.connect(
-                host='localhost',
+                host='192.168.2.20',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -1194,7 +1194,7 @@ class CareerTab(QWidget):
                 
     def setData(self,emp_num):
         conn = pymysql.connect(
-                host='localhost',
+                host='192.168.2.20',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -1454,7 +1454,7 @@ class TechnicalTab(QWidget):
 
     def setData(self,emp_num):
         conn = pymysql.connect(
-                host='localhost',
+                host='192.168.2.20',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -1700,7 +1700,7 @@ class RPTab(QWidget):
 
     def setData(self,emp_num):
         conn = pymysql.connect(
-                host='localhost',
+                host='192.168.2.20',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -1933,7 +1933,7 @@ class RSTab(QWidget):
             
     def setData(self,emp_num):
         conn = pymysql.connect(
-                host='localhost',
+                host='192.168.2.20',
                 user='dev',
                 password='nori1234',
                 db='dev',

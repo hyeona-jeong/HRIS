@@ -55,7 +55,7 @@ class Q_A(QMainWindow, form_class):
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self.conn = pymysql.connect(
-            host='localhost',
+            host='192.168.2.20',
             user='dev',
             password='nori1234',
             db='dev',
@@ -295,7 +295,7 @@ class Q_A(QMainWindow, form_class):
             for col, data in enumerate(row_data):
                 if col == 0:
                     self.cur.execute(check_query, data)
-                    comment_yn = self.cur.fetchall
+                    comment_yn = self.cur.fetchall()
                 if col == 6:
                     self.emp_num.append(data)
                 elif col == 2:

@@ -97,7 +97,7 @@ class Regist(QMainWindow, form_class):
         self.cur = cur
         if self.conn is None:
             self.conn = pymysql.connect(
-                    host='localhost',
+                    host='192.168.2.20',
                     user='dev',
                     password='nori1234',
                     db='dev',

@@ -60,7 +60,7 @@ class Emplist(QMainWindow, form_class):
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self.conn = pymysql.connect(
-            host='localhost',
+            host='192.168.2.20',
             user='dev',
             password='nori1234',
             db='dev',
