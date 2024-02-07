@@ -58,9 +58,19 @@ class Write(QMainWindow, form_class):
         self.setLoadingCursor(True)
         category = self.category_combo.currentText()
         title = self.title_le.text()
+        content = self.contents_te.toPlainText()
         contents = self.contents_te.toHtml()
         imgs_path = None
         files_path = None
+        
+        if title == "":
+            QMessageBox.warning(self,"게시글 등록 실패","제목을 입력해주세요.")
+            return 
+        
+        if content == "":
+            QMessageBox.warning(self,"게시글 등록 실패","내용을 입력해주세요.")
+            return 
+        
         query = "SELECT NAME_KOR FROM MAIN_TABLE WHERE EMP_NUM = %s"
         cur.execute(query,(emp_num))
         name = cur.fetchone()
