@@ -16,6 +16,7 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 form = resource_path('login.ui')
+# form = resource_path(r'c:\Users\정현아\.ssh\HRIS\login.ui')
 form_class = uic.loadUiType(form)[0]
 
 class Login(QMainWindow, form_class):

@@ -75,7 +75,8 @@ class Edit(QMainWindow, form_class):
         post = xmlobj.find_all('zipNo')
         post2 = xmlobj.find_all('lnmAdres')
         row = len(post)
-
+        
+        # 결과 값이 1줄 이상이면 값을 테이블에 세팅
         if(row != 0):
             self.w.table.setRowCount(row)
             for p in post:
@@ -85,6 +86,7 @@ class Edit(QMainWindow, form_class):
             for r in range(row):
                 self.w.table.setItem(r, 0, QTableWidgetItem(str(post_num[r])))
                 self.w.table.setItem(r, 1, QTableWidgetItem(str(post_address[r])))
+        # 결과 값이 0줄이면 동으로 검색
         else:
             params['searchSe'] = 'dong'
             response = requests.get(url, params=params).text.encode('utf-8')
