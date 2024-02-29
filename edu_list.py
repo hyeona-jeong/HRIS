@@ -56,7 +56,7 @@ class EduList(QMainWindow, form_class):
         self.delBtn.clicked.connect(self.delChkList)
 
         self.conn = pymysql.connect(
-                host='192.168.2.20',
+                host='localhost',
                 user='dev',
                 password='nori1234',
                 db='dev',

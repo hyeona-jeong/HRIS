@@ -14,6 +14,8 @@ from sign_up import SignUp
 from user_auth import UserAuth
 from forum_list import Forum
 from qa_list import Q_A
+from age_barchart import Age_barchart
+from grade_pychart import Grade_pychart
 
 
 def resource_path(relative_path):
@@ -59,6 +61,7 @@ class Index(QMainWindow, form_class):
         self.toolrc = self.menuBar.addAction('채용')
         self.toolbm = self.menuBar.addAction('사업관리')
         self.toolga = self.menuBar.addAction('총무')
+        self.tooltotal = self.menuBar.addAction('통계현황')
         
         # 231125 메뉴바에 메뉴 추가 
         self.menuHr = QMenu()
@@ -67,6 +70,22 @@ class Index(QMainWindow, form_class):
         self.menuHr.addAction('사원정보등록',self.showPage)
         self.menuHr.addAction('사원ID등록',self.showIDRegist)
         self.menuHr.addAction('사용자권한관리',self.showPage)
+        #self.menuHr.addAction('조직관리',self.showPage)
+        #구분선 추가
+        #self.menuHr.addSeparator()
+        
+        #서브 메뉴 추가
+        # file_submenu = self.menuHr.addMenu("조직관리")
+        # file_submenu.addAction('연령별 현황',self.showPage)
+        # file_submenu.addAction('직급별 현황',self.showPage)
+        
+        #통계현황 메뉴바에 메뉴 추가
+        menuTotal = QMenu()
+        menuTotal.addAction('연령별 현황',self.showPage)
+        menuTotal.addAction('직급별 현황',self.showPage)
+        menuTotal.setStyleSheet(stylesheet)
+        self.tooltotal.setMenu(menuTotal)
+        
         self.toolhr.setMenu(self.menuHr)
         self.menuHr.setStyleSheet(stylesheet)
 
@@ -104,6 +123,12 @@ class Index(QMainWindow, form_class):
             
         elif sender == '사용자권한관리':
             self.w = UserAuth()
+        
+        elif sender == '연령별 현황':
+            self.w = Age_barchart()
+        
+        elif sender == '직급별 현황':
+            self.w = Grade_pychart()
         
         elif sender == '게시판':
             self.w = Forum(self.emp_num)

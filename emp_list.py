@@ -3,6 +3,8 @@ import sys
 import pymysql
 import re
 import math
+import openpyxl
+import datetime
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -60,7 +62,7 @@ class Emplist(QMainWindow, form_class):
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self.conn = pymysql.connect(
-            host='192.168.2.20',
+            host='localhost',
             user='dev',
             password='nori1234',
             db='dev',
@@ -94,6 +96,7 @@ class Emplist(QMainWindow, form_class):
         self.empSearchBtn.clicked.connect(self.searchEmp)
 
         self.table.itemChanged.connect(self.delChk)
+        self.xlBtn.clicked.connect(self.createExel)
         self.listDelBtn.clicked.connect(self.delChkList)
         self.listRegBtn.clicked.connect(self.showRegsit)
         self.table.cellDoubleClicked.connect(self.showEmpInfo)
@@ -885,6 +888,53 @@ class Emplist(QMainWindow, form_class):
                 resize_pixmap = self.pixmap.scaled(width,height)
                 self.w.w.pic.setPixmap(resize_pixmap)
         self.w1.accept()
+        
+    def createExel(self):
+        wb = openpyxl.Workbook()
+        try:
+            if self.biz == '전체':
+                if not self.name:
+                    query = "SELECT DEPT_BIZ, DEPT_GROUP, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL FROM MAIN_TABLE"
+                else:
+                    query = """SELECT DEPT_BIZ, DEPT_GROUP, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL 
+                    FROM MAIN_TABLE WHERE NAME_KOR LIKE '%""" + self.name +"%'"
+            else :
+                if not self. name:
+                    query = """SELECT 
+                    DEPT_BIZ, DEPT_GROUP, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL 
+                    FROM MAIN_TABLE 
+                    WHERE DEPT_BIZ = '""" + self.biz +"'"
+                else:
+                    query = """SELECT 
+                    DEPT_BIZ, DEPT_GROUP, NAME_KOR, POSITION, EMP_RANK, WORK_POS, PHONE, MAIL 
+                    FROM MAIN_TABLE 
+                    WHERE NAME_KOR LIKE '%""" + self.name +"%' AND DEPT_BIZ = '" + self.biz + "'"
+                    
+            self.cur.execute(query)
+            result = self.cur.fetchall()
+        except Exception as e:
+                QMessageBox.warning(self, "엑셀파일추출 실패", "Error: " + str(e))
+                return   
+        w1 = wb["Sheet"]
+        
+        for i in range(len(result)):
+            for j in range(len(result[i])):
+                w1.cell(i+1,j+1).value = result[i][j]
+                
+        #파일명_날짜로 파일명 자동 적용
+        save_filename = '\\사원정보_' + datetime.datetime.now().strftime("%Y-%m-%d")
+        
+        #본인 계정 경로 추적 및 바탕화면
+        save_user_name = os.path.expanduser('~') + '\\Desktop' + save_filename
+                                                                   
+        fname = QFileDialog.getSaveFileName(self, 'Save file', save_user_name,'Excel file(*xlsx *xls)')
+
+
+        if fname[0]:
+            wb.save(fname[0] + r".xlsx")
+            QMessageBox.information(self, "엑셀파일추출 성공", "엑셀파일이 추출되었습니다.")
+        else: 
+            return
 
     # 231122 페이지 전환 함수 by정현아
     def showRegsit(self):

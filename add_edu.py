@@ -21,7 +21,7 @@ class DialogClass(QDialog, form_class):
         self.addT.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         
         self.conn = pymysql.connect(
-                host='192.168.2.20',
+                host='localhost',
                 user='dev',
                 password='nori1234',
                 db='dev',
