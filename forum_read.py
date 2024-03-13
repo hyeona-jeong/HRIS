@@ -27,7 +27,7 @@ class Read(QMainWindow, form_class):
         self.result = None
         
         self.conn = pymysql.connect(
-                host='192.168.2.20',
+                host='localhost',
                 user='dev',
                 password='nori1234',
                 db='dev',
@@ -81,7 +81,10 @@ class Read(QMainWindow, form_class):
                 del self.file_name_list[-1]
                 i = 0
                 for atch_file_name in self.file_name_list:
-                    self.downlaod_btn_list.append(QPushButton(atch_file_name))
+                    if i-1 != len(self.file_name_list):
+                        self.downlaod_btn_list.append(QPushButton(atch_file_name + " | " ))
+                    else :
+                        self.downlaod_btn_list.append(QPushButton(atch_file_name))
                     self.downlaod_btn_list[i].setStyleSheet("border: none;")
                     self.fileLay.insertWidget(i+1,self.downlaod_btn_list[i])
                     self.downlaod_btn_list[i].installEventFilter(self)
@@ -89,13 +92,19 @@ class Read(QMainWindow, form_class):
                     i+=1
     
     # 231228 파일 다운로드 by 정현아            
+    # 240311 편의성 강화를 위해 파일다운로드 대신 파일 열기로 변경
     def download_file(self,file_name):
         index = self.file_name_list.index(file_name)
         web_path = self.result[5].split(",")
-        reply = QMessageBox.question(self, '저장 확인', '현재 폴더에 저장하시겠습니까??', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            gdown.download(web_path[index],self.file_name_list[index],quiet=False)
-            QMessageBox.information(self,"저장 완료", "저장되었습니다.")
+        
+        web_file_name = "/".join(web_path) + "/" + file_name
+
+        if os.name == 'nt':  # Windows
+            os.startfile(web_file_name)
+        elif os.name == 'posix':  # macOS, Linux
+            subprocess.run(['open', web_path + "/" + file_name])
+        else:
+            print("현재 OS는 지원되지 않습니다.")
     
     # 231222 이미지 태그 경로를 로컬에서 구글드라이브 경로로 변경 by 정현아
     def load_img(self):

@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QGridLayout" name="gridLayout_12">
+       <item row="5" column="3">
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string>정규(명)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>부서</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="8">
+        <widget class="QLineEdit" name="pm_save_name">
+         <property name="minimumSize">
+          <size>
+           <width>188</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>188</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="5">
+        <widget class="QLabel" name="label_18">
+         <property name="minimumSize">
+          <size>
+           <width>75</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>75</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>완료일</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>첨부파일</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="8">
+        <widget class="QDateEdit" name="pm_create_date"/>
+       </item>
+       <item row="7" column="1">
+        <widget class="QComboBox" name="pm_status">
+         <item>
+          <property name="text">
+           <string>대기</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>제안</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>실행</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>완료</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>취소</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="8">
+        <widget class="QLineEdit" name="pm_business">
+         <property name="minimumSize">
+          <size>
+           <width>188</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>188</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="6">
+        <widget class="QLineEdit" name="pm_code"/>
+       </item>
+       <item row="3" column="1" colspan="2">
+        <widget class="QLineEdit" name="pm_manager">
+         <property name="minimumSize">
+          <size>
+           <width>188</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>188</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="6">
+        <widget class="QLineEdit" name="pm_name"/>
+       </item>
+       <item row="8" column="1" colspan="8">
+        <widget class="QTextEdit" name="pm_outline"/>
+       </item>
+       <item row="5" column="4" colspan="3">
+        <widget class="QLineEdit" name="pm_full">
+         <property name="minimumSize">
+          <size>
+           <width>188</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>188</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="4" colspan="3">
+        <widget class="QLineEdit" name="pm_bu">
+         <property name="minimumSize">
+          <size>
+           <width>188</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>188</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="8">
+        <widget class="QLineEdit" name="pm_part">
+         <property name="minimumSize">
+          <size>
+           <width>188</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>188</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1" colspan="8">
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="1">
+          <widget class="QPushButton" name="attchFileBtn">
+           <property name="text">
+            <string>파일선택</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLineEdit" name="pm_file"/>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="1" colspan="2">
+        <widget class="QLineEdit" name="pm_nori_manager">
+         <property name="minimumSize">
+          <size>
+           <width>188</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>188</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>상태</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="8">
+        <widget class="QDoubleSpinBox" name="pm_work_date">
+         <property name="minimumSize">
+          <size>
+           <width>188</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>188</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>담당자</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>부서</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>공수</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" colspan="2">
+        <widget class="QLineEdit" name="pm_price">
+         <property name="minimumSize">
+          <size>
+           <width>188</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>188</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="inputMask">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>계약금액</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="3">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>확정유무</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4" colspan="2">
+        <widget class="QComboBox" name="pm_nori_bu">
+         <property name="minimumSize">
+          <size>
+           <width>110</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>TSP사업부</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>TC사업부</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>FAB사업부</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>MIS사업부</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="7">
+        <widget class="QLabel" name="label_20">
+         <property name="text">
+          <string>과제생성일</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="5">
+        <widget class="QComboBox" name="pm_confirmed">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <item>
+          <property name="text">
+           <string>Y</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>N</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="6" column="3" colspan="2">
+        <widget class="QDateEdit" name="pm_start_date">
+         <property name="minimumSize">
+          <size>
+           <width>103</width>
+           <height>21</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>103</width>
+           <height>21</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_21">
+         <property name="text">
+          <string>책임자</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1" colspan="8">
+        <widget class="QTextEdit" name="pm_bego"/>
+       </item>
+       <item row="0" column="7">
+        <widget class="QLabel" name="label_22">
+         <property name="text">
+          <string>등록자</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="7">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>파트너(명)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>개요</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>과제코드</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" colspan="2">
+        <widget class="QLineEdit" name="pm_workload">
+         <property name="minimumSize">
+          <size>
+           <width>188</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>188</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="7">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>고객사</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="2">
+        <widget class="QLabel" name="label_17">
+         <property name="minimumSize">
+          <size>
+           <width>75</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>75</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>시작일</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QDateEdit" name="pm_suggest_date">
+         <property name="minimumSize">
+          <size>
+           <width>103</width>
+           <height>21</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>103</width>
+           <height>21</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>특이사항</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="7">
+        <widget class="QLabel" name="label_23">
+         <property name="text">
+          <string>등록자사번</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_16">
+         <property name="minimumSize">
+          <size>
+           <width>75</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>75</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>제안일</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="6">
+        <widget class="QDateEdit" name="pm_end_date">
+         <property name="maximumSize">
+          <size>
+           <width>103</width>
+           <height>21</height>
+          </size>
+         </property>
+         <property name="sizeIncrement">
+          <size>
+           <width>103</width>
+           <height>21</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="7">
+        <widget class="QLabel" name="label_7">
+         <property name="minimumSize">
+          <size>
+           <width>75</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>75</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>기간</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>과제명</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="8">
+        <widget class="QLineEdit" name="pm_save_sa">
+         <property name="minimumSize">
+          <size>
+           <width>188</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>188</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QGridLayout" name="gridLayout_11">
+       <item row="0" column="3">
+        <widget class="QPushButton" name="cnlBtn">
+         <property name="minimumSize">
+          <size>
+           <width>105</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>105</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>닫기</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="saveBtn">
+         <property name="minimumSize">
+          <size>
+           <width>105</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>105</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>저장</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="delBtn">
+         <property name="minimumSize">
+          <size>
+           <width>105</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>105</width>
+           <height>28</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>삭제</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

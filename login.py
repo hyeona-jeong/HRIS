@@ -92,13 +92,15 @@ class Login(QMainWindow, form_class):
     # 231122 인덱스 페이지 by정현아
     def showIndex(self):
         # 사원정보를 가져옴 by 정현아
-        query = 'SELECT ID, PIC, MAIN_TABLE.EMP_NUM FROM LOGIN_DATA, MAIN_TABLE WHERE LOGIN_DATA.EMP_NUM = MAIN_TABLE.EMP_NUM AND ID = %s'
+        query = 'SELECT ID, PIC, MAIN_TABLE.EMP_NUM, NAME_KOR, AUTHORITY FROM LOGIN_DATA, MAIN_TABLE WHERE LOGIN_DATA.EMP_NUM = MAIN_TABLE.EMP_NUM AND ID = %s'
         self.cur.execute(query,(self.id))
         result = self.cur.fetchone()
         self.emp_num = result[2]
         data = result[1]
+        user_info = list(result)
+        del user_info[1]
         
-        self.w = Index(self.emp_num, self.result_pass[2])
+        self.w = Index(self.emp_num, self.result_pass[2], user_info)
         self.w.show()
         regist_action = None
 
@@ -305,9 +307,9 @@ class Login(QMainWindow, form_class):
         self.w.w.w.namekor.setText(self.result[0])
         self.w.w.w.nameeng.setText(self.result[1])
         self.w.w.w.empnum.setText(str(self.result[2]))
-        date_str = self.result[3].strftime("%Y-%m-%d")
-        date = QDate.fromString(date_str, "yyyy-MM-dd")
-        self.w.w.w.joindate.setDate(date)
+        # date_str = self.result[3].strftime("%Y-%m-%d")
+        # date = QDate.fromString(date_str, "yyyy-MM-dd")
+        self.w.w.w.joindate.setDate(self.result[3])
         self.w.w.w.emprank.setCurrentText(self.result[4])
         self.w.w.w.regnum_lineEdit.setText(self.result[5])
         self.w.w.w.regnum_lineEdit2.setText(self.result[6])
@@ -368,8 +370,8 @@ class Login(QMainWindow, form_class):
             return        
 
     def saveEdit(self):
-        date_str = self.result[3].strftime("%Y-%m-%d")
-        date = QDate.fromString(date_str, "yyyy-MM-dd")
+        # date_str = self.result[3].strftime("%Y-%m-%d")
+        # date = QDate.fromString(date_str, "yyyy-MM-dd")
         attrDict ={
             '주민번호': self.result[5] + self.result[6],  
             '메일': self.result[7], 
@@ -385,7 +387,7 @@ class Login(QMainWindow, form_class):
             '한글성명': self.result[0],
             '영문성명': self.result[1],
             '사번': self.result[2],
-            '입사일': date,
+            '입사일': self.result[3],
             '직급': self.result[4],
             '사업부': self.result[11],
             '직책': self.result[12],

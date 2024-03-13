@@ -16,6 +16,7 @@ from forum_list import Forum
 from qa_list import Q_A
 from age_barchart import Age_barchart
 from grade_pychart import Grade_pychart
+from pm_list import PMList
 
 
 def resource_path(relative_path):
@@ -35,13 +36,14 @@ class Index(QMainWindow, form_class):
     indexToForum = pyqtSignal()
     indextToQA = pyqtSignal()
 
-    def __init__(self, emp_num, auth):
+    def __init__(self, emp_num, auth, user_info):
         super().__init__()
         self.setupUi(self)
         self.auth = None
         self.w = None
         self.emp_num = emp_num
         self.auth = auth
+        self.user_info = user_info
         
         self.index.setStyleSheet(stylesheet)
 
@@ -59,7 +61,7 @@ class Index(QMainWindow, form_class):
         self.toolforum = self.menuBar.addAction('게시판',self.showPage)
         self.toolqa = self.menuBar.addAction('Q&&A',self.showPage)
         self.toolrc = self.menuBar.addAction('채용')
-        self.toolbm = self.menuBar.addAction('사업관리')
+        self.toolbm = self.menuBar.addAction('사업관리',self.showPage)
         self.toolga = self.menuBar.addAction('총무')
         self.tooltotal = self.menuBar.addAction('통계현황')
         
@@ -120,6 +122,9 @@ class Index(QMainWindow, form_class):
             
         elif sender == '교육' or sender == '교육이수정보 조회':
             self.w = EduList()
+        
+        elif sender == '사업관리':
+            self.w = PMList(self.user_info)
             
         elif sender == '사용자권한관리':
             self.w = UserAuth()

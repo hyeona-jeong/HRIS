@@ -3,6 +3,7 @@ import sys
 import openpyxl
 import pymysql
 import math
+import datetime
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -52,6 +53,7 @@ class EduList(QMainWindow, form_class):
         
         self.addBtn.clicked.connect(self.addEdu)
         self.excelBtn.clicked.connect(self.addExcel)
+        self.xlBtn.clicked.connect(self.createExcel)
         self.table.itemChanged.connect(self.delChk)
         self.delBtn.clicked.connect(self.delChkList)
 
@@ -518,6 +520,60 @@ class EduList(QMainWindow, form_class):
                     self.conn.commit()
             self.chList = []
             QMessageBox.information(self,"Update Item Succeed","업데이트 되었습니다.") 
+            
+    def createExcel(self):
+        wb = openpyxl.Workbook()
+        try:
+            if self.biz == '전체':
+                if not self.name:
+                    query = """SELECT MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+                    FROM MAIN_TABLE, E_C 
+                    WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM
+                    """
+                else:
+                    query = f"""
+                    SELECT MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+                    FROM MAIN_TABLE,E_C
+                    WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND NAME_KOR LIKE '%{self.name}%'
+                    """
+            else :
+                if not self. name:
+                    query = f"""
+                    SELECT MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+                    FROM MAIN_TABLE,E_C
+                    WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = '%{self.biz}%'"""
+                else:
+                    query = f"""
+                    SELECT MAIN_TABLE.EMP_NUM,DEPT_BIZ,DEPT_GROUP,NAME_KOR,NAME_EDU,EDU_INSTI,COMP_YN 
+                    FROM MAIN_TABLE,E_C
+                    WHERE MAIN_TABLE.EMP_NUM = E_C.EMP_NUM AND DEPT_BIZ = '{self.biz}' AND NAME_KOR LIKE '%{self.name}%'
+                    """
+                    
+            self.cur.execute(query)
+            result = self.cur.fetchall()
+        except Exception as e:
+            QMessageBox.warning(self, "엑셀파일추출 실패", "Error: " + str(e))
+            return   
+        w1 = wb["Sheet"]
+        
+        for i in range(len(result)):
+            for j in range(len(result[i])):
+                w1.cell(i+1,j+1).value = result[i][j]
+                
+        #파일명_날짜로 파일명 자동 적용
+        save_filename = '\\교육이수정보_' + datetime.datetime.now().strftime("%Y-%m-%d")
+        
+        #본인 계정 경로 추적 및 바탕화면
+        save_user_name = os.path.expanduser('~') + '\\Desktop' + save_filename
+                                                                   
+        fname = QFileDialog.getSaveFileName(self, 'Save file', save_user_name,'Excel file(*xlsx *xls)')
+
+
+        if fname[0]:
+            wb.save(fname[0] + r".xlsx")
+            QMessageBox.information(self, "엑셀파일추출 성공", "엑셀파일이 추출되었습니다.")
+        else: 
+            return
 
     # 231122 닫기 클릭시 이전 페이지로 넘어가기 위해 close이벤트 재정의 by정현아
     def closeEvent(self, e):

@@ -53,15 +53,20 @@ class Grade_pychart(QMainWindow):
         self.cnlBtn = QPushButton("닫기")
         self.cnlBtn.setFixedSize(98,28)
         
+        hs1 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        hs2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        
         hbox = QHBoxLayout()
         vbox.addLayout(hbox)
+        hbox.addItem(hs1)
         hbox.addWidget(self.printBtn)
         hbox.addWidget(self.cnlBtn)
+        hbox.addItem(hs2)
         
         self.printBtn.clicked.connect(self.print)
         
-        self.setWindowTitle('Matplotlib in PyQt5')
-        self.setGeometry(300, 100, 600, 400)
+        self.setWindowTitle('    ')
+        self.setGeometry(600, 200, 1200, 800)
         self.show()
         
     def print(self):
@@ -83,7 +88,7 @@ class Grade_pychart(QMainWindow):
             scale = xscale if xscale < yscale else yscale        
             qp.translate(printer.paperRect().x() + printer.pageRect().width()/2, printer.paperRect().y() + printer.pageRect().height()/2)
             qp.scale(scale, scale)
-            qp.translate(-self.canvas.width()/2, -self.canvas.height()/2);        
+            qp.translate(-self.canvas.width()/2, -self.canvas.height()/2) 
  
             # 인쇄
             self.canvas.render(qp)

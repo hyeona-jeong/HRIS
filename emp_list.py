@@ -96,7 +96,7 @@ class Emplist(QMainWindow, form_class):
         self.empSearchBtn.clicked.connect(self.searchEmp)
 
         self.table.itemChanged.connect(self.delChk)
-        self.xlBtn.clicked.connect(self.createExel)
+        self.xlBtn.clicked.connect(self.createExcel)
         self.listDelBtn.clicked.connect(self.delChkList)
         self.listRegBtn.clicked.connect(self.showRegsit)
         self.table.cellDoubleClicked.connect(self.showEmpInfo)
@@ -568,9 +568,9 @@ class Emplist(QMainWindow, form_class):
         self.w.w.namekor.setText(self.result[0])
         self.w.w.nameeng.setText(self.result[1])
         self.w.w.empnum.setText(str(self.result[2]))
-        date_str = self.result[3].strftime("%Y-%m-%d")
-        date = QDate.fromString(date_str, "yyyy-MM-dd")
-        self.w.w.joindate.setDate(date)
+        # date_str = self.result[3].strftime("%Y-%m-%d")
+        # date = QDate.fromString(date_str, "yyyy-MM-dd")
+        self.w.w.joindate.setDate(self.result[3])
         self.w.w.emprank.setCurrentText(self.result[4])
         self.w.w.regnum_lineEdit.setText(self.result[5])
         self.w.w.regnum_lineEdit2.setText(self.result[6])
@@ -636,8 +636,8 @@ class Emplist(QMainWindow, form_class):
 
     # 개인정보편집에서 수정한 내용 DB에 저장
     def saveEdit(self):
-        date_str = self.result[3].strftime("%Y-%m-%d")
-        date = QDate.fromString(date_str, "yyyy-MM-dd")
+        # date_str = self.result[3].strftime("%Y-%m-%d")
+        # date = QDate.fromString(date_str, "yyyy-MM-dd")
         attrDict ={
             '주민번호': self.result[5] + self.result[6],  
             '메일': self.result[7], 
@@ -653,7 +653,7 @@ class Emplist(QMainWindow, form_class):
             '한글성명': self.result[0],
             '영문성명': self.result[1],
             '사번': self.result[2],
-            '입사일': date,
+            '입사일': result[3],
             '직급': self.result[4],
             '사업부': self.result[11],
             '직책': self.result[12],
@@ -889,7 +889,7 @@ class Emplist(QMainWindow, form_class):
                 self.w.w.pic.setPixmap(resize_pixmap)
         self.w1.accept()
         
-    def createExel(self):
+    def createExcel(self):
         wb = openpyxl.Workbook()
         try:
             if self.biz == '전체':

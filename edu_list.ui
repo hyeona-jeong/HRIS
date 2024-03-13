@@ -465,7 +465,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>         </string>
+   <string/>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -965,7 +965,14 @@ colorL white;</string>
 </string>
                 </property>
                 <property name="text">
-                 <string>엑셀 입력</string>
+                 <string>엑셀 업로드</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="xlBtn">
+                <property name="text">
+                 <string>엑셀 다운로드</string>
                 </property>
                </widget>
               </item>

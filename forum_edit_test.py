@@ -13,7 +13,7 @@ def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
-form = resource_path('write_test.ui')
+form = resource_path('write.ui')
 form_class = uic.loadUiType(form)[0]
 
 class Edit(QMainWindow, form_class):
@@ -26,8 +26,9 @@ class Edit(QMainWindow, form_class):
             return
         self.setupUi(self)
         self.file_path_list = []
-        # self.del_btn_list = []
-        # self.file_lbl_list = [self.file_lbl]
+        self.del_btn_list = []
+        self.file_lbl_list = [self.file_lbl]
+        self.cnt = 0
         self.img_chk = False
         self.file_chk = False
         
@@ -45,14 +46,9 @@ class Edit(QMainWindow, form_class):
         self.italic_btn.setCheckable(True)
         self.underline_btn.setCheckable(True)
         
-        self.file.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
-        self.file.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        
         self.font_combo.activated[str].connect(self.chg_font_famliy)
         self.font_size_combo.activated[str].connect(self.chg_font_size)
         self.align_combo.activated[int].connect(self.chg_align)
-        
-        self.file.cellClicked.connect(self.selectFile)
         
         self.bold_btn.clicked.connect(self.bold)
         self.italic_btn.clicked.connect(self.italic)
@@ -75,32 +71,25 @@ class Edit(QMainWindow, form_class):
         # 로컬링크를 리스트로 변환
         if result[4]:
             self.file_path_list = result[4].split(",")
-        # self.atch_files = result[8]
+        self.atch_files = result[8]
+        
         
         #231227 첨부파일명 라벨에 세팅 및 삭제 버튼 세팅
         if result[8] : 
             file_name_list = result[8].split(",")
             del file_name_list[-1]
-            row = 0
-            for file in file_name_list:
-                self.file.insertRow(row)
-                self.file.setItem(row, 0, QTableWidgetItem(file))
-                self.file.setItem(row, 1, QTableWidgetItem('X'))
-                self.file.item(row, 1).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-                
-                row += 1
             
-            # self.cnt = len(file_name_list)
-            # for i in range(self.cnt):
-            #     self.del_btn_list.append(QPushButton("X"))
-            #     self.del_btn_list[i].setFixedSize(28, 28)
-            #     self.fileLay.insertWidget(2*(i+1),self.del_btn_list[i])
-            #     if i == 0:
-            #         self.file_lbl_list[0].setText(file_name_list[i])
-            #     else:
-            #         self.file_lbl_list.append(QLabel(file_name_list[i]))
-            #         self.fileLay.insertWidget(2*i+1,self.file_lbl_list[i])
-            # self.del_btn_list[self.cnt-1].clicked.connect(lambda idx=self.cnt-1: self.del_attach_file(idx))
+            self.cnt = len(file_name_list)
+            for i in range(self.cnt):
+                self.del_btn_list.append(QPushButton("X"))
+                self.del_btn_list[i].setFixedSize(28, 28)
+                self.fileLay.insertWidget(2*(i+1),self.del_btn_list[i])
+                if i == 0:
+                    self.file_lbl_list[0].setText(file_name_list[i])
+                else:
+                    self.file_lbl_list.append(QLabel(file_name_list[i]))
+                    self.fileLay.insertWidget(2*i+1,self.file_lbl_list[i])
+            self.del_btn_list[self.cnt-1].clicked.connect(lambda idx=self.cnt-1: self.del_attach_file(idx))
                 
         self.category_combo.setCurrentText(category)
         self.title_le.setText(title)
@@ -184,7 +173,6 @@ class Edit(QMainWindow, form_class):
             
             # 현재 첨부중인 파일 로컬링크 할당     
             if self.file_path_list:
-                print(self.file_path_list)
             
                 dir_paths = [os.path.dirname(path) for path in self.file_path_list]
                 dir_files = [os.path.basename(path) for path in self.file_path_list]
@@ -244,23 +232,16 @@ class Edit(QMainWindow, form_class):
         #             files_path += file_url
         #             files_path += ","
                 
-        # # 첨부파일명 목록 저장 by 정현아
-        # if self.cnt != 0:
-        #     self.atch_files = ""
-        #     for lbl in self.file_lbl_list:
-        #         if lbl.text() == "":
-        #             break
-        #         self.atch_files += lbl.text()
-        #         self.atch_files += ","
-        #     if self.atch_files == "" :
-        #         self.atch_files = None
-        
-        # 첨부파일 리스트를 문자열로 변환
-        file_name = ''
-        cnt = self.file.rowCount()
-        for i in range(cnt):
-            file_name += self.file.item(i,0).text()
-            file_name += ','
+        # 첨부파일명 목록 저장 by 정현아
+        if self.cnt != 0:
+            self.atch_files = ""
+            for lbl in self.file_lbl_list:
+                if lbl.text() == "":
+                    break
+                self.atch_files += lbl.text()
+                self.atch_files += ","
+            if self.atch_files == "" :
+                self.atch_files = None
         
         #로컬 이미지 경로에서 DB 경로로 변경
         if self.img_chk == True:
@@ -272,7 +253,7 @@ class Edit(QMainWindow, form_class):
             pass
         
         query = "UPDATE FORUM SET CATEGORY = %s, TITLE = %s, CONTENTS = %s, ATCH_IMG_PATH = %s, ATCH_IMG_NAME = %s, ATCH_FILE_PATH = %s, ATCH_FILE_NAME = %s, ATCH_IMG_LOCAL_PATH = %s, ATCH_FILE_LOCAL_PATH = %s WHERE IDX = %s;"
-        cur.execute(query, (category, title, contents, imgs_path, imgs_file, files_path, file_name, '', '', idx))
+        cur.execute(query, (category, title, contents, imgs_path, imgs_file, files_path, self.atch_files, '', '', idx))
         conn.commit()
         self.setLoadingCursor(False)
         self.close()
@@ -356,27 +337,71 @@ class Edit(QMainWindow, form_class):
             self.replace_img_files = os.path.basename(fname)
             
             
+            
+            
+
+        
+    
         # 231227 추가한 첨부 파일 정보 저장 by 정현아
     def attach_file(self):
         fname,_ = QFileDialog.getOpenFileName(self, '첨부 파일 추가', 'C:/Program Files', '모든 파일(*.*)')
-        file_name = os.path.basename(fname)
         
-        if fname:
-            # 테이블에 row를 한 줄 추가하고 파일명과 버튼을 각 셀에 배치
-            self.file.insertRow(0)
-            item = QTableWidgetItem(file_name)
-            self.file.setItem(0, 0, item)
-            self.file.setItem(0, 1, QTableWidgetItem('X'))
-            self.file.item(0, 1).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-            self.file_path_list.append(fname)
-            self.file_chk = True
-    
-    def selectFile(self, row, col):
-        if col == 1:
-            self.file.removeRow(row)
+        self.file_path_list.append(fname)
+        self.attach_file = os.path.basename(fname)
+        self.attach_path = os.path.dirname(fname)
+        self.file_chk = True
+                 
+        # 231227 카운트가 0일 경우 기존에 존재하는 라벨의 텍스트만 변경
+        if self.cnt == 0 :
+            self.file_lbl.setText(self.attach_file)
+            self.del_btn_list.append(QPushButton('X'))
+            self.del_btn_list[self.cnt].setFixedSize(28, 28)
+            self.fileLay.insertWidget(2,self.del_btn_list[self.cnt])
+            
+        # 231227 카운트가 1이상이면 리스트에 값을 추가하고 레이아웃에 라벨 추가
+        elif 0 < self.cnt < 5 and len(self.file_lbl_list) < 5:
+            self.file_lbl_list.append(QLabel(self.attach_file))
+            self.del_btn_list.append(QPushButton('X'))
+            self.del_btn_list[self.cnt].setFixedSize(28, 28)
+            
+            self.fileLay.insertWidget(2*self.cnt+1,self.file_lbl_list[self.cnt])
+            self.fileLay.insertWidget(2*(self.cnt+1),self.del_btn_list[self.cnt])
+        
+        elif 0 < self.cnt <5 and len(self.file_lbl_list) ==5:
+            self.file_lbl_list[self.cnt].setText(self.attach_file)
+            self.del_btn_list[self.cnt].setVisible(True)
+            
+        # 첨부파일이 5개 이상일 경우 경고
+        elif self.cnt >= 5:
+            QMessageBox.warning(self,"파일 첨부 실패","파일을 5개이상 추가하실 수 없습니다.")
+            return
+
+        self.del_btn_list[self.cnt].clicked.connect(lambda idx=self.cnt: self.del_attach_file(idx))
+        self.cnt +=1
+        
+    # 첨부파일 제거 by 정현아
+    def del_attach_file(self,index):
+        # 첨부된 파일 목록에서 제거
+        del self.file_path_list[index]
+        
+        if self.cnt == 1 :
+            # 남아있는 라벨에 문구 설정
+            self.file_lbl_list[0].setText("파일은 최대 5개까지 첨부 가능합니다.")
+
+            # 삭제버튼 제거
+            self.del_btn_list[0].setVisible(False)
             
         else:
-            pass
+            # 중간 항목을 앞으로 당김
+            for i in range(index, self.cnt - 1):
+                self.file_lbl_list[i].setText(self.file_lbl_list[i + 1].text())
+            
+            # 마지막 항목 제거
+            last_index = self.cnt - 1
+            self.file_lbl_list[last_index].setText("")
+            self.del_btn_list[last_index].setVisible(False)
+            
+        self.cnt -= 1
 
     def setLoadingCursor(self, loading):
         if loading:
