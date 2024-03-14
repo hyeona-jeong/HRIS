@@ -5,6 +5,7 @@ import pymysql
 import math
 import datetime
 import re
+import shutil
 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -29,7 +30,6 @@ class PMList(QMainWindow, form_class):
         self.user_info = user_info
         
         # 변경된 셀값 저장
-        self.file_cnt = 0
         self.chLists = []
         self.biz = '전체'
         self.name = ''
@@ -39,11 +39,13 @@ class PMList(QMainWindow, form_class):
         self.delRowList = []
         self.current_page = 1
         self.prev_page = None
-        self.align_index = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        self.align_index = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         self.current_index = 1
+        self.file_chk = False
         self.prev_index = None
         self.ignore_paging_btn = False
-        self.header = ['','과제코드','과제명','담당자','부서','과제생성일','책임자','부서','고객사','계약금액','공수','정규(명)','파트너(명)','제안일','시작일','완료일','기간','상태','개요','특이사항','첨부파일','확정유무']
+        self.table.setColumnHidden(25,True)
+        self.header = ['','과제코드','과제명','담당자','부서','과제생성일','책임자','부서','고객사','계약금액','공수','정규(명)','파트너(명)','제안일','시작일','완료일','기간','상태','개요','특이사항','첨부파일','확정유무','등록자 ID','등록자 사번','등록자 이름','첨부파일경로']
         
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         # self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)  
@@ -73,7 +75,7 @@ class PMList(QMainWindow, form_class):
         self.main_query = """
         SELECT PM_CODE, PM_NAME, PM_NORI_MANAGER, PM_NORI_BU, PM_CREATE_DATE, PM_MANAGER, 
         PM_BU, PM_BUSINESS, FORMAT(PM_PRICE, 0) AS PM_PRICE, PM_WORKLOAD, PM_FULL, PM_PART, PM_SUGGEST_DATE, 
-        PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME
+        PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME, PM_FILE_PATH
         FROM PM_DATA
         """
         
@@ -302,7 +304,7 @@ class PMList(QMainWindow, form_class):
                 query = f"""
                 SELECT PM_CODE, PM_NAME, PM_NORI_MANAGER, PM_NORI_BU, PM_CREATE_DATE, PM_MANAGER, 
                 PM_BU, PM_BUSINESS, FORMAT(PM_PRICE, 0) AS PM_PRICE, PM_WORKLOAD, PM_FULL, PM_PART, PM_SUGGEST_DATE, 
-                PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME
+                PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME, PM_FILE_PATH
                 FROM PM_DATA
                 WHERE PM_NORI_BU = '{self.biz}' """
                 self.setTables(query)
@@ -319,7 +321,7 @@ class PMList(QMainWindow, form_class):
                 query = f"""
                 SELECT PM_CODE, PM_NAME, PM_NORI_MANAGER, PM_NORI_BU, PM_CREATE_DATE, PM_MANAGER, 
                 PM_BU, PM_BUSINESS, FORMAT(PM_PRICE, 0) AS PM_PRICE, PM_WORKLOAD, PM_FULL, PM_PART, PM_SUGGEST_DATE, 
-                PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME
+                PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME, PM_FILE_PATH
                 FROM PM_DATA
                 WHERE PM_NORI_MANAGER LIKE '%{self.name}%'
                 """
@@ -328,7 +330,7 @@ class PMList(QMainWindow, form_class):
                 query = f"""
                 SELECT PM_CODE, PM_NAME, PM_NORI_MANAGER, PM_NORI_BU, PM_CREATE_DATE, PM_MANAGER, 
                 PM_BU, PM_BUSINESS, FORMAT(PM_PRICE, 0) AS PM_PRICE, PM_WORKLOAD, PM_FULL, PM_PART, PM_SUGGEST_DATE, 
-                PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME
+                PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME, PM_FILE_PATH
                 FROM PM_DATA
                 WHERE PM_NORI_BU = '{self.biz}' AND PM_NORI_MANAGER LIKE '%{self.name}%'
                 """
@@ -403,7 +405,7 @@ class PMList(QMainWindow, form_class):
                     query = f"""
                     SELECT PM_CODE, PM_NAME, PM_NORI_MANAGER, PM_NORI_BU, PM_CREATE_DATE, PM_MANAGER, 
                     PM_BU, PM_BUSINESS, FORMAT(PM_PRICE, 0) AS PM_PRICE, PM_WORKLOAD, PM_FULL, PM_PART, PM_SUGGEST_DATE, 
-                    PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME
+                    PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME, PM_FILE_PATH
                     FROM PM_DATA
                     WHERE PM_NORI_MANAGER LIKE '%{self.name}%'
                     """
@@ -412,14 +414,14 @@ class PMList(QMainWindow, form_class):
                     query = f"""
                     SELECT PM_CODE, PM_NAME, PM_NORI_MANAGER, PM_NORI_BU, PM_CREATE_DATE, PM_MANAGER, 
                     PM_BU, PM_BUSINESS, FORMAT(PM_PRICE, 0) AS PM_PRICE, PM_WORKLOAD, PM_FULL, PM_PART, PM_SUGGEST_DATE, 
-                    PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME
+                    PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE,PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME, PM_FILE_PATH
                     FROM PM_DATA
                     WHERE PM_NORI_BU = '{self.biz}' """
                 else:
                     query = f"""
                     SELECT PM_CODE, PM_NAME, PM_NORI_MANAGER, PM_NORI_BU, PM_CREATE_DATE, PM_MANAGER, 
                     PM_BU, PM_BUSINESS, FORMAT(PM_PRICE, 0) AS PM_PRICE, PM_WORKLOAD, PM_FULL, PM_PART, PM_SUGGEST_DATE, 
-                    PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME
+                    PM_START_DATE, PM_END_DATE, PM_WORK_DATE, PM_STATUS, PM_OUTLINE, PM_BEGO, PM_FILE, PM_CONFIRMED, PM_SAVE_ID, PM_SAVE_SA, PM_SAVE_NAME, PM_FILE_PATH
                     FROM PM_DATA
                     WHERE PM_NORI_BU = '{self.biz}' AND PM_NORI_MANAGER LIKE '%{self.name}%'
                     """
@@ -453,7 +455,7 @@ class PMList(QMainWindow, form_class):
     # PM등록 팝업창 생성
     def registPM(self):
         self.w = QDialog(self)
-        uic.loadUi(resource_path('pm_regist_attch_file_test.ui'), self.w)
+        uic.loadUi(resource_path('pm_regist.ui'), self.w)
         
         self.w.delBtn.setVisible(False)
         
@@ -500,6 +502,18 @@ class PMList(QMainWindow, form_class):
         pm_price_comma = format(int_pm_price,',')
         self.w.pm_price.setText(pm_price_comma)
         
+      # 파일 copy
+    def save_file_at_dir(self, dst_dir_path, sot_dir_path, sot_filename):
+        # 디렉토리 생성 (존재하지 않는 경우)
+        os.makedirs(dst_dir_path, exist_ok=True)
+        
+        for source_path, file_name in zip(sot_dir_path, sot_filename):
+            source_file_path = os.path.join(source_path, file_name)
+            target_file_path = os.path.join(dst_dir_path, file_name)
+            
+            if source_file_path != target_file_path:                    
+                shutil.copy(source_file_path, target_file_path)
+        
     # PM정보저장
     def savePM(self,type):
         pm_full = 0 if self.w.pm_full.text() == '' else int(self.w.pm_full.text())
@@ -510,12 +524,37 @@ class PMList(QMainWindow, form_class):
         
         # 첨부파일 리스트를 문자열로 변환
         file_name = ''
+        file_path = ''
         cnt = self.w.pm_file.rowCount()
         for i in range(cnt):
             file_name += self.w.pm_file.item(i,0).text()
+            file_path += self.w.pm_file.item(i,2).text()
             if i != cnt-1:
-                file_name += ', '
-                        
+                file_name += ','
+                file_path += ','
+        
+        dir_file_name = file_name.split(',')
+        dir_file_path = file_path.split(',')
+
+        #if self.file_chk == True:
+            
+            #소스 파일
+            #dir_paths = (os.path.dirname(self.file_path))
+            #dir_files = (os.path.basename(self.file_path))
+            
+            #dir_paths = [os.path.dirname(self.file_path)]
+            #dir_files = [os.path.basename(self.file_path)]
+            
+            #source_file_path = (",".join(dir_paths))
+            #source_file_name = (",".join(dir_files))
+        
+            #저장 경로
+            #dst_file_path = 'C:/HRIS/upload_data/pm_list' + '/' + QDateTime.currentDateTime().toString('yyyyMMddHHmm')
+            #dst_file_name = dir_files
+            
+            #print(dir_paths)
+            #print(dir_files)
+                                    
         pmAttr ={
             '과제코드': QDateTime.currentDateTime().toString('yyyyMMddHHmm'),  
             '과제명': self.w.pm_name.text(),             
@@ -536,13 +575,20 @@ class PMList(QMainWindow, form_class):
             '상태':self.w.pm_status.currentText(),  
             '개요':self.w.pm_outline.toPlainText() ,             
             '특이사항':self.w.pm_bego.toPlainText() , 
-            '첨부파일':file_name,  
+            '첨부파일':file_name, 
             '확정유무':self.w.pm_confirmed.currentText(),
             '등록자 ID':self.user_info[0],
             '등록자 사번':int(self.user_info[1]),
-            '등록자 이름':self.user_info[2]
+            '등록자 이름':self.user_info[2],
+            '첨부파일경로': '' 
                     }
+        if pmAttr['첨부파일']  == '':
+            pmAttr['첨부파일경로'] = ''
+        else :
+            pmAttr['첨부파일경로'] = 'C:/HRIS/upload_data/pm_list' + '/' + QDateTime.currentDateTime().toString('yyyyMMddHHmm')
+            
         if type == 'regist':
+            
             query = """
             INSERT INTO PM_DATA (
                 pm_code,
@@ -568,15 +614,21 @@ class PMList(QMainWindow, form_class):
                 pm_confirmed,
                 pm_save_id,
                 pm_save_sa,
-                pm_save_name
+                pm_save_name,
+                pm_file_path
             )
             VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s , %s , %s 
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s , %s ,%s , %s 
             )
             """ 
         elif type == 'edit':
             pmAttr['과제코드'] = self.w.pm_code.text()
             pmAttr['과제생성일'] = self.w.pm_create_date.date().toString("yyyy-MM-dd")
+            if pmAttr['첨부파일'] == '':
+               pmAttr['첨부파일경로'] = ''
+            else:
+               pmAttr['첨부파일경로'] = 'C:/HRIS/upload_data/pm_list' + '/' + pmAttr['과제코드']
+            
             query = f"""
             UPDATE PM_DATA SET
                 pm_code = %s,
@@ -602,9 +654,16 @@ class PMList(QMainWindow, form_class):
                 pm_confirmed = %s,
                 pm_save_id = %s,
                 pm_save_sa = %s,
-                pm_save_name = %s
+                pm_save_name = %s,
+                pm_file_path = %s
             WHERE pm_code = '{pmAttr['과제코드']}'
             """ 
+        
+        if self.file_chk == True:
+        #파일 copy
+            self.save_file_at_dir(pmAttr['첨부파일경로'], dir_file_path, dir_file_name)
+        else:
+            pass
         
         reply = QMessageBox.question(self, '저장 확인', '저장하시겠습니까??', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
@@ -653,14 +712,15 @@ class PMList(QMainWindow, form_class):
             pm_confirmed,
             pm_save_id,
             pm_save_sa,
-            pm_save_name
+            pm_save_name,
+            pm_file_path
             FROM PM_DATA
             WHERE PM_CODE = '{pmCode}'
         """
         self.cur.execute(query)
         result = self.cur.fetchone()
         self.w = QDialog(self)
-        uic.loadUi(resource_path('pm_regist_attch_file_test.ui'), self.w)
+        uic.loadUi(resource_path('pm_regist.ui'), self.w)
         
         self.setViewUI(result)
         self.w.saveBtn.setText('수정')
@@ -673,6 +733,8 @@ class PMList(QMainWindow, form_class):
         if not (self.user_info[3] == 'Master' or self.user_info[1] == int(self.w.pm_save_sa.text())):
             self.w.delBtn.setVisible(False)
             self.w.saveBtn.setVisible(False)
+        
+        self.w.pm_file.setColumnHidden(2,True)
         
         # self.w.attchFileBtn.setVisible(False)
         self.w.pm_save_name.setReadOnly(True)
@@ -724,12 +786,15 @@ class PMList(QMainWindow, form_class):
         self.w.pm_save_name.setText(result[23])
         self.w.pm_save_sa.setText(str(result[22]))
         
-        pm_file = result[19].split(', ')
+        pm_file = result[19].split(',')
+        pm_file_path = result[24]
         row = 0
-        for file in pm_file:
-            self.w.pm_file.insertRow(row)
-            self.w.pm_file.setItem(row, 0, QTableWidgetItem(file))
-            row += 1
+        if pm_file != '':
+            for file in pm_file:
+                self.w.pm_file.insertRow(row)
+                self.w.pm_file.setItem(row,0,QTableWidgetItem(file))
+                self.w.pm_file.setItem(row,2,QTableWidgetItem(pm_file_path))
+                row += 1
         
     def editPM(self):     
         # self.w.attchFileBtn.setVisible(True)
@@ -793,21 +858,26 @@ class PMList(QMainWindow, form_class):
                             )
     #첨부파일 선택 이벤트
     def attachFile(self):
-        if self.file_cnt >= 5:
+        if self.w.pm_file.rowCount() >= 5:
             QMessageBox.warning(self, "추가 실패","첨부파일은 최대 5개까지 추가하실 수 있습니다.")
             return
         
         fname,_ = QFileDialog.getOpenFileName(self, '첨부 파일 추가', 'C:/Program Files', '모든 파일(*.*)')
         file_name = os.path.basename(fname)
-        
+        file_path = os.path.dirname(fname)
+                
         # 선택된 파일이 있을 시
         if fname:
             # 테이블에 row를 한 줄 추가하고 파일명과 버튼을 각 셀에 배치
             self.w.pm_file.insertRow(0)
-            item = QTableWidgetItem(file_name)
-            self.w.pm_file.setItem(0, 0, item)
+            item_file = QTableWidgetItem(file_name)
+            item_path = QTableWidgetItem(file_path)
+            self.w.pm_file.setItem(0, 0, item_file)
             self.w.pm_file.setItem(0, 1, QTableWidgetItem('X'))
+            self.w.pm_file.setItem(0, 2, item_path)
+            self.w.pm_file.setColumnHidden(2, True)
             self.w.pm_file.item(0, 1).setTextAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+            self.file_chk = True
             
             # # 삭제버튼을 중앙에 위치시키기 위해 위젯을 생성하여 중앙 정렬
             # btnWidget = QWidget()
@@ -825,7 +895,6 @@ class PMList(QMainWindow, form_class):
             # btnWidget.setLayout(btnLayout)
             
             # self.w.pm_file.setCellWidget(self.file_cnt, 1, btnWidget)
-            self.file_cnt += 1
         # 선택된 파일이 없을 시 
         else:
             pass
@@ -833,7 +902,6 @@ class PMList(QMainWindow, form_class):
     def selectFile(self, row, col):
         if col == 1:
             self.w.pm_file.removeRow(row)
-            self.file_cnt -= 1 
         else:
             pass
         

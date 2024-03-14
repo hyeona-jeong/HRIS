@@ -205,7 +205,44 @@
           </widget>
          </item>
          <item row="0" column="0">
-          <widget class="QLineEdit" name="pm_file"/>
+          <widget class="QTableWidget" name="pm_file">
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="tabKeyNavigation">
+            <bool>true</bool>
+           </property>
+           <property name="showDropIndicator" stdset="0">
+            <bool>false</bool>
+           </property>
+           <property name="dragDropOverwriteMode">
+            <bool>false</bool>
+           </property>
+           <property name="cornerButtonEnabled">
+            <bool>false</bool>
+           </property>
+           <attribute name="horizontalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <column>
+            <property name="text">
+             <string>파일명</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>파일삭제</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>파일경로</string>
+            </property>
+           </column>
+          </widget>
          </item>
         </layout>
        </item>

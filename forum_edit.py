@@ -358,6 +358,8 @@ class Edit(QMainWindow, form_class):
             
         # 231227 추가한 첨부 파일 정보 저장 by 정현아
     def attach_file(self):
+        if self.file.rowCount() >=5:
+            QMessageBox(self,"첨부파일 추가 실패","첨부파일은 최대 5개까지 추가하실 수 있습니다.")
         fname,_ = QFileDialog.getOpenFileName(self, '첨부 파일 추가', 'C:/Program Files', '모든 파일(*.*)')
         file_name = os.path.basename(fname)
         

@@ -1020,6 +1020,11 @@ background-color:white;</string>
           <string>등록자이름</string>
          </property>
         </column>
+        <column>
+         <property name="text">
+          <string>첨부파일경로</string>
+         </property>
+        </column>
        </widget>
       </item>
       <item>
