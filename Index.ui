@@ -459,7 +459,7 @@
    </palette>
   </property>
   <property name="windowTitle">
-   <string>            </string>
+   <string/>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -537,6 +537,9 @@
               <width>40</width>
               <height>40</height>
              </size>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
             </property>
             <property name="styleSheet">
              <string notr="true">background-color: white;
@@ -879,7 +882,7 @@ border-radius: 20px;
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QToolButton" name="hireBtn_2">
+         <widget class="QToolButton" name="pmBtn">
           <property name="minimumSize">
            <size>
             <width>200</width>
@@ -906,21 +909,28 @@ border-radius: 20px;
           <property name="toolTip">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;개발예정&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
           <property name="styleSheet">
            <string notr="true">QToolButton {
-background-color: #c6c6c6;
-border: 4px solid #646464;
+background-color: white;
+border: 4px solid ;
 border-radius: 20px;
-color: #646464;
 }
-</string>
+
+QToolButton:hover {
+background-color: rgba(255, 85, 0, 50);
+border: 4px solid;
+border-radius: 20px;
+}</string>
           </property>
           <property name="text">
            <string>사업관리</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>busi1.png</normaloff>busi1.png</iconset>
+            <normaloff>busi.png</normaloff>busi.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -965,7 +975,7 @@ color: #646464;
      <x>0</x>
      <y>0</y>
      <width>1269</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

@@ -795,8 +795,26 @@ class PMList(QMainWindow, form_class):
                 self.w.pm_file.setItem(row,0,QTableWidgetItem(file))
                 self.w.pm_file.setItem(row,2,QTableWidgetItem(pm_file_path))
                 row += 1
+                
+        self.w.pm_file.cellDoubleClicked.connect(self.download_file)  
+        # self.w.pm_file.cellClicked.connect(lambda: self.download_file(file, pm_file_path))      
+    
+    # 240311 편의성 강화를 위해 파일다운로드 대신 파일 열기로 변경
+    def download_file(self, row, col):
+        #index = self.file_name_list.index(file_name)
+        #pm_file_path = self.result[24].split(",")
+        print(self.w.pm_file.item(row, 2).text())
+        web_file_name = self.w.pm_file.item(row, 2).text() + "/" + self.w.pm_file.item(row, 0).text()
+        if os.name == 'nt':  # Windows
+            os.startfile(web_file_name)
+        elif os.name == 'posix':  # macOS, Linux
+            subprocess.run('open', web_file_name)
+        else:
+            print("현재 OS는 지원되지 않습니다.")        
         
-    def editPM(self):     
+    def editPM(self):   
+        if hasattr(self.w.pm_file, 'download_file') :
+            self.w.pm_file.cellDoubleClicked.disconnect(self.download_file)  
         # self.w.attchFileBtn.setVisible(True)
         self.w.pm_name.setReadOnly(False)
         self.w.pm_nori_manager.setReadOnly(False)
